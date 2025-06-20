@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Basic Gui</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <script
+      src="https://unpkg.com/three@0.133.0/build/three.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/tweakpane@3.0.5/dist/tweakpane.min.js"></script>
+  </head>
+
+  <body>
+    <script type="module">
+      // Learn more about the gui panel we're using at:
+      // https://cocopon.github.io/tweakpane/
+      
+      import { ARButton } from "https://unpkg.com/three@0.133.0/examples/jsm/webxr/ARButton.js";
+
+      let camera, scene, renderer;
+      let mesh;
+      let pane;
+      
+      // we specify the parameters we want to show up in the gui and starting values for the mesh
+      // right now just x, y, z for the position of the model
+      const PARAMS = {
+        x: 0,
+        y: 0,
+        z: -0.5
+      };
+
+      setupGui();
+      init();
+      animate();
+      
+      function setupGui() {
+        // first we create the gui panel
+        pane = new Tweakpane.Pane();
+        pane.containerElem_.style.zIndex = "10000"; // we need to set the zIndex so it shows up on desktop correctly
+        
+        // finally you customize the parameters
+        // min is the minimum value the slider will go, max is the max value the slider will go, step is the increase at each change in the slider
+        // remember these values are in meters in WebXR
+        pane.addInput(
+          PARAMS, 'x',
+          {min: -5, max: 5, step: 0.1} 
+        );
+        pane.addInput(
+          PARAMS, 'y',
+          {min: -5, max: 5, step: 0.1}
+        );
+        pane.addInput(
+          PARAMS, 'z',
+          {min: -5, max: 5, step: 0.1}
+        );
+        
+        // more types of params and options can be found:
+        // https://cocopon.github.io/tweakpane/
+      }
+
+      function init() {
+        const container = document.createElement("div");
+        document.body.appendChild(container);
+
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(
+          70,
+          window.innerWidth / window.innerHeight,
+          0.01,
+          40
+        );
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true; // New!
+        container.appendChild(renderer.domElement);
+
+        var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+        light.position.set(0.5, 1, 0.25);
+        scene.add(light);
+
+        const geometry = new THREE.IcosahedronGeometry(0.1, 1);
+        const material = new THREE.MeshPhongMaterial({
+          color: new THREE.Color("rgb(226,35,213)"),
+          shininess: 6,
+          flatShading: true,
+          transparent: 1,
+          opacity: 0.8
+        });
+
+        mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(PARAMS.x, PARAMS.y, PARAMS.z);
+        scene.add(mesh);
+        
+        // this event listener 'change' gets called every time the sliders on the pane are moved
+        pane.on('change', (ev) => {
+          const type = ev.presetKey; // what slider was changed
+          const value = ev.value; // the number value on the slider
+          
+          switch(type) {
+            case 'x':
+              mesh.position.x = value;
+              break;
+            case 'y':
+              mesh.position.y = value;
+              break;
+            case 'z':
+              mesh.position.z = value;
+              break;
+            default:
+              break;
+          }
+        });
+
+        const button = ARButton.createButton(renderer, {
+          optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],
+          domOverlay: {
+            root: document.body
+          }
+        });
+
+        document.body.appendChild(button);
+
+        window.addEventListener("resize", onWindowResize, false);
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      function animate() {
+        renderer.setAnimationLoop(render);
+      }
+
+      function render() {
+        renderer.render(scene, camera);
+      }
+    </script>
+  </body>
+</html>
