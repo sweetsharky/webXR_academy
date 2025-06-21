@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Video transparent - android and desktop</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <script src="https://unpkg.com/three@0.133.0/build/three.js" crossorigin="anonymous"></script>
+  </head>
+
+<body>  
+  <div id="console-ui"></div>
+	<script type="module">
+		import { ARButton } from 'https://unpkg.com/three@0.133.0/examples/jsm/webxr/ARButton.js';
+
+    const VIDEO_WIDTH = 640; // original video width
+    const VIDEO_HEIGHT = 360; // original video height
+    
+		let container;
+		let camera, scene, renderer;
+		let controller;
+    let video, videoCanvasContext, videoCanvas, videoTexture;
+
+		init();
+		animate();
+
+		function init() {
+			container = document.createElement('div');
+			document.body.appendChild(container);
+
+			scene = new THREE.Scene();
+			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 200);
+
+			renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.xr.enabled = true; // we have to enable the renderer for webxr
+			container.appendChild(renderer.domElement);
+
+			var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+			light.position.set(0.5, 1, 0.25);
+			scene.add(light);
+      
+      // Setup the video canvas and video mesh
+      createCanvasWithVideo(); // step 1: setup a canvas with the video
+      const videoMesh = createMeshWithVideo(); // step 2: setup a mesh with the video
+      videoMesh.position.set(0,0, -1);
+      scene.add(videoMesh);
+
+      const button = ARButton.createButton(renderer, {
+        optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],
+        domOverlay: {
+          root: document.body
+        }
+      });
+			document.body.appendChild(button);
+      
+      // play a video when a user clicks on the start AR button
+      button.addEventListener('click', () => {
+        playVideo();
+        
+        // optionally wait three seconds before playing the video
+        // setTimeout(playVideo, 2000);
+      })
+
+			window.addEventListener('resize', onWindowResize, false);
+		}
+
+		function onWindowResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		}
+
+		function animate() {
+			renderer.setAnimationLoop(render);
+		}
+
+		function render() {
+      if (video) {
+        if (video.readyState === video.HAVE_ENOUGH_DATA) {
+          videoCanvasContext.clearRect(0, 0, VIDEO_WIDTH, VIDEO_HEIGHT);
+          videoCanvasContext.drawImage(video, 0, 0);
+          if (videoTexture) 
+            videoTexture.needsUpdate = true;
+        }
+      }
+
+			renderer.render(scene, camera);
+		}
+    
+    function createCanvasWithVideo() {
+      video = document.createElement('video');
+      // IMPORTANT: This video has to be a video with transparency! Recommended format is webm
+      video.src = "https://cdn.glitch.me/b09d0ef2-cbb9-4685-be74-25b4dbc9e604%2Fdancer.webm?v=1636679831857";
+      video.crossOrigin = "anonymous"; //important!
+      video.load(); // call after changing source
+      video.preload = 'auto';
+      video.autoload = true;
+      video.loop = true; // for autolooping
+      
+      videoCanvas = document.createElement('canvas');
+      videoCanvas.width = VIDEO_WIDTH;
+      videoCanvas.height = VIDEO_HEIGHT;
+
+      // The canvas element is the actual DOM node that's embedded in the HTML page. 
+      // The canvas context is an object with properties and methods that you can use 
+      // to render graphics inside the canvas element. 
+      videoCanvasContext = videoCanvas.getContext('2d');
+      videoCanvasContext.fillStyle = 'rgba(255,255,255,0)'; // transparent background color
+      videoCanvasContext.fillRect(0, 0, videoCanvas.width, videoCanvas.height);
+    }
+    
+    function createMeshWithVideo() {
+      // first we create a geometry in the shape of a plane to hold the video
+      // tthe unites here have to corespond to ratio/size of video but scaled down to 
+      // webxr units. So in this case the original video was aspect ratio 16 : 9 
+      // but those units would be too large for webxr, so we divide by 10
+      const geometry = new THREE.PlaneGeometry(1.6, 0.9); 
+      
+      // then we setup a material associated with the video through a texture
+      videoTexture = new THREE.Texture(videoCanvas);
+      videoTexture.minFilter = THREE.LinearFilter;
+      videoTexture.magFilter = THREE.LinearFilter;
+      const material = new THREE.MeshLambertMaterial({ 
+        map: videoTexture, 
+        side:THREE.DoubleSide,
+        transparent: true,
+      });
+      
+      // finally you associate the geometry and material into one mesh
+      const mesh = new THREE.Mesh(geometry, material);
+      return mesh;
+    }
+    
+    function playVideo() {
+      video.play();
+    }
+	</script>
+</body>
+
+</html>

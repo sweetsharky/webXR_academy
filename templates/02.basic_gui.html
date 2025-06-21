@@ -26,7 +26,7 @@
       let pane;
 
       // =======================================================
-      // 2. 🧠 EINSTELLUNGEN FÜR DIE GUI
+      // 2. 🧠 EINSTELLUNGEN FÜR DIE GUI --> ist auch eine globale Variable, die bereits mit Werten zugewiesen wird. Damit ist es ein (Java-script-)Object, also wird hier dem Objekt/Instanz PARAMS die Eigenschaft x,y und z mit entsprechenden Werten gegeben. Ist also keine Klasse, sondern bereits ein konkretes Objekt :)
       // =======================================================
       const PARAMS = {
         x: 0,
@@ -42,7 +42,7 @@
       animate();  // Renderloop starten
 
       // =======================================================
-      // 4. 🧰 FUNKTIONS-DEFINITIONEN
+      // 4. 🧰 FUNKTIONS-DEFINITIONEN --> können auch nach gaaaanz unten geschrieben werden, da Java-Script, durch sogenanntes Hoisting, die Funktions-Definitionen auch von ganz unten beim Kompilieren nach oben zieht!
       // =======================================================
 
       // 🎛️ GUI Setup mit Tweakpane
@@ -55,8 +55,8 @@
         pane.addInput(PARAMS, 'z', { min: -5, max: 5, step: 0.1 });
 
         // Wenn Werte verändert werden: Objekt aktualisieren
-        pane.on('change', (ev) => {
-          const type = ev.presetKey;
+        pane.on('change', (ev) => {   // das ist ein Eventlistener. sobald sich etwas änder auf der GUI (der pane). dort wird erst genauer definiert WAS der Eventlistener "beobachten" soll. Und sobald eine Veränderung dort eintritt sollt ein Callback ausgeführt werden = alles was in switch(type) steht. Dort wird zurückgegeben (Callback) was nun verändert werden soll, wenn eine Veränderung "beobachtet" wurde. --> Eventlistener hören auf eine Veränderung ('change' oder 'input') und tun, dann was ihnen über das Callback (switch() oder if statements) gesagt wird zu tun!
+          const type = ev.presetKey; //hier wird auf die Keys in PARAMS (da es ja Key-Value-Pairs als EIgenschaft hat) zurückgegriffen. Deswegen weiß type, dass er über den Eventlistender beobachten soll, ob sich die Keys auf der Pane ändern. --> siehe swich unten: dort steht wenn der Eventlistener beobachtet hat, dass sich case "x" verändert hat, dann verändere auch für das mesh diesen Wert usw.
           const value = ev.value;
 
           switch(type) {

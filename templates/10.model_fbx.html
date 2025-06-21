@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>3D Model - fbx</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+    <link type="text/css" rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/tweakpane@3.0.5/dist/tweakpane.min.js"></script>
+  </head>
+
+  <body>
+    <script type="module">
+      // This is an example of how to load an FBX model with textures
+
+      import * as THREE from "https://cdn.skypack.dev/three@0.133.0";
+      import { FBXLoader } from "https://cdn.skypack.dev/three@0.133.0/examples/jsm/loaders/FBXLoader.js"
+      import { TGALoader } from "https://cdn.skypack.dev/three@0.133.0/examples/jsm/loaders/TGALoader.js"
+      import { ARButton } from "https://cdn.skypack.dev/three@0.133.0/examples/jsm/webxr/ARButton.js";
+      
+      let container;
+      let camera, scene, renderer;
+      let controller;
+      let loader;
+      let model;
+      let pane;
+
+      // initial values
+      const PARAMS = {
+        scale: 0.06,
+        z: -2.60
+      };
+      
+      setupGui();
+      init();
+      animate();
+      
+      function setupGui() {
+        pane = new Tweakpane.Pane();
+        pane.containerElem_.style.zIndex = "10000"; // we need to set the zIndex so it shows up on desktop correctly
+        
+        pane.addInput(
+          PARAMS, 'scale',
+          { min: 0.001, max: 1, step: 0.001 } 
+        );
+        pane.addInput(
+          PARAMS, 'z',
+          { min: -5, max: 5, step: 0.01 } 
+        );
+      }
+
+      async function init() {
+        container = document.createElement("div");
+        document.body.appendChild(container);
+
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(
+          70,
+          window.innerWidth / window.innerHeight,
+          0.01,
+          20
+        );
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true; // we have to enable the renderer for webxr
+        container.appendChild(renderer.domElement);
+
+        // Add a light to the cene
+        var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+        light.position.set(0.5, 1, 0.25);
+        scene.add(light);
+        
+        // load the fbx model
+        const loader = new createFbxLoader();
+        const fbx = await loadFbx(loader);
+        fbx.scale.multiplyScalar(PARAMS.scale);
+        fbx.position.z = PARAMS.z;
+        fbx.rotation.y = fbx.rotation.y - 1.5;
+        
+        scene.add(fbx);
+        
+        pane.on('change', (ev) => {
+          const type = ev.presetKey; // what slider was changed
+          const value = ev.value; // the number value on the slider
+          
+          switch(type) {
+            case 'scale':
+              fbx.scale.multiplyScalar(value);
+              break;
+            case 'z':
+              fbx.position.z = value;
+              break;
+            default:
+              break;
+          }
+        });
+        
+        const button = ARButton.createButton(renderer, {
+          optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],
+          domOverlay: {
+            root: document.body
+          }
+        });
+        document.body.appendChild(button);
+
+        window.addEventListener("resize", onWindowResize, false);
+      }
+      
+      function createFbxLoader() {
+        const manager = new THREE.LoadingManager();
+        const tgaLoader = new TGALoader();
+        manager.addHandler(/\.tga$/i, tgaLoader); // add handler for TGA textures
+        const loader = new FBXLoader(manager);
+        return loader;
+      }
+      
+      // load the shape/geometry of the model
+      async function loadFbx(loader) {
+        const url = 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/sourceModels/BarramundiFish/BarramundiFish.fbx';
+        const fbx = await loader.loadAsync(url);
+        return fbx;
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      function animate() {
+        renderer.setAnimationLoop(render);
+      }
+
+      function render() {
+        renderer.render(scene, camera);
+      }
+    </script>
+  </body>
+</html>

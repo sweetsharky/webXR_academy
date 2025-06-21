@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Drawing</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <script
+      src="https://unpkg.com/three@0.133.0/build/three.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body>
+    <script type="module">
+      // This drawing in AR example is heavily borrowed from Three.js's excellent example
+      // https://threejs.org/examples/?q=webxr#webxr_ar_paint
+
+      import { ARButton } from "https://unpkg.com/three@0.133.0/examples/jsm/webxr/ARButton.js";
+      import { TubePainter } from "./TubePainter.js";
+
+      let camera, scene, renderer;
+      let painter;
+      let controller;
+      const cursor = new THREE.Vector3();
+      
+      let isSelecting = false;
+      let numFramesToMoveToNewPos = 2;
+
+      init();
+      animate();
+
+      function init() {
+        const container = document.createElement("div");
+        document.body.appendChild(container);
+
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(
+          70,
+          window.innerWidth / window.innerHeight,
+          0.01,
+          40
+        );
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true; // New!
+        container.appendChild(renderer.domElement);
+
+        var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+        light.position.set(0.5, 1, 0.25);
+        scene.add(light);
+
+        // add tube painter
+        painter = new TubePainter();
+        painter.setSize(0.4); // if you don't pass a size the default is 1
+        const color = new THREE.Color('skyblue'); // if you don't pass a color the default is white
+        // const color = new THREE.Color("rgb(255, 0, 0)");
+        painter.setColor(color); // pass in a Three.js color: https://threejs.org/docs/#api/en/math/Color
+        painter.mesh.material.side = THREE.DoubleSide;
+        scene.add(painter.mesh);
+
+        // add controller
+        controller = renderer.xr.getController(0);
+        controller.addEventListener("selectstart", onSelectStart);
+        controller.addEventListener("selectend", onSelectEnd);
+        scene.add(controller);
+
+        document.body.appendChild(ARButton.createButton(renderer));
+
+        window.addEventListener("resize", onWindowResize, false);
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      function animate() {
+        renderer.setAnimationLoop(render);
+      }
+
+      function render() {
+        handleController();
+        renderer.render(scene, camera);
+      }
+
+      function onSelectStart() {
+        isSelecting = true;
+        numFramesToMoveToNewPos = 2;
+      }
+
+      function onSelectEnd() {
+        isSelecting = false;
+      }
+
+      function handleController() {
+        cursor.set(0, 0, -0.2).applyMatrix4(controller.matrixWorld);
+
+        if (isSelecting === true) {
+          if (numFramesToMoveToNewPos >= 0) {
+            numFramesToMoveToNewPos = numFramesToMoveToNewPos - 1;
+
+            painter.moveTo(cursor);
+          } else {
+            painter.lineTo(cursor);
+            painter.update();
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>spatial audio with tonejs</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <script src="https://unpkg.com/three@0.133.0/build/three.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.32/Tone.js"></script>
+  </head>
+
+  <body>
+    <script type="module">
+      // this demo works best with headphones!
+      // you can move towards and from the sphere or left and right
+      
+      // Tone.js is a Web Audio framework for creating interactive music in the browser. 
+      // read more about tone.js here: https://tonejs.github.io/
+      
+      import { ARButton } from 'https://unpkg.com/three@0.133.0/examples/jsm/webxr/ARButton.js';
+      import { PositionalAudioHelper } from "https://cdn.skypack.dev/three@0.133.0/examples/jsm/helpers/PositionalAudioHelper.js";
+      console.log(Tone);
+
+      let container;
+      let camera, scene, renderer;
+      
+      // audio specific variables
+      let listener;
+
+      init();
+      animate();
+
+      function init() {
+        container = document.createElement("div");
+        document.body.appendChild(container);
+
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(
+          70,
+          window.innerWidth / window.innerHeight,
+          0.01,
+          20
+        );
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true; // we have to enable the renderer for webxr
+        container.appendChild(renderer.domElement);
+
+        const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+        light.position.set(0.5, 1, 0.25);
+        scene.add(light);
+
+        const button = ARButton.createButton(renderer, {
+          optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],
+          domOverlay: {
+            root: document.body
+          }
+        });
+        document.body.appendChild(button);
+        
+        //attach a click listener to a play button
+        button.addEventListener('click', async () => {
+          await Tone.start();
+          
+          setTimeout(setupAudio, 1000);
+        })
+
+        window.addEventListener("resize", onWindowResize, false);
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      function animate() {
+        renderer.setAnimationLoop(render);
+      }
+      
+      function render(timestamp, frame) {
+        renderer.render(scene, camera);
+      }
+      
+      /***************************/
+      /* Tone.js Audio section */
+      /***************************/
+
+      let audioElement;
+      let audioContext;
+      let resonanceAudioScene;
+      let mesh;
+      
+      const positionOfAudioAndSphere = { x: 0, y: 0, z: -0.5 };
+      
+      function setupAudio() {
+        // create an AudioListener and add it to the camera
+        listener = new THREE.AudioListener();
+        camera.add(listener);
+
+        // create audio sound and sphere
+        createSphere();
+        
+        createToneAudio();
+      }
+      
+      function createSphere() {
+        // // create an object for the sound to play from
+        const sphere = new THREE.SphereBufferGeometry(0.2, 32, 16);
+        const material = new THREE.MeshPhongMaterial({ color: 0xff2200 });
+        mesh = new THREE.Mesh(sphere, material);
+        mesh.position.set(positionOfAudioAndSphere.x, positionOfAudioAndSphere.y, positionOfAudioAndSphere.z);
+        scene.add(mesh);
+      }
+      
+      function createPositionalAudio() {
+        const sound = new THREE.PositionalAudio(listener);
+        sound.setRefDistance(0.1); // the distance between sound and listener at which the volume reduction starts taking effect.
+        sound.setDistanceModel('linear'); // this has to be linear for the max distance to work
+        sound.setMaxDistance(1.5); // more settings here: https://threejs.org/docs/#api/en/audio/PositionalAudio
+        
+        // Good definitions for what each of these are at
+        // https://stackoverflow.com/questions/36706118/use-three-js-positionalaudio-to-make-a-cone-of-sound
+        // coneInnerAngle, coneOuterAngle, coneOuterGain (from 0-1, 0 means no audio outside of cone)
+        sound.setDirectionalCone(180, 230, 0);
+
+        // optional helper to visualize the cone shape
+        const helper = new PositionalAudioHelper(sound);
+        sound.add(helper);
+        return sound;
+      }
+
+      function createToneAudio() {        
+        const sound = createPositionalAudio();
+        
+        Tone.setContext(sound.context);
+        
+        const synth = new Tone.PolySynth(Tone.Synth);
+        sound.setNodeSource(synth);
+        mesh.add(sound);
+        
+        Tone.Transport.scheduleRepeat(time => {
+          console.log("note 1");
+          synth.triggerAttackRelease("C2", "8n", time);
+        }, "4n", 0);
+        
+        Tone.Transport.scheduleRepeat(time => {
+          console.log("note 2");
+          synth.triggerAttackRelease("C4", "8n", time);
+        }, "4n", "8n", "4m"); // will play
+        
+        Tone.Transport.start();
+      }
+      
+    </script>
+  </body>
+</html>

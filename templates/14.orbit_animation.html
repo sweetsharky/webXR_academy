@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Orbit Animation</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<link type="text/css" rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/three@0.133.0/build/three.js" crossorigin="anonymous"></script>
+</head>
+
+<body>
+	<script type="module">
+    // This example shows how to perform an animation around an orbit
+    // The key here is that a circle orbit and a sphere are placed inside of a THREE.Group object
+    // Then you can place rotations and tilt on that Group object instead of the original sphere/circle orbit themselves
+    
+    import { ARButton } from "https://unpkg.com/three@0.133.0/examples/jsm/webxr/ARButton.js";
+    
+		let camera, scene, renderer;
+    let orbitGroup;
+
+		init();
+		animate();
+
+		function init() {
+			const container = document.createElement('div');
+			document.body.appendChild(container);
+
+			scene = new THREE.Scene();
+
+			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 40);
+
+			renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.xr.enabled = true;
+			container.appendChild(renderer.domElement);
+
+			var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+			light.position.set(0.5, 1, 0.25);
+			scene.add(light);
+
+      createOrbit();
+      
+      const button = ARButton.createButton(renderer);
+			document.body.appendChild(button);
+
+			window.addEventListener('resize', onWindowResize, false);
+		}
+    
+    function createOrbit() {
+      const radius = 1;
+      const geometry = new THREE.CircleGeometry(radius, 500); // notice use of radius
+      const material = new THREE.LineDashedMaterial({color: 'yellow'});
+      const circle = new THREE.Line(geometry, material);
+      circle.position.set(0, 0, 0);
+      circle.rotateX(THREE.Math.degToRad(90)); // don't need to change
+      // circle.visible = false; // uncomment this to make the orbit invisible
+
+      const sphereGeometry = new THREE.SphereBufferGeometry(0.2, 32, 32);
+      const sphereMaterial = new THREE.MeshPhongMaterial({color: 'white'});
+      const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      sphere.position.set(radius, 0, 0); // notice the sphere is placed at radius = x of circle
+
+      // mesh group that includes all the objects in the orbit
+      orbitGroup = new THREE.Group(); // Three.js objects are just containers for other objects
+      orbitGroup.add(circle);
+      orbitGroup.add(sphere);
+      // Change these values if you want to change the tilt of the rotation! 
+      orbitGroup.rotateX(THREE.Math.degToRad(25));
+      orbitGroup.rotateY(THREE.Math.degToRad(270));
+      orbitGroup.rotateZ(THREE.Math.degToRad(10));
+      
+      // use for positioning in the scene
+      const distanceFromCamera = -1.5;
+      orbitGroup.position.set(0, 0, distanceFromCamera);
+      scene.add(orbitGroup);
+    }
+  
+		function onWindowResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		}
+
+		function animate() {
+			renderer.setAnimationLoop(render);
+		}
+
+    // Can also use the Tween library for animation
+    const degree = 1; // speed to move the object each frame
+		function render() {
+      orbitGroup.rotateY(THREE.Math.degToRad(degree)); // don't need to change the rotate on Y
+      
+			renderer.render(scene, camera);
+		}
+
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>3D Model - obj</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+    <link type="text/css" rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/three@0.133.0/build/three.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/three@0.133.0/examples/js/loaders/OBJLoader.js"></script>
+    <script src="https://unpkg.com/three@0.133.0/examples/js/loaders/MTLLoader.js"></script>
+  </head>
+
+  <body>
+    <script type="module">
+      // This is an example of how to load an OBJ model with a texture
+
+      import { ARButton } from "https://unpkg.com/three@0.133.0/examples/jsm/webxr/ARButton.js";
+
+      let container;
+      let camera, scene, renderer;
+      let controller;
+      let loader;
+      let model;
+
+      init();
+      animate();
+
+      async function init() {
+        container = document.createElement("div");
+        document.body.appendChild(container);
+
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(
+          70,
+          window.innerWidth / window.innerHeight,
+          0.01,
+          20
+        );
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true; // we have to enable the renderer for webxr
+        container.appendChild(renderer.domElement);
+
+        // Add a light to the cene
+        var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+        light.position.set(0.5, 1, 0.25);
+        scene.add(light);
+        
+        // load the obj model by first loading a material and then the geometry of the model
+        const mtl = await loadMtl();
+        const obj = await loadObj(mtl);
+        obj.scale.multiplyScalar(0.3);
+        obj.position.z = -1; // pushes the model out
+        obj.position.y = -0.2;
+        obj.rotation.y = obj.rotation.y - 1.5;
+        
+        scene.add(obj);
+        
+        document.body.appendChild(ARButton.createButton(renderer));
+
+        window.addEventListener("resize", onWindowResize, false);
+      }
+      
+      // load a material file for the model
+      async function loadMtl() {
+        const mtlLoader = new THREE.MTLLoader();
+        
+        const mtlUrl = "https://raw.githubusercontent.com/webxr-academy/models/main/duck/model.mtl";
+        const mtl = await mtlLoader.loadAsync(mtlUrl);
+        return mtl;
+      }
+      
+      // load the shape/geometry of the model
+      async function loadObj(mtl) {
+        const objLoader = new THREE.OBJLoader();
+        objLoader.setMaterials(mtl);
+        
+        const objUrl = "https://raw.githubusercontent.com/webxr-academy/models/main/duck/model.obj";
+        const obj = await objLoader.loadAsync(objUrl);
+        return obj;
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      function animate() {
+        renderer.setAnimationLoop(render);
+      }
+
+      function render() {
+        renderer.render(scene, camera);
+      }
+    </script>
+  </body>
+</html>

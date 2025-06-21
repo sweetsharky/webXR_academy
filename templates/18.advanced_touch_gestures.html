@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Advanced touch gestures</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <script src="https://unpkg.com/three@0.133.0/build/three.js" crossorigin="anonymous"></script>
+    <!--  Library we will use to detect touch gestures  -->
+    <script src="https://hammerjs.github.io/dist/hammer.min.js"></script>
+  </head>
+
+  <body>
+    <script type="module">
+      // in this example you can zoom in and out with two fingers to scale the model
+      
+      import { ARButton } from "https://unpkg.com/three@0.133.0/examples/jsm/webxr/ARButton.js";
+
+      let camera, scene, renderer;
+      let mesh;
+      let radius = 0.1; // size of mesh
+
+      init();
+      animate();
+
+      function init() {
+        const container = document.createElement("div");
+        document.body.appendChild(container);
+
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(
+          70,
+          window.innerWidth / window.innerHeight,
+          0.01,
+          40
+        );
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true; // New!
+        container.appendChild(renderer.domElement);
+
+        var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+        light.position.set(0.5, 1, 0.25);
+        scene.add(light);
+
+        const geometry = new THREE.IcosahedronGeometry(radius, 1);
+        const material = new THREE.MeshPhongMaterial({
+          color: new THREE.Color("rgb(226,35,213)"),
+          shininess: 6,
+          flatShading: true,
+          transparent: 1,
+          opacity: 0.8
+        });
+
+        mesh = new THREE.Mesh(geometry, material);
+        mesh.position.set(0, 0, -0.5);
+        scene.add(mesh);
+
+        const button = ARButton.createButton(renderer);
+        document.body.appendChild(button);
+        button.addEventListener("click", () => {
+          console.log("click");
+          
+          const body = document.body;
+          const hammertime = new Hammer(body);
+          console.log(hammertime);
+          
+          hammertime.get('pinch').set({ enable: true });
+          
+          hammertime.on("pinch", ev => {
+            // output, scale, change a color
+            scaleMesh(ev.scale);
+          })
+        });
+
+        window.addEventListener("resize", onWindowResize, false);
+      }
+      
+      function scaleMesh(amount) {
+        // amount = 0.01 --> 0.1
+        // amount = 0.8 --> 0.8
+        // amount = 2 --> 1.5
+        const scaleAmount = clipValue(amount, 0.1, 1.5);
+        mesh.scale.set(scaleAmount, scaleAmount , scaleAmount);
+      }
+
+     
+
+      // function to clip a value between min and max
+      function clipValue(val, min, max) {
+        return val < min ? min : val > max ? max : val;
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      function animate() {
+        renderer.setAnimationLoop(render);
+      }
+
+      function render() {
+        renderer.render(scene, camera);
+      }
+    </script>
+  </body>
+</html>

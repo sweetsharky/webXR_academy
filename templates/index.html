@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>WebXR Examples</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<link type="text/css" rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <ul id="list">
+  </ul>
+</body>
+<script>
+  const examples = [
+    {
+      title: 'Creating a basic Three.js scene:',
+      url: '00.basic_scene.html'
+    },
+    {
+      title: 'Adding WebXR to the basic scene:',
+      url: '01.basic_scene_webxr.html'
+    },
+    {
+      title: 'Basic gui:',
+      url: '02.basic_gui.html'
+    },
+    {
+      title: 'Advanced gui:',
+      url: '03.advanced_gui.html'
+    },
+    {
+      title: 'Frame rate:',
+      url: '04.framerate_gui.html'
+    },
+    {
+      title: 'Mobile debugging:',
+      url: '05.mobile_debugging.html'
+    },
+    {
+      title: 'More objects:',
+      url: '06.more_objects.html'
+    },
+    {
+      title: '3D Model:',
+      url: '07.model.html'
+    },
+    {
+      title: '3D Model - glb:',
+      url: '08.model_glb.html'
+    },
+    {
+      title: '3D Model - obj:',
+      url: '09.model_obj.html'
+    },
+    {
+      title: '3D Model - fbx:',
+      url: '10.model_fbx.html'
+    },
+    {
+      title: 'Usdz viewer iOS:',
+      url: '11.model_usdz_ios.html'
+    },
+    {
+      title: 'Usdz exporter:',
+      url: '11.usdz_exporter.html'
+    },
+    {
+      title: 'More objects animated:',
+      url: '12.more_objects_animated.html'
+    },
+    {
+      title: 'Tween animation:',
+      url: '13.tween_animation.html'
+    },
+    {
+      title: 'Orbit animation:',
+      url: '14.orbit_animation.html'
+    },
+    {
+      title: 'Model animated:',
+      url: '15.model_animated.html'
+    },
+    {
+      title: 'Advanced model animation:',
+      url: '16.advanced_model_animation.html'
+    },
+    {
+      title: 'Touch gestures:',
+      url: '17.touch_gestures.html'
+    },
+    {
+      title: 'Advanced touch gestures:',
+      url: '18.advanced_touch_gestures.html'
+    },
+    {
+      title: 'Hit testing - only reticle:',
+      url: '19.hit_testing_only_reticle.html'
+    },
+    {
+      title: 'Hit testing',
+      url: '20.hit_testing.html'
+    },
+    {
+      title: 'Image:',
+      url: '21.image.html'
+    },
+    {
+      title: 'Transparent Image:',
+      url: '22.image_transparent.html'
+    },
+    {
+      title: 'Video:',
+      url: '23.video.html'
+    },
+    {
+      title: 'Video transparent:',
+      url: '24.video_transparent_android.html'
+    },
+    {
+      title: 'Video transparent:',
+      url: '24.video_transparent_ios.html'
+    },
+    {
+      title: 'Spatial audio with Resonance library:',
+      url: '25.spatial_audio_resonance.html'
+    },
+    {
+      title: 'Spatial audio with Positional audio:',
+      url: '26.spatial_audio_positional.html'
+    },
+    {
+      title: 'Spatial audio with Tone.js:',
+      url: '27.spatial_audio_tonejs.html'
+    },
+    {
+      title: 'Lighting:',
+      url: '28.lighting.html'
+    },
+    {
+      title: 'Ground plane:',
+      url: '29.ground_plane.html'
+    },
+    {
+      title: 'Shadows:',
+      url: '30.shadows.html'
+    },
+    {
+      title: 'Lighting estimation:',
+      url: '31.lighting_estimation.html'
+    },
+    {
+      title: 'Camera position:',
+      url: '32.camera_position.html'
+    },
+    {
+      title: 'Image targets (Android):',
+      url: '33.image_targets.html'
+    },
+    {
+      title: 'Image targets with GLB model (Android):',
+      url: '33.image_targets_glb.html'
+    },
+    {
+      title: 'Raycasting:',
+      url: '34.raycasting.html'
+    },
+    {
+      title: 'Drawing:',
+      url: '35.drawing.html'
+    },
+    {
+      title: 'Bonus: Hit testing update model position:',
+      url: "bonus01.hit_testing_position.html"
+    },
+    {
+      title: 'Bonus: Hit testing just once',
+      url: "bonus02.hit_testing_once.html"
+    }
+  ]
+  const listEl = document.getElementById('list');
+  for (let example of examples) {
+    const liEl = document.createElement('li');
+    const bEl = document.createElement('b');
+    const aEl = document.createElement('a');
+    bEl.innerText = example.title;
+    aEl.href = `/${example.url}`;
+    aEl.innerText = example.url;
+    
+    liEl.append(bEl);
+    liEl.append(aEl);
+    listEl.append(liEl);
+  }
+
+</script>
+</html>

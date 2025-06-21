@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Mobile Debugging</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <script src="https://unpkg.com/three@0.133.0/build/three.js" crossorigin="anonymous"></script>
+  <script src="//cdn.jsdelivr.net/npm/eruda"></script>
+  <link type="text/css" rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="console-ui"></div>
+	<script type="module">
+    setupMobileDebug();
+    setInterval(logsForMobileDebug, 1000);
+    
+    import { ARButton } from 'https://unpkg.com/three@0.133.0/examples/jsm/webxr/ARButton.js';
+    
+		let camera, scene, renderer;
+    let mesh;
+
+		init();
+		animate();
+    
+    function setupMobileDebug() {
+      // First thing we do is setup the mobile debug console
+      // This library is very big so only use it while debugging
+      // just comment it out when your app is done
+      const containerEl = document.getElementById("console-ui");
+      eruda.init({
+        container: containerEl
+      });
+      const devToolEl = containerEl.shadowRoot.querySelector('.eruda-dev-tools');
+      devToolEl.style.height = '40%'; // control the height of the dev tool panel
+    }
+    
+    let i = 0;
+    function logsForMobileDebug() {
+      console.log(i++);
+    }
+
+		function init() {
+			const container = document.createElement('div');
+			document.body.appendChild(container);
+
+			scene = new THREE.Scene();
+
+			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 40);
+
+			renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.xr.enabled = true;
+			container.appendChild(renderer.domElement);
+
+			var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+			light.position.set(0.5, 1, 0.25);
+			scene.add(light);
+
+      const geometry = new THREE.IcosahedronGeometry(0.1, 1);
+      const material = new THREE.MeshPhongMaterial({
+        color      :  new THREE.Color("rgb(226,35,213)"),
+        shininess  :  6,
+        flatShading:  true,
+        transparent: 1,
+        opacity    : 0.8
+      });
+      
+      mesh = new THREE.Mesh(geometry, material);
+      mesh.position.set(0, 0, -0.5);
+      scene.add(mesh);
+
+			const button = ARButton.createButton(renderer, {
+        optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],
+        domOverlay: {
+          root: document.body
+        }
+      });
+      document.body.appendChild(button);
+
+			window.addEventListener('resize', onWindowResize, false);
+		}
+
+		function onWindowResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		}
+
+		function animate() {
+			renderer.setAnimationLoop(render);
+		}
+
+		function render() {      
+			renderer.render(scene, camera);
+		}
+
+	</script>
+</body>
+
+</html>

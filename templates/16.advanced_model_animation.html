@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Advanced 3D model animation</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+	<link type="text/css" rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/three@0.133.0/build/three.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/three@0.133.0/examples/js/loaders/GLTFLoader.js"></script>
+</head>
+
+<body>
+	<script type="module">
+    // This is an example of how to perform an animation off of a GLTF model.
+    // Many models come with animations "baked" in. The animation is often easier to do in a program like Blender or Maya and 
+    // export the animation as part of the .gltf file. 
+    
+	  import { ARButton } from "https://unpkg.com/three@0.133.0/examples/jsm/webxr/ARButton.js";
+
+		let container;
+		let camera, scene, renderer;
+		let controller;
+		let loader;
+		let model;
+		let mixer;
+		const clock = new THREE.Clock();
+
+		init();
+		animate();
+
+		function init() {
+			container = document.createElement('div');
+			document.body.appendChild(container);
+
+			scene = new THREE.Scene();
+
+			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+
+			renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			// renderer.outputEncoding = THREE.sRGBEncoding;
+			renderer.xr.enabled = true; // we have to enable the renderer for webxr
+			container.appendChild(renderer.domElement);
+
+			// Add a light to the cene
+			var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+			light.position.set(0.5, 1, 0.25);
+			scene.add(light);
+      
+      loadModel();
+
+			document.body.appendChild(ARButton.createButton(renderer));
+
+			window.addEventListener('resize', onWindowResize, false);
+		}
+
+    async function loadModel() {
+      // We recommend storing your models on GitHub and accessing the "Raw" link to the file
+      // The reason is that Glitch uses a virtual folder for assets or uploaded files and it's hard to get a relative path to those models
+      // This model comes from this repo: https://github.com/webxr-academy/models
+      
+			// load the model texture
+			const textureLoader = new THREE.TextureLoader();
+			const texture = textureLoader.load("https://raw.githubusercontent.com/webxr-academy/models/main/jelly/Spotted-Jelly.png");
+			// read more about why we need these settings here
+			// https://threejs.org/docs/#examples/en/loaders/GLTFLoader
+			texture.encoding = THREE.sRGBEncoding;
+			texture.flipY = false;
+      
+      // Add a GLTF model to the scene
+      const modelUrl = 'https://raw.githubusercontent.com/webxr-academy/models/main/jelly/Spotted-Jelly.gltf';
+      
+			loader = new THREE.GLTFLoader();
+      const gltf = await loader.loadAsync(modelUrl);
+      model = gltf.scene;
+      model.position.z = -3; // change the z position a bit
+      addTextureToModel(texture); // add a texture to the model
+
+      // setup the model animation
+      // read more about animation here: 
+      // https://threejs.org/docs/#manual/en/introduction/Animation-system
+      // a mixer object controls the actual playback of the animation
+      mixer = new THREE.AnimationMixer(model);
+
+      // the gltf animations array contains animation clips for the model
+      console.log(gltf.animations);
+
+      gltf.animations.forEach((clip) => {
+        const action = mixer.clipAction(clip);
+        action.play(); // start playing each animation clip
+      });
+
+      scene.add(model);
+    }
+
+    
+		function onWindowResize() {
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
+
+			renderer.setSize(window.innerWidth, window.innerHeight);
+		}
+
+		// this function is only called one time
+		function animate() {
+			// here we set the render function to be called in a loop
+			renderer.setAnimationLoop(render);
+		}
+
+		// render function called on a loop every time the screen is refreshed
+		// which typically means 60 times a second (60 frames per second)
+		function render() {
+			const delta = clock.getDelta();
+			if (mixer) {
+				// Update the animation mixer on each frame
+				mixer.update(delta);
+			}
+
+			renderer.render(scene, camera);
+		}
+
+		function addTextureToModel(textureToAdd) {
+			model.traverse((child) => {
+				if (child instanceof THREE.Mesh) {
+					child.material.map = textureToAdd;
+
+					// Probably need the lines below if you will change the texture after 
+					// the model has been added to the scene
+					// child.material.needsUpdate = true;
+					// child.material.map.needsUpdate = true;
+				}
+			});
+		}
+
+	</script>
+</body>
+
+</html>

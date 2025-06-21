@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>spatial audio with resonance audio</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <script src="https://unpkg.com/three@0.133.0/build/three.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/resonance-audio/build/resonance-audio.min.js"></script>
+  </head>
+
+  <body>
+    <script type="module">
+      // this demo works best with headphones!
+      // you can move towards and from the sphere or left and right
+      
+      // read about the resonance audio here: https://resonance-audio.github.io/resonance-audio/discover/concepts.html
+      // you can also add a room to the scene for more options to control the audio:
+      // https://resonance-audio.github.io/resonance-audio/develop/web/getting-started.html
+
+      import { ARButton } from 'https://unpkg.com/three@0.133.0/examples/jsm/webxr/ARButton.js';
+
+      let container;
+      let camera, scene, renderer;
+
+      init();
+      animate();
+
+      function init() {
+        container = document.createElement("div");
+        document.body.appendChild(container);
+
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(
+          70,
+          window.innerWidth / window.innerHeight,
+          0.01,
+          20
+        );
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true; // we have to enable the renderer for webxr
+        container.appendChild(renderer.domElement);
+
+        const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+        light.position.set(0.5, 1, 0.25);
+        scene.add(light);
+
+        const button = ARButton.createButton(renderer, {
+          optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],
+          domOverlay: {
+            root: document.body
+          }
+        });
+        document.body.appendChild(button);
+        
+        button.addEventListener('click', () => {
+          toggleAudio();
+        });
+
+        window.addEventListener("resize", onWindowResize, false);
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      function animate() {
+        renderer.setAnimationLoop(render);
+      }
+      
+      function render(timestamp, frame) {
+        // if frame is not undefind, we know we are in an AR scene
+        if (frame) {
+          // setup audio and the sphere
+          // only will run one time since isAudioInitialized will be true next time
+          if (!audioIsInitialized) {
+            setupAudioScene();
+          }
+          
+          // will run each frame
+          if (resonanceAudioScene !== undefined) {
+            // set position and orienation of listener based on camera/cube
+            resonanceAudioScene.setListenerFromMatrix(camera.matrixWorld);
+          }
+        }
+
+        renderer.render(scene, camera);
+      }
+      
+      /***************************/
+      /* Spatial Audio section */
+      /***************************/
+
+      let audioElement;
+      let audioContext;
+      let resonanceAudioScene;
+      const positionOfAudioAndSphere = { x: 0, y: 0, z: -0.5 };
+      
+      function setupAudioScene() {
+        createSphere();
+        createAudioScene(); // first we create an audio scene
+        createPositionalAudio(); // then we create the audio track
+        audioIsInitialized = true;
+        playAudio();
+      }
+      
+      function createSphere() {
+        // // create an object for the sound to play from
+        const sphere = new THREE.SphereBufferGeometry(0.2, 32, 16);
+        const material = new THREE.MeshPhongMaterial({ color: 0xff2200 });
+        const mesh = new THREE.Mesh(sphere, material);
+        mesh.position.set(positionOfAudioAndSphere.x, positionOfAudioAndSphere.y, positionOfAudioAndSphere.z);
+        scene.add(mesh);
+      }
+
+      // Create an AudioContext
+      // Can only do so AFTER user does a gesture (like a click) on the page
+      function createAudioScene() {
+        // have to set AudioContext for different browsers
+        const AudioContext = window.AudioContext || window.webkitAudioContext || false;
+        window.AudioContext = AudioContext;
+        
+        audioContext = new AudioContext();
+
+        // Create a Resonance Audio scene and pass it he AudioContext.
+        resonanceAudioScene = new ResonanceAudio(audioContext);
+
+        // Connect the scene’s binaural output to stereo out.
+        resonanceAudioScene.output.connect(audioContext.destination);
+      }
+
+      function createPositionalAudio() {
+        // Create an AudioElement.
+        audioElement = document.createElement("audio");
+
+        // Load an audio file into the AudioElement
+        // do not load a music file as ogg, won't play in Firefox
+        const url = 'https://cdn.glitch.me/b09d0ef2-cbb9-4685-be74-25b4dbc9e604%2Fjazz.mp3?v=1636917771621';
+        audioElement.src = url;
+        audioElement.crossOrigin = 'anonymous';
+        audioElement.loop = true;
+
+        // Generate a MediaElementSource from the AudioElement.
+        const audioElementSource = audioContext.createMediaElementSource(
+          audioElement
+        );
+
+        // Add the MediaElementSource to the scene as an audio input source.
+        const source = resonanceAudioScene.createSource();
+        audioElementSource.connect(source.input);
+
+        // Set the source position relative to the room center (source default position).
+        // More API references here: https://resonance-audio.github.io/resonance-audio/reference/web/Source
+        source.setPosition(positionOfAudioAndSphere.x, positionOfAudioAndSphere.y, positionOfAudioAndSphere.z);
+        source.setMaxDistance(1.5);
+        source.setRolloff("linear"); // can be logarithmic, linear or none
+        
+        // source.setDirectivityPattern(alpha, sharpness)
+        // alpha:  where 0 is an omnidirectional pattern, 1 is a bidirectional pattern, 0.5 is a cardiod pattern
+        // More info here: https://resonance-audio.github.io/resonance-audio/reference/web/Source
+        // source.setDirectivityPattern(0.5, 5); // this will only play the sound only to the front of the sphere (pointing towards the camera)
+        source.setDirectivityPattern(0, 1); // this will play sound all around the sphere
+      }
+      
+      function playAudio() {
+        // Play the audio.
+        audioElement.play();
+        audioIsPlaying = true;
+      }
+      
+      function stopAudio() {
+        // how to stop the audio source
+        audioElement.pause();
+        audioIsPlaying = false;
+        // audioElement.currentTime = 0; // if you want to restart the audio track to the beginning
+      }
+      
+      let audioIsInitialized = false;
+      let audioIsPlaying = false;
+      
+      function toggleAudio() {
+        if (audioIsInitialized) {
+          if (!audioIsPlaying) {
+            playAudio();
+          } else {
+            stopAudio();
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

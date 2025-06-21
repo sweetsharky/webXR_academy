@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Raycasting</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+    <link type="text/css" rel="stylesheet" href="style.css" />
+    <script src="https://unpkg.com/three@0.133.0/build/three.js" crossorigin="anonymous"></script>
+  </head>
+
+  <body>
+    <script type="module">
+      import { ARButton } from "https://unpkg.com/three@0.133.0/examples/jsm/webxr/ARButton.js";
+      
+      let container;
+      let camera, scene, renderer;
+      let cube;
+      let raycaster;
+      let savedIntersectedObject = null;
+      let line;
+
+      init();
+      animate();
+
+      function init() {
+        container = document.createElement("div");
+        document.body.appendChild(container);
+
+        scene = new THREE.Scene();
+
+        camera = new THREE.PerspectiveCamera(
+          70,
+          window.innerWidth / window.innerHeight,
+          0.01,
+          20
+        );
+
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true; // we have to enable the renderer for webxr
+        container.appendChild(renderer.domElement);
+
+        // setup cube 1 and cube 2
+        createCube(-0.5, 0, -1);
+        createCube(0.5, 0, -1);
+        
+        // Add a line to the scene that will represent the raycast
+        createRaycastLine();
+
+        // Add raycaster manager
+        raycaster = new THREE.Raycaster();
+
+        const button = ARButton.createButton(renderer, {
+            optionalFeatures: ["dom-overlay"],
+            domOverlay: { root: document.body }
+        });
+        document.body.appendChild(button);
+
+        window.addEventListener("resize", onWindowResize, false);
+      }
+      
+      function createCube(x, y, z) {
+        const geometry = new THREE.BoxGeometry(0.1, 0.1, 0.1);
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const cube = new THREE.Mesh(geometry, material);
+        cube.position.x = x;
+        cube.position.y = y;
+        cube.position.z = z;
+        scene.add(cube);
+      }
+
+      function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+
+      function animate() {
+        renderer.setAnimationLoop(render);
+      }
+      
+      /*******************/
+      /* Raycast code */
+      /*******************/
+
+      function render() {
+        // Set the raycast based on (origin, normalized direction);
+        // which inthis case means (camera position, camera direction normalized)
+        const cameraDirection = getCameraDirectionNormalized();
+        raycaster.set(getCameraPosition(), cameraDirection);
+
+        // Update the origin and end positions of the line
+        updateRaycasterHelperLine(); // optional function to visualize the line
+
+        // See where the ray intersects with the two mesh cubes in the scene
+        const intersectsArray = raycaster.intersectObjects([scene.children[0], scene.children[1]]);
+
+        // Go through an array of intersected objects
+        if (intersectsArray.length > 0) {
+          for (const intersectObject of intersectsArray) {
+            // Case 3: if the currently selected object is not the same one as the last selected object
+            // then we have to change the color of the previously select object back to green
+            if (intersectObject.object !== savedIntersectedObject && savedIntersectedObject !== null) {
+              savedIntersectedObject.material.color.setHex(0x00ff00); // change color of the cube back to riignal green
+              savedIntersectedObject = null;
+            }
+
+            // Case 1: if the object is a mesh (i.e. a cube) we want to change the color of the cube to white
+            if (intersectObject.object instanceof THREE.Mesh) {
+              intersectObject.object.material.color.setHex(0xffffff); // change the color of the cube to white
+
+              savedIntersectedObject = intersectObject.object; // save a reference of the last intersected object
+            }
+          }
+        } else {
+          // Case 2: if we have a last saved object, but our ray isn't currently selecting anything
+          // then we have to change the color back to the original color
+          if (savedIntersectedObject !== null) {
+            savedIntersectedObject.material.color.setHex(0x00ff00); // set the color of the cube back to the original green
+            savedIntersectedObject = null; // we're not pointing at any objects to this variable goes back to null
+          }
+        }
+
+        renderer.render(scene, camera);
+      }
+      
+      /*******************/
+      /* Helper functions */
+      /*******************/
+
+
+      function getCameraPosition() {
+        return camera.position;
+      }
+
+      function getCameraRotation() {
+        const rotation = new THREE.Quaternion();
+        rotation.setFromRotationMatrix(camera.matrixWorld);
+        return rotation;
+      }
+      
+      function getCameraDirectionNormalized() {
+        // Get the camera direction
+        const quat = getCameraRotation();
+        const cameraDirection = new THREE.Vector3(0, 0, -1);
+        cameraDirection.applyQuaternion(quat);
+        cameraDirection.normalize()
+        return cameraDirection;
+      }
+      
+      function createVectorXDistanceAwayFromCamera(distanceFromCamera) {
+        // we create a temporary vector that we will pass in the camera position and rotation to
+        const vector = new THREE.Vector3();
+
+        // order is important in steps 1-3!
+        // step 1: get rotation from the camera
+        // update the vector so it points in the same direction as the camera
+        camera.getWorldDirection(vector);
+        
+        // step 2: scale the vector a bit so it reachs out in front (not on top) of the camera
+        vector.multiplyScalar(distanceFromCamera);
+        
+        // step 3: get the position from the camera
+        // adjust the position of the vector so it's in line with where the camera is (+ the distanceFromCamera)
+        vector.add(camera.position);
+                
+        return vector;
+      }
+      
+      /*******************/
+      /* Raycast line helper = a line to visualize the raycast. Totally optional */
+      /*******************/
+      
+      function createRaycastLine() {
+        const lineMaterial = new THREE.LineBasicMaterial({ color: 0xffffff });
+        const lineGeometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(2 * 3); // 2 points x 3 vertices per point
+        lineGeometry.setAttribute(
+          "position",
+          new THREE.BufferAttribute(positions, 3)
+        );
+        line = new THREE.Line(lineGeometry, lineMaterial);
+        scene.add(line);
+      }
+         
+      // this function is just here as a helper to visualize the raycast line (as an approximate)
+      // you can comment it out and raycast still works as it does not directly do the raycast function
+      function updateRaycasterHelperLine() {
+        const positionStart = createVectorXDistanceAwayFromCamera(0);
+        const positionEnd = createVectorXDistanceAwayFromCamera(200);
+        const positions = line.geometry.attributes.position.array;
+        
+        positions[0] = positionEnd.x; // end x
+        positions[1] = positionEnd.y; // end y
+        positions[2] = positionEnd.z; // end z
+        positions[3] = positionStart.x; // origin x
+        positions[4] = positionStart.y - 0.2; // origin y. we push the origin a bit down to visualize it better
+        positions[5] = positionStart.z; // origin z
+        
+        line.geometry.attributes.position.needsUpdate = true;
+      }
+    </script>
+  </body>
+</html>
