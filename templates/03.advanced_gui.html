@@ -35,9 +35,13 @@
   </head>
 
   <body>
+
+    //hier ist der neue Button hinzugefügt mit dem css-Style gui-button
     <button id="color-change-button" class="gui-button">
       Color
     </button>
+
+
     <script type="module"> 
       import { ARButton } from "https://unpkg.com/three@0.133.0/examples/jsm/webxr/ARButton.js";
 
@@ -106,7 +110,7 @@
         
         // The following code adds a 'click' event handler for what to do when the button is pressed
         colorChangeButton.addEventListener('click', (event) => {
-          const randomColor = `rgb(${getRandomInt(0, 360)}, ${getRandomInt(0, 360)}, ${getRandomInt(0, 360)})`;
+          const randomColor = `rgb(${getRandomInt(0, 255)}, ${getRandomInt(0, 255)}, ${getRandomInt(0, 255)})`;
           mesh.material.color = new THREE.Color(randomColor)
         });
 
