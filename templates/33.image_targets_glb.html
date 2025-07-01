@@ -109,18 +109,18 @@
         const gltf = await loader.loadAsync(modelUrl); 
         model = gltf.scene; // I'd suggest saving a reference to the model this way
         
+const tex = new THREE.TextureLoader().load('https://threejs.org/examples/textures/brick_diffuse.jpg'); // oder deine eigene Textur
+         model.traverse((node) => {
+    if (node.isMesh) {
+      node.material = new THREE.MeshBasicMaterial({ map: tex });
+    }
+  });
+
         // model.matrixAutoUpdate = false;
         model.scale.multiplyScalar(3);
         model.visible = false; // start as invisible
         
         scene.add(model);
-
-        model.traverse((node) => {
-  if (node.isMesh) {
-    console.log("Mesh:", node.name);
-    console.log("Material:", node.material);
-  }
-});
 
       }
 
