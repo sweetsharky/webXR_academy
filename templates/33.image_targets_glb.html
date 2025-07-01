@@ -68,6 +68,10 @@
         light.position.set(0.5, 1, 0.25);
         scene.add(light);
 
+        //directionalLight, damit Textur von dunklem Modell besser erkannt wird
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+directionalLight.position.set(1, 2, 3);
+scene.add(directionalLight);
 
         await loadModel();
 
