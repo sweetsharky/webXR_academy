@@ -68,11 +68,6 @@
         light.position.set(0.5, 1, 0.25);
         scene.add(light);
 
-        //directionalLigth hinzugefügt, da dadurch Textur bei einigen Modellen erst sichtbar wird.
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 2);
-        directionalLight.position.set(2, 4, 1); // Licht von oben
-        scene.add(directionalLight);
-
 
         await loadModel();
 
