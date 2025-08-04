@@ -87,7 +87,7 @@
     function createCanvasWithVideo() {
       video = document.createElement('video');
       video.src = "https://cdn.glitch.me/b09d0ef2-cbb9-4685-be74-25b4dbc9e604%2Fring.mov?v=1636679010942";
-      video.crossOrigin = "anonymous"; //important!
+      video.crossOrigin = "anonymous"; //important! --> lets you load videos from different domains (= different websites in video.src)
       video.load(); // call after changing source
       video.preload = 'auto';
       video.autoload = true;
