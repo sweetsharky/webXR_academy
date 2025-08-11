@@ -13,6 +13,7 @@
 .flex-container {
   display: flex;
   flex-direction: column;
+  width: 30%;
   background-color: rgb(212, 130, 7);
 }
 
@@ -23,6 +24,10 @@
   text-align: center;
   line-height: 75px;
   font-size: 30px;
+}
+
+.hide {
+  display: none;
 }
 
 </style>
@@ -101,6 +106,11 @@
           		domOverlay: { root: document.body}
 			}));
 
+			//Button, um UI-Panel zu aktivieren/deaktivieren
+			document.getElementById('toggle-panel').addEventListener('click', () => {
+  			document.querySelector('.flex-container').classList.toggle('hide');
+});
+
 			window.addEventListener('resize', onWindowResize, false);
 		}
 
@@ -122,10 +132,11 @@
 	</script>
 
 	<div class="flex-container">
-  <div>1</div>
-  <div>2</div>
-  <div>3</div>  
-</div>
+	  	<div>1</div>
+  		<div>2</div>
+  		<div>3</div>  
+	</div>
+	<button id="toggle-panel">Toggle Panel</button>
 </body>
 
 </html>
