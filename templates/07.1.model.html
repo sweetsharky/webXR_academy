@@ -8,6 +8,25 @@
 	<link type="text/css" rel="stylesheet" href="style.css">
   <script src="https://unpkg.com/three@0.133.0/build/three.js" crossorigin="anonymous"></script>
   <script src="https://unpkg.com/three@0.133.0/examples/js/loaders/GLTFLoader.js"></script>
+<style>
+
+.flex-container {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(212, 130, 7);
+}
+
+.flex-container > div {
+  background-color: #521e96;
+  width: 100px;
+  margin: 10px;
+  text-align: center;
+  line-height: 75px;
+  font-size: 30px;
+}
+
+</style>
+
 </head>
 
 <body>
@@ -98,6 +117,12 @@
 		}
 
 	</script>
+	
+	<div class="flex-container">
+  <div>1</div>
+  <div>2</div>
+  <div>3</div>  
+</div>
 </body>
 
 </html>
