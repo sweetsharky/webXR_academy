@@ -96,7 +96,10 @@
 				}
 			);
 
-			document.body.appendChild(ARButton.createButton(renderer));
+			document.body.appendChild(ARButton.createButton(renderer, {
+				optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],
+          		domOverlay: { root: document.body}
+			}));
 
 			window.addEventListener('resize', onWindowResize, false);
 		}
@@ -117,7 +120,7 @@
 		}
 
 	</script>
-	
+
 	<div class="flex-container">
   <div>1</div>
   <div>2</div>
