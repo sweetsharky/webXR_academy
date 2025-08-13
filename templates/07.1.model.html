@@ -17,6 +17,7 @@
   gap: 10px;
 	background-color: rgba(255, 255, 255, 0.212); /* transparentes Weiß */
   padding: 1em;
+  border-radius: 12px;
 }
 .grid-container > div {
   color:#000;
@@ -119,7 +120,7 @@
 
 			//Button, um UI-Panel zu aktivieren/deaktivieren
 			document.getElementById('toggle-panel').addEventListener('click', () => {
-  			document.querySelector('.flex-container').classList.toggle('hide');
+  			document.querySelector('.grid-container').classList.toggle('hide');
 });
 
 			window.addEventListener('resize', onWindowResize, false);
