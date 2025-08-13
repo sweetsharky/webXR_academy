@@ -20,10 +20,11 @@
 		Ohne das würde dein 100vw/100vh-Container immer mit einem weißen Rahmen außen angezeigt werden, weil das Browser-Default-Margin den Inhalt vom Rand wegrückt.
 	 
 	 */
+	}
     .grid-container {
       display: grid;
       grid-template-columns: 80% 20%;
-      grid-template-rows: auto 1fr auto;
+      grid-template-rows: 1fr 4fr 2fr;
       gap: 10px;
       width: 100vw; /* volle Breite */
       height: 100vh; /* volle Höhe */
