@@ -12,11 +12,14 @@
     html, body {
       margin: 0;
       padding: 0;
-      height: 100%;
-      width: 100%;
       overflow: hidden; /* Kein Scrollen */
-    }
-
+    
+	  /*margin und padding brauchen 0, weil...
+		...Browser geben body und html standardmäßig einen kleinen Außenabstand (margin, oft 8px) und manchmal auch Innenabstand (padding).
+		Wenn du willst, dass ein Element – wie hier dein .grid-container – wirklich von Rand zu Rand des Bildschirms geht, musst du diese Standardabstände auf 0 setzen.
+		Ohne das würde dein 100vw/100vh-Container immer mit einem weißen Rahmen außen angezeigt werden, weil das Browser-Default-Margin den Inhalt vom Rand wegrückt.
+	 
+	 */
     .grid-container {
       display: grid;
       grid-template-columns: 80% 20%;
