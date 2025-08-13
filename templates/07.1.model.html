@@ -13,7 +13,7 @@
 .grid-container {
   display: grid;
   grid-template-columns: 80% 20%;
-    grid-template-rows: 10em 40em 20em;
+	grid-template-rows: 1fr 4fr 2fr;
   gap: 10px;
 	background-color: rgba(255, 255, 255, 0.212); /* transparentes Weiß */
   padding: 1em;
@@ -55,7 +55,6 @@
 
 		init();
 		animate();
-		//direkt beim Laden einmal aufrufen (eventuell herausnehmen 13.08)
 
 
 		function init() {
@@ -104,12 +103,15 @@
             gltf.scene.position.z = -0.3; // negative Z moves the model in the opposite direction the camera is facing
            gltf.scene.position.y = 0; // positive Y moves the model up
             gltf.scene.position.x = 0; // positive X moves hte model to the right
-				},
+			},
+
+
 				// onProgress callback: optional function for showing progress on model load
-				function (xhr) {
-		      // console.log((xhr.loaded / xhr.total * 100) + '% loaded' );
-	      },
-				// onError callback
+				//function (xhr) {
+		      // console.log((xhr.loaded / xhr.total * 100) + '% loaded' );},
+				
+			 
+			  // onError callback
 				function (error) {
 					console.error(error);
 				}
