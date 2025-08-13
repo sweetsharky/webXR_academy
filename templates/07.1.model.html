@@ -55,6 +55,8 @@
 
 		init();
 		animate();
+		//direkt beim Laden einmal aufrufen (eventuell herausnehmen 13.08)
+		onWindowResize();
 
 		function init() {
 			const container = document.createElement('div');
@@ -120,18 +122,36 @@
 
 			//Button, um UI-Panel zu aktivieren/deaktivieren
 			document.getElementById('toggle-panel').addEventListener('click', () => {
-  			document.querySelector('.grid-container').classList.toggle('hide');
+  			document.querySelector('.grid-container').classList.toggle('hide'); 
 });
 
 			window.addEventListener('resize', onWindowResize, false);
 		}
 
-		function onWindowResize() {
-			camera.aspect = window.innerWidth / window.innerHeight;
-			camera.updateProjectionMatrix();
+// Anpassung bei Fenstergröße ändern → Kamera, Renderer und Grid
+function onWindowResize() {
+    // Three.js anpassen
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
 
-			renderer.setSize(window.innerWidth, window.innerHeight);
-		}
+    // Grid-Container proportional skalieren, ohne Layout zu ändern
+    const container = document.querySelector('.grid-container');
+    if (!container) return;
+
+    const vw = window.innerWidth;
+    const vh = window.innerHeight;
+
+    const originalWidth = container.offsetWidth;
+    const originalHeight = container.offsetHeight;
+
+    const scaleX = vw / originalWidth;
+    const scaleY = vh / originalHeight;
+    const scale = Math.min(scaleX, scaleY, 1); // max 1 = keine Vergrößerung
+
+    container.style.transformOrigin = 'top left';
+    container.style.transform = `scale(${scale})`;
+}
 
 		function animate() {
 			renderer.setAnimationLoop(render);
