@@ -11,7 +11,7 @@
 <style>
 
     .grid-container {
-      display: grid;
+      display: none; /*wird bei sessionstart durch den ARButton in display: grid; verändert*/
       grid-template-columns: 80% 20%;
       grid-template-rows: 1fr 4fr 2fr;
       gap: 0.2em;
@@ -206,6 +206,16 @@
 			document.getElementById('toggle-panel').addEventListener('click', () => {
   			document.querySelector('.grid-container').classList.toggle('hide'); 
 });
+
+// Wenn eine AR-Session startet → UI einblenden
+  renderer.xr.addEventListener('sessionstart', () => {
+    document.querySelector('.grid-container').style.display = 'grid';
+  });
+
+  // Wenn AR-Session beendet → UI ausblenden
+  renderer.xr.addEventListener('sessionend', () => {
+    document.querySelector('.grid-container').style.display = 'none';
+  });
 
 			window.addEventListener('resize', onWindowResize, false);
 		}
