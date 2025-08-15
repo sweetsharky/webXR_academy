@@ -66,10 +66,6 @@
     justify-content: center;
   }
 
-    .hide {
-      display: none;
-    }
-
 
 
 	/*Quiz-Buttons innerhalb eines flex-Layouts (siehe .answers)*/
@@ -211,9 +207,9 @@
     document.querySelector('.grid-container').style.display = 'none';
   });
 
-  			//Button, um UI-Panel zu aktivieren/deaktivieren
+  			//Button, um UI-Panel(grid-Layout) zu sichtbar zu machen/unsichtbar
 			document.getElementById('toggle-panel').addEventListener('click', () => {
-  			document.querySelector('.grid-container').classList.toggle('hide'); 
+  			document.querySelector('.grid-container').style.display = 'none'; 
 });
 
 			window.addEventListener('resize', onWindowResize, false);
@@ -242,13 +238,13 @@ function onWindowResize() {
 	</script>
 
 <div class="grid-container">
-  <div class="item1">1</div>
+  <div class="item1">Auf den Spuren der Wikinger in Duisburg</div>
   <div class="item2">  
-  	<p style="background: green;">2	Ist es ein Teil von...(wähle aus):</p>
+  	<p style="background: green;"></p>Das Objekt, das du siehst ist es ein Teil von...(wähle aus):</p>
   	<div class="answers">
-      <button class="quiz-button">Antwort 1</button>
-      <button class="quiz-button">Antwort 2</button>
-      <button class="quiz-button">Antwort 3</button>
+      <button class="quiz-button">einem Schiff</button>
+      <button class="quiz-button">einer Waffe</button>
+      <button class="quiz-button">einem Wassereimer</button>
     </div>
     </div>
     
