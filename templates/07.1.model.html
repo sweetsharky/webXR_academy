@@ -66,6 +66,9 @@
     justify-content: center;
   }
 
+  .hide {
+  display: none !important;
+}
 
 
 	/*Quiz-Buttons innerhalb eines flex-Layouts (siehe .answers)*/
@@ -208,8 +211,8 @@
   });
 
   			//Button, um UI-Panel(grid-Layout) zu sichtbar zu machen/unsichtbar
-			document.getElementById('toggle-panel').addEventListener('click', () => {
-  			document.querySelector('.grid-container').style.display = 'none'; 
+document.getElementById('toggle-panel').addEventListener('click', () => {
+  document.querySelector('.grid-container').classList.toggle('hide');
 });
 
 			window.addEventListener('resize', onWindowResize, false);
