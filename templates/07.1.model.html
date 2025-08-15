@@ -19,14 +19,15 @@
       height: 100vh; /* volle Höhe */
       background-color: rgba(255, 255, 255, 0.212);
       padding: 1em;
-      border-radius: 12px;
+      border-radius: 0.5em;
       box-sizing: border-box;
     }
 
     .grid-container>div {
       color: #000;
       padding: 0.5em;
-	    margin-right: 1em;
+	  margin-right: 1em;
+      border-radius: 0.5em;
       font-size: 30px;
       text-align: center;
     }
@@ -49,9 +50,46 @@
     }
 
 
-.hide {
-  display: none;
+
+	/*Quiz-Buttons*/
+	.quiz-button {
+  position: relative;
+  background-color: #04AA6D;
+  border: none;
+  border-radius: 0.5em;
+  font-size: 28px;
+  color: #FFFFFF;
+  padding: 20px;
+  width: 200px;
+  text-align: center;
+  transition-duration: 0.4s;
+  text-decoration: none;
+  overflow: hidden;
+  cursor: pointer;
 }
+
+.quiz-button:after {
+  content: "";
+  background: #f1f1f1;
+  display: block;
+  position: absolute;
+  padding-top: 300%;
+  padding-left: 350%;
+  margin-left: -20px !important;
+  margin-top: -120%;
+  opacity: 0;
+  transition: all 0.8s
+}
+
+.quiz-button:active:after {
+  padding: 0;
+  margin: 0;
+  opacity: 1;
+  transition: 0s
+}
+	/*Quiz-Buttons Ende*/
+
+
 
 </style>
 
@@ -163,11 +201,23 @@ function onWindowResize() {
 
 <div class="grid-container">
   <div class="item1">1</div>
-  <div class="item2">2</div>
+  <div class="item2">
+  
+  <p style="background: green;">2	Ist es ein Teil von...(wähle aus): Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.</p>
+  <p><button class="quiz-button">Click Me</button></p>
+  <p><button class="quiz-button">Click Me</button></p>
+  <p><button class="quiz-button">Click Me</button></p>
+  <p><button class="quiz-button">Click Me</button></p>
+  <p><button class="quiz-button">Click Me</button></p>
+  <p><button class="quiz-button">Click Me</button></p>
+    
+    </div>
+    
   <div class="item3">3</div>  
   <div>4</div>
   <div>5 	<button id="toggle-panel">Toggle Panel</button></div>
 
+</div>
 </div>
 
 </body>
