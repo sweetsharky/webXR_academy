@@ -46,11 +46,27 @@
     }
 
     .item4 {
-      background-color: orange;
+	background-color: orange;
+    overflow: hidden; /* verhindert Scrollen */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
     }
-    .item5 {
-      background-color: orange;
-    }
+    
+  #textBox {
+    text-align: left;
+    word-wrap: break-word;
+  }
+
+  .item5 {
+    background-color: orange;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+
 
     .hide {
       display: none;
@@ -58,9 +74,9 @@
 
 
 
-	/*Quiz-Buttons*/
+	/*Quiz-Buttons innerhalb eines flex-Layouts (siehe .answers)*/
 	.quiz-button {
-  position: relative;
+  position: relative; /* wichtig! .quiz-button:after ist ein pseudo-element, das absolut positioniert wird. Deshalb muss der Eltern-Button .quiz-button auf position: relative gesetzt werden, damit sich der Effekt nur innerhalb des Buttons ausbreitet. Ansonsten überlagert der Effekt den ganzen Bildschirm*/
   background-color: #04AA6D;
   border: none;
   border-radius: 0.5em;
@@ -95,7 +111,13 @@
   transition: 0s
 }
 
-
+.answers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    align-items: center;
+  }
 	/*Quiz-Buttons Ende*/
 
 
@@ -210,22 +232,80 @@ function onWindowResize() {
 
 <div class="grid-container">
   <div class="item1">1</div>
-  <div class="item2">
-  
-  <p style="background: green;">2	Ist es ein Teil von...(wähle aus):</p>
-  <p><button class="quiz-button">Click Me</button></p>
-  <p><button class="quiz-button">Click Me</button></p>
-  <p><button class="quiz-button">Click Me</button></p>
-
-    
+  <div class="item2">  
+  	<p style="background: green;">2	Ist es ein Teil von...(wähle aus):</p>
+  	<div class="answers">
+      <button class="quiz-button">Antwort 1</button>
+      <button class="quiz-button">Antwort 2</button>
+      <button class="quiz-button">Antwort 3</button>
+    </div>
     </div>
     
   <div class="item3">3</div>  
   <div class="item4">
-  <p style="background: green;">4	Ist es ein Teil von...(wähle aus): Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod</p></div>
-  <div class="item5">5 	<button id="toggle-panel">Toggle Panel</button></div>
+  	<div id="textBox"></div>
+    </div>
+    
+  <div class="item5">
+   <button id="nextButton" class="button" style="display:none;">Weiter</button>
+  <button id="toggle-panel">Toggle Panel</button></div>
 
 </div>
+
+<!-- Script für Textleiste unten, um Typewriter-Effekt, Pagination und Overflow-Handling des Textes hinzubekommen.-->
+<script>
+const fullText = `Ist es ein Teil von...(wähle aus): Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.`;
+
+const charsPerPage = 100; // Anzahl Zeichen pro "Seite" (kannst du anpassen)
+let currentPage = 0;
+
+const textBox = document.getElementById('textBox');
+const nextButton = document.getElementById('nextButton');
+
+function typeWriterEffect(text, callback) {
+  let i = 0;
+  textBox.textContent = "";
+  const interval = setInterval(() => {
+    textBox.textContent += text[i];
+    i++;
+    if (i >= text.length) {
+      clearInterval(interval);
+      callback();
+    }
+  }, 30); // Geschwindigkeit (ms pro Buchstabe)
+}
+
+function showPage(pageIndex) {
+  const start = pageIndex * charsPerPage;
+  const end = start + charsPerPage;
+  let pageText = fullText.slice(start, end);
+  
+  // Falls nicht am Ende, füge "..." hinzu
+  if (end < fullText.length) {
+    pageText += "...";
+  }
+  
+  typeWriterEffect(pageText, () => {
+    // Falls noch mehr Text existiert → Button anzeigen
+    if (end < fullText.length) {
+      nextButton.style.display = "block";
+    } else {
+      nextButton.style.display = "none";
+    }
+  });
+}
+
+nextButton.addEventListener('click', () => {
+  currentPage++;
+  nextButton.style.display = "none";
+  showPage(currentPage);
+});
+
+// Start bei Seite 0
+showPage(0);
+</script>
+
+
 </body>
 
 </html>
