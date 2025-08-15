@@ -66,8 +66,6 @@
     justify-content: center;
   }
 
-
-
     .hide {
       display: none;
     }
@@ -202,10 +200,6 @@
           		domOverlay: { root: document.body}
 			}));
 
-			//Button, um UI-Panel zu aktivieren/deaktivieren
-			document.getElementById('toggle-panel').addEventListener('click', () => {
-  			document.querySelector('.grid-container').classList.toggle('hide'); 
-});
 
 // Wenn eine AR-Session startet → UI einblenden
   renderer.xr.addEventListener('sessionstart', () => {
@@ -216,6 +210,11 @@
   renderer.xr.addEventListener('sessionend', () => {
     document.querySelector('.grid-container').style.display = 'none';
   });
+
+  			//Button, um UI-Panel zu aktivieren/deaktivieren
+			document.getElementById('toggle-panel').addEventListener('click', () => {
+  			document.querySelector('.grid-container').classList.toggle('hide'); 
+});
 
 			window.addEventListener('resize', onWindowResize, false);
 		}
@@ -229,6 +228,8 @@ function onWindowResize() {
 
     
 }
+/*function init() zuende*/
+
 
 		function animate() {
 			renderer.setAnimationLoop(render);
