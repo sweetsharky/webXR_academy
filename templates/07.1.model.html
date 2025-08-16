@@ -117,8 +117,15 @@
   }
 	/*Quiz-Buttons Ende*/
 
-
-
+  /*Hinweis-Icons*/
+.icon-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    align-items: center;
+  }
+  /*Hinweis-Icons Ende*/
 </style>
 
 </head>
@@ -254,9 +261,12 @@ function onWindowResize() {
     </div>
     
   <div class="item3">3
-       <img src="/webXR_academy/staticfiles/images/feuerstahlbeschlag_duisburg_einzeln.svg" 
-     alt="Feuerstahlbeschlag" width="10"/>
+    <div class="icon-column">
+      <img src="/webXR_academy/staticfiles/images/feuerstahlbeschlag_duisburg_einzeln.svg" alt="Feuerstahlbeschlag" width="10"/>
+      <img src="/webXR_academy/staticfiles/images/feuerstahlbeschlag_duisburg_einzeln.svg" alt="Feuerstahlbeschlag" width="10"/>
+    </div>
   </div>  
+  
   <div class="item4">
   	<div id="textBox"></div>
     </div>
