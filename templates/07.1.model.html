@@ -129,6 +129,16 @@
     
 		let camera, scene, renderer;
 		let loader; // we need to create a variable for a gltf model loader
+    let model; // das geladene 3D-Model wird hierdrunter gespeichert
+
+
+/* Idee: Grid-container ein-/ausblenden bei Klick auf Model
+In AR kannst du Maus-/Touch-Events nicht wie bei normalen Webseiten nutzen.
+Stattdessen setzt du auf Raycaster aus Three.js, der prüft, ob der Klick/Tap auf dein 3D-Model geht.
+Wenn der Nutzer aufs Model tippt → grid-container einblenden.*/
+// Raycaster und Vektor für Maus/Tap
+const raycaster = new THREE.Raycaster();
+const tapPosition = new THREE.Vector2();
 
 		init();
 		animate();
@@ -170,16 +180,17 @@
 				// onLoad callback: what get's called once the full model has loaded
 				function (gltf) {
           // gltf.scene contains the Three.js object group that represents the 3d object of the model
-					scene.add(gltf.scene);
+					model = gltf.scene;
+          scene.add(model);
           console.log("Model added to scene");
           
 
 		  // scaling model
-		  gltf.scene.scale.multiplyScalar(0.002);
+		  model.scale.multiplyScalar(0.002);
           // you can optionally change the position of the model
-            gltf.scene.position.z = -0.3; // negative Z moves the model in the opposite direction the camera is facing
-           gltf.scene.position.y = 0; // positive Y moves the model up
-            gltf.scene.position.x = 0; // positive X moves hte model to the right
+            model.position.z = -0.3; // negative Z moves the model in the opposite direction the camera is facing
+           model.position.y = 0; // positive Y moves the model up
+            model.position.x = 0; // positive X moves hte model to the right
 			},
 
 
@@ -215,8 +226,35 @@ document.getElementById('toggle-panel').addEventListener('click', () => {
   document.querySelector('.grid-container').classList.toggle('hide');
 });
 
+//  Klick/Tap Event für Raycasting hinzufügen, damit grid-container bei Klick auf Model geöffnet werden kann.
+  renderer.domElement.addEventListener('click', onSelect, false);
+
 			window.addEventListener('resize', onWindowResize, false);
 		}
+
+
+    function onSelect(event) {
+  if (!model) return; // falls das Model noch nicht geladen ist
+
+  // Normalisierte Klick-Koordinaten (-1 bis 1)
+  tapPosition.x = (event.clientX / window.innerWidth) * 2 - 1;
+  tapPosition.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+  raycaster.setFromCamera(tapPosition, camera);
+
+  // Teste nur das Model
+  const intersects = raycaster.intersectObject(model, true);
+
+  if (intersects.length > 0) {
+    console.log("Model angeklickt:", intersects[0].object);
+
+    // 👉 Grid sichtbar machen
+    document.querySelector('.grid-container').style.display = 'grid';
+  }
+}
+
+
+
 
 // Anpassung bei Fenstergröße ändern → Kamera, Renderer und Grid
 function onWindowResize() {
