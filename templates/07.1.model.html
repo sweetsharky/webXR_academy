@@ -329,18 +329,20 @@ function showPage(pageIndex) {
   typeWriterEffect(pageText, () => {
     if (end < fullText.length) {
       nextButton.style.display = "block";  // normale Weiter-Page
-    } else {
-      // nach erstem fullText soll Quiz-angezeigt werden
-      if (fullText == fullTexts[0] && end > fullTexts[0].length) {
-      document.getElementsByClassName('.item2').style.display('block');
-  }
-      // wir sind am Ende des Textes
+    } else if // nach erstem fullText soll Quiz-angezeigt werden
+       ((currentStep < fullTexts.length - 1) && (fullText == fullTexts[0] && end > fullTexts[0].length)) {
+        nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
+        document.getElementsByClassName('.item2').style.display('block');
+      }
+      else {
+              // wir sind am Ende des Textes
       if (currentStep < fullTexts.length - 1) {
         nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
       }
-    }
+      }
   });
 }
+
 
 /*Auswahl der Buttons und definieren, was sie ausläsen sollen*/
 nextButton.addEventListener('click', () => {
