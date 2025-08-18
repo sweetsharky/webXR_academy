@@ -253,15 +253,15 @@ function onWindowResize() {
 <div class="grid-container">
   <div class="item1">Auf den Spuren der Wikinger in Duisburg</div>
   <div class="empty-gameObject-item2">
-  <div class="item2">  
-  	<p style="background: green;"></p>Das Objekt, das du siehst ist es ein Teil von...(wähle aus):</p>
-  	<div class="answers">
+    <div class="item2">  
+    <p style="background: green;"></p>Das Objekt, das du siehst ist es ein Teil von...(wähle aus):</p>
+    <div class="answers">
       <button class="quiz-button">einem Schiff</button>
       <button class="quiz-button">einer Waffe</button>
       <button class="quiz-button">einem Wassereimer</button>
     </div>
     </div>
-    </div>
+  </div>
     
   <div class="item3">3
     <div class="icon-column">
@@ -325,10 +325,15 @@ function showPage(pageIndex) {
   }
 
 
+
   typeWriterEffect(pageText, () => {
     if (end < fullText.length) {
       nextButton.style.display = "block";  // normale Weiter-Page
     } else {
+      // nach erstem fullText soll Quiz-angezeigt werden
+      if (fullText == fullTexts[0] && end > fullTexts[0].length) {
+      document.getElementsByClassName('.item2').style.display('block');
+  }
       // wir sind am Ende des Textes
       if (currentStep < fullTexts.length - 1) {
         nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
