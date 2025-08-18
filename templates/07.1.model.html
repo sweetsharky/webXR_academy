@@ -286,6 +286,7 @@ function onWindowResize() {
 <script>
 const fullTexts = [
   'Du hast einen Gegenstand gefunden! Was ist das wohl für ein Objekt?',
+  'Was ist das wohl für ein Objekt?',
   'Dieses alte Metallstück ist Teil von einem Schiff. Die Erdschicht, in dem es gefunden wurde, ist dem 9. Jahrhundert zuzuordnen. Aus einer schriftlichen Überlieferung wissen wir, dass es einen Überfall auf das Handelszentrum von Duisburg gegeben haben soll.', 
   `Dieser Überfall ist von den Normannen, den Wikingern ausgegangen. Dieser Schiffsniet ist Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind. Denn nur an den Schiffen der Wikinger finden sich Schiffsnieten der gleichen Bauart. Schau dir den Schiffsniet genauer an und entdecke neue Informationen.`,
   `Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben. Finde es heraus, indem du auch die anderen Gegenstände erkundest!`,
@@ -331,7 +332,7 @@ function showPage(pageIndex) {
       nextButton.style.display = "block";  // normale Weiter-Page
     } else {      // wir sind am Ende eines Textes
       //Wenn am Ende des ersten Textes, dann...
-      if (currentStep === 0) {
+      if (currentStep === 1) {
         document.querySelector('.item2').style.display = 'block';
       }
       //Wenn am Ende aller weiteren Texte, dann...
