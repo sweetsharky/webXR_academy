@@ -256,9 +256,9 @@ function onWindowResize() {
     <div class="item2">  
     <p style="background: green;"></p>Das Objekt, das du siehst ist es ein Teil von...(wähle aus):</p>
     <div class="answers">
-      <button class="quiz-button">einem Schiff</button>
-      <button class="quiz-button">einer Waffe</button>
-      <button class="quiz-button">einem Wassereimer</button>
+      <button class="quiz-button" id="schiff">einem Schiff</button>
+      <button class="quiz-button" id="waffe">einer Waffe</button>
+      <button class="quiz-button" id="eimer">einem Wassereimer</button>
     </div>
     </div>
   </div>
@@ -285,7 +285,7 @@ function onWindowResize() {
 <!-- Script für Textleiste unten, um Typewriter-Effekt, Pagination und Overflow-Handling des Textes hinzubekommen.-->
 <script>
 const fullTexts = [
-  'Du hast einen Gegenstand gefunden! Was ist das wohl für ein Objekt?',
+  'Du hast einen Gegenstand gefunden!',
   'Was ist das wohl für ein Objekt?',
   'Dieses alte Metallstück ist Teil von einem Schiff. Die Erdschicht, in dem es gefunden wurde, ist dem 9. Jahrhundert zuzuordnen. Aus einer schriftlichen Überlieferung wissen wir, dass es einen Überfall auf das Handelszentrum von Duisburg gegeben haben soll.', 
   `Dieser Überfall ist von den Normannen, den Wikingern ausgegangen. Dieser Schiffsniet ist Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind. Denn nur an den Schiffen der Wikinger finden sich Schiffsnieten der gleichen Bauart. Schau dir den Schiffsniet genauer an und entdecke neue Informationen.`,
@@ -357,8 +357,23 @@ nextStepButton.addEventListener('click', () => {
   showPage(currentPage);
 });
 
+nextButton.addEventListener('click', () => {
+  currentPage++;
+  nextButton.style.display = "none";
+  showPage(currentPage);
+});
+
+quizButton.getElementById('schiff').addEventListener('click', () => {
+  currentStep++;
+  currentPage=0;
+  document.querySelector('item2').style.display = 'none';
+  showPage(currentPage);
+});
+
 // Start bei Seite 0
 showPage(0);
+
+
 </script>
 
 
