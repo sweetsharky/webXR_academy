@@ -40,6 +40,7 @@
 
     .item2 {
       background-color: orange;
+      display: none;
     }
 
     .item3 {
@@ -282,9 +283,10 @@ function onWindowResize() {
 <!-- Script für Textleiste unten, um Typewriter-Effekt, Pagination und Overflow-Handling des Textes hinzubekommen.-->
 <script>
 const fullTexts = [
-  `Du hast einen Gegenstand gefunden! Dieses alte Metallstück ist Teil von einem Schiff. Die Erdschicht, in dem es gefunden wurde, ist dem 9. Jahrhundert zuzuordnen. Aus einer schriftlichen Überlieferung wissen wir, dass es einen Überfall auf das Handelszentrum von Duisburg gegeben haben soll. Dieser Überfall ist von den Normannen, den Wikingern ausgegangen. Dieser Schiffsniet ist Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind. Denn nur an den Schiffen der Wikinger finden sich Schiffsnieten der gleichen Bauart. Schau dir den Schiffsniet genauer an und entdecke neue Informationen. Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben. Finde es heraus, indem du auch die anderen Gegenstände erkundest!`,
-  `Du hast einen Gegenstand gefunden! Dieses alte Metallstück grrrrrrrrrrrrrrrr grrrrrr grrrrhgrrrrr grrrrrr grr gr gr grrrr grrrrrrr`,
-  `Super! Du hast die erste Information erhalten. Im nächsten Schritt ...`,
+  'Du hast einen Gegenstand gefunden! Was ist das wohl für ein Objekt?',
+  'Dieses alte Metallstück ist Teil von einem Schiff. Die Erdschicht, in dem es gefunden wurde, ist dem 9. Jahrhundert zuzuordnen. Aus einer schriftlichen Überlieferung wissen wir, dass es einen Überfall auf das Handelszentrum von Duisburg gegeben haben soll.', 
+  `Dieser Überfall ist von den Normannen, den Wikingern ausgegangen. Dieser Schiffsniet ist Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind. Denn nur an den Schiffen der Wikinger finden sich Schiffsnieten der gleichen Bauart. Schau dir den Schiffsniet genauer an und entdecke neue Informationen.`,
+  `Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben. Finde es heraus, indem du auch die anderen Gegenstände erkundest!`,
   `Jetzt erfährst du noch mehr über die Wikinger ...`
 ];
 
@@ -319,6 +321,7 @@ function showPage(pageIndex) {
   if (end < fullText.length) {
     pageText += "...";
   }
+
 
   typeWriterEffect(pageText, () => {
     if (end < fullText.length) {
