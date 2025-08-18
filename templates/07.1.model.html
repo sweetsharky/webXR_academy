@@ -15,8 +15,8 @@
       grid-template-columns: 80% 20%;
       grid-template-rows: 1fr 4fr 2fr;
       gap: 0.2em;
-      width: 100vw; /* volle Breite */
-      height: 100vh; /* volle Höhe */
+      width: 100vw; /* volle Bildschirmbreite */
+      height: 100vh; /* volle Bildschirmhöhe */
       background-color: rgba(255, 255, 255, 0.212);
       padding: 1em;
       border-radius: 0.5em;
@@ -67,7 +67,7 @@
   }
 
   .hide {
-  display: none !important;
+  display: none;
 }
 
 
@@ -280,7 +280,7 @@ function onWindowResize() {
 
 <!-- Script für Textleiste unten, um Typewriter-Effekt, Pagination und Overflow-Handling des Textes hinzubekommen.-->
 <script>
-const fullText = `Ist es ein Teil von...(wähle aus): Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.`;
+const fullText = `Du hast einen Gegenstand gefunden! Dieses alte Metallstück ist Teil von einem Schiff. Die Erdschicht, in dem es gefunden wurde, ist dem 9. Jahrhundert zuzuordnen. Aus einer schriftlichen Überlieferung wissen wir, dass es einen Überfall auf das Handelszentrum von Duisburg gegeben haben soll. Dieser Überfall ist von den Normannen, den Wikingern ausgegangen. Dieser Schiffsniet ist Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind. Denn nur an den Schiffen der Wikinger finden sich Schiffsnieten der gleichen Bauart. Schau dir den Schiffsniet genauer an und entdecke neue Informationen. Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben. Finde es heraus, indem du auch die anderen Gegenstände erkundest!`;
 
 const charsPerPage = 100; // Anzahl Zeichen pro "Seite" (kannst du anpassen)
 let currentPage = 0;
