@@ -67,7 +67,7 @@
   }
 
   .hide {
-  display: none;
+  display: none !important;
 }
 
 
@@ -273,17 +273,26 @@ function onWindowResize() {
     
   <div class="item5">
    <button id="nextButton" class="button" style="display:none;">Weiter</button>
-  
+  <button id="nextStepButton" class="button" style="display:none;">Nächster Lernschritt</button>
+
 
 </div>
   <button id="toggle-panel">Toggle Panel</button></div>
 
 <!-- Script für Textleiste unten, um Typewriter-Effekt, Pagination und Overflow-Handling des Textes hinzubekommen.-->
 <script>
-const fullText = `Du hast einen Gegenstand gefunden! Dieses alte Metallstück ist Teil von einem Schiff. Die Erdschicht, in dem es gefunden wurde, ist dem 9. Jahrhundert zuzuordnen. Aus einer schriftlichen Überlieferung wissen wir, dass es einen Überfall auf das Handelszentrum von Duisburg gegeben haben soll. Dieser Überfall ist von den Normannen, den Wikingern ausgegangen. Dieser Schiffsniet ist Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind. Denn nur an den Schiffen der Wikinger finden sich Schiffsnieten der gleichen Bauart. Schau dir den Schiffsniet genauer an und entdecke neue Informationen. Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben. Finde es heraus, indem du auch die anderen Gegenstände erkundest!`;
+const fullTexts = [
+  `Du hast einen Gegenstand gefunden! Dieses alte Metallstück ist Teil von einem Schiff. Die Erdschicht, in dem es gefunden wurde, ist dem 9. Jahrhundert zuzuordnen. Aus einer schriftlichen Überlieferung wissen wir, dass es einen Überfall auf das Handelszentrum von Duisburg gegeben haben soll. Dieser Überfall ist von den Normannen, den Wikingern ausgegangen. Dieser Schiffsniet ist Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind. Denn nur an den Schiffen der Wikinger finden sich Schiffsnieten der gleichen Bauart. Schau dir den Schiffsniet genauer an und entdecke neue Informationen. Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben. Finde es heraus, indem du auch die anderen Gegenstände erkundest!`,
+  `Du hast einen Gegenstand gefunden! Dieses alte Metallstück grrrrrrrrrrrrrrrr grrrrrr grrrrhgrrrrr grrrrrr grr gr gr grrrr grrrrrrr`,
+  `Super! Du hast die erste Information erhalten. Im nächsten Schritt ...`,
+  `Jetzt erfährst du noch mehr über die Wikinger ...`
+];
+
 
 const charsPerPage = 100; // Anzahl Zeichen pro "Seite" (kannst du anpassen)
-let currentPage = 0;
+let currentStep = 0;   // startet bei Lernschritt 0
+let currentPage = 0;   // Seite im aktuellen Schritt
+
 
 const textBox = document.getElementById('textBox');
 const nextButton = document.getElementById('nextButton');
@@ -302,28 +311,38 @@ function typeWriterEffect(text, callback) {
 }
 
 function showPage(pageIndex) {
+  const fullText = fullTexts[currentStep]; // Text vom aktuellen Lernschritt
   const start = pageIndex * charsPerPage;
   const end = start + charsPerPage;
   let pageText = fullText.slice(start, end);
-  
-  // Falls nicht am Ende, füge "..." hinzu
+
   if (end < fullText.length) {
     pageText += "...";
   }
-  
+
   typeWriterEffect(pageText, () => {
-    // Falls noch mehr Text existiert → Button anzeigen
     if (end < fullText.length) {
-      nextButton.style.display = "block";
+      nextButton.style.display = "block";  // normale Weiter-Page
     } else {
-      nextButton.style.display = "none";
+      // wir sind am Ende des Textes
+      if (currentStep < fullTexts.length - 1) {
+        nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
+      }
     }
   });
 }
 
+/*Auswahl der Buttons und definieren, was sie ausläsen sollen*/
 nextButton.addEventListener('click', () => {
   currentPage++;
   nextButton.style.display = "none";
+  showPage(currentPage);
+});
+
+nextStepButton.addEventListener('click', () => {
+  currentStep++;       // nächster Lernschritt
+  currentPage = 0;     // wieder von Seite 0 starten
+  nextStepButton.style.display = "none";
   showPage(currentPage);
 });
 
