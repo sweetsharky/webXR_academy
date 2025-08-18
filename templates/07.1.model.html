@@ -336,7 +336,7 @@ function showPage(pageIndex) {
         document.querySelector('.item2').style.display = 'block';
       }
       //Wenn am Ende aller weiteren Texte, dann...
-      else if (currentStep < fullTexts.length - 1) {
+      else if (currentStep !== 1 && currentStep < fullTexts.length - 1) {
         nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
       }
     }
