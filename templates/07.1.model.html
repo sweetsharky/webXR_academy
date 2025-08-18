@@ -363,6 +363,12 @@ nextButton.addEventListener('click', () => {
   showPage(currentPage);
 });
 
+document.getElementById('schiff').addEventListener('click', () => {
+  currentStep++;
+  currentPage = 0;
+  document.querySelector('.item2').style.display = 'none';
+  showPage(currentPage);
+});
 
 // Start bei Seite 0
 showPage(0);
