@@ -210,22 +210,57 @@
 			}));
 
 
-// Wenn eine AR-Session startet → UI einblenden
-  renderer.xr.addEventListener('sessionstart', () => {
-    document.querySelector('.grid-container').style.display = 'grid';
-  });
+      // Wenn eine AR-Session startet → UI einblenden
+        renderer.xr.addEventListener('sessionstart', () => {
+          document.querySelector('.grid-container').style.display = 'grid';
+        });
 
-  // Wenn AR-Session beendet → UI ausblenden
-  renderer.xr.addEventListener('sessionend', () => {
-    document.querySelector('.grid-container').style.display = 'none';
-  });
+        // Wenn AR-Session beendet → UI ausblenden
+        renderer.xr.addEventListener('sessionend', () => {
+          document.querySelector('.grid-container').style.display = 'none';
+        });
 
-  			//Button, um UI-Panel(grid-Layout) zu sichtbar zu machen/unsichtbar
-document.getElementById('toggle-panel').addEventListener('click', () => {
-  document.querySelector('.grid-container').classList.toggle('hide');
-});
+              //Button, um UI-Panel(grid-Layout) zu sichtbar zu machen/unsichtbar
+      document.getElementById('toggle-panel').addEventListener('click', () => {
+        document.querySelector('.grid-container').classList.toggle('hide');
+      });
 
-			window.addEventListener('resize', onWindowResize, false);
+            window.addEventListener('resize', onWindowResize, false);
+
+
+
+      //ft_model_rot/clickable - Funktion, um Modell mit touch-swipes zu rotieren und anglickbar zu machen
+        //modell rotieren       
+        let previousTouch = null;
+
+          renderer.domElement.addEventListener('touchstart', (event) => {
+            if (event.touches.length === 1) { // nur Einzel-Touch
+              previousTouch = { x: event.touches[0].pageX, y: event.touches[0].pageY };
+            }
+          }, false);
+
+          renderer.domElement.addEventListener('touchmove', (event) => {
+            if (event.touches.length === 1 && previousTouch && model) {
+              const deltaX = event.touches[0].pageX - previousTouch.x;
+              const deltaY = event.touches[0].pageY - previousTouch.y;
+
+              // Rotation um Y-Achse (horizontal swipen)
+              model.rotation.y += deltaX * 0.01;
+
+              // Optional: Rotation um X-Achse (vertikal swipen)
+              model.rotation.x += deltaY * 0.01;
+
+              previousTouch = { x: event.touches[0].pageX, y: event.touches[0].pageY };
+            }
+          }, false);
+
+          renderer.domElement.addEventListener('touchend', () => {
+            previousTouch = null;
+          }, false);
+
+          
+          //model anklickbar machen
+
 		}
 
 // Anpassung bei Fenstergröße ändern → Kamera, Renderer und Grid
