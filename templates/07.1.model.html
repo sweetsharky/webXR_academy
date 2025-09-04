@@ -12,10 +12,14 @@
 
     /* Canvas: immer vorne für Touch-Interaktion */
     .three.js-canvas {
+      position: absolute;
+      width: 100vw; /* volle Bildschirmbreite */
+      height: 100vh; /* volle Bildschirmhöhe */
       z-index: 10; /* Canvas liegt über dem Grid */
     }
 
     .grid-container {
+      position: absolute;
       display: none; /*wird bei sessionstart durch den ARButton in display: grid; verändert*/
       grid-template-columns: 80% 20%;
       grid-template-rows: 1fr 4fr 2fr;
