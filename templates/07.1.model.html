@@ -46,6 +46,9 @@
       border-radius: 0.5em;
       font-size: 1em;
       text-align: center;
+      position: relative; /* z-index wirkt nur auf positionierte Elemente. Deswegen brauchen wir position: absolute, relative oder fixed! */
+      z-index: 4;         /* inerhalb des grid-container und damit auch hinter Canvas */
+      
     }
 
     .item1 {
