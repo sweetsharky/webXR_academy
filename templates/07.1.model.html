@@ -31,7 +31,7 @@
       border-radius: 0.5em;
       box-sizing: border-box;
       overflow: hidden; /* verhindert Scrollen überall */
-      z-index: 5;         /* Grid liegt damit unter dem Three.js-canvas */
+      z-index: 5;         /* damit das Grid unter dem Three.js-canvas liegt */
       pointer-events: none;    /* Hintergrund blockiert keine Touchs */
     }
     /* Buttons im Grid weiterhin interaktiv. (Muss drin stehen, weil das grid im Hintergrund (hinter dem Three.js Canvas) ist und sonst die Buttons nicht anklickbar sind!)) */
@@ -288,18 +288,18 @@
 
           //model anklickbar machen
 
-		}
+		}/*function init() zuende*/
 
-// Anpassung bei Fenstergröße ändern → Kamera, Renderer und Grid
-function onWindowResize() {
-    // Three.js anpassen
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
 
-    
-}
-/*function init() zuende*/
+
+    // Anpassung bei Fenstergröße ändern → Kamera, Renderer und Grid
+    function onWindowResize() {
+        // Three.js anpassen
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);       
+    }
+
 
 
 		function animate() {
