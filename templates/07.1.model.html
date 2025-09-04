@@ -10,6 +10,11 @@
   <script src="https://unpkg.com/three@0.133.0/examples/js/loaders/GLTFLoader.js"></script>
 <style>
 
+    /* Canvas: immer vorne für Touch-Interaktion */
+    .three.js-canvas {
+      z-index: 10; /* Canvas liegt über dem Grid */
+    }
+
     .grid-container {
       display: none; /*wird bei sessionstart durch den ARButton in display: grid; verändert*/
       grid-template-columns: 80% 20%;
@@ -17,12 +22,17 @@
       gap: 0.2em;
       width: 100vw; /* volle Bildschirmbreite */
       height: 100vh; /* volle Bildschirmhöhe */
-      background-color: rgba(255, 255, 255, 0);
+      background-color: rgba(255, 255, 255, 0.2);
       padding: 1em;
       border-radius: 0.5em;
       box-sizing: border-box;
-		overflow: hidden; /* verhindert Scrollen überall */
-    z-index: -1;
+      overflow: hidden; /* verhindert Scrollen überall */
+      z-index: 5;         /* Grid liegt damit unter dem Three.js-canvas */
+      pointer-events: none;    /* Hintergrund blockiert keine Touchs */
+    }
+    /* Buttons im Grid weiterhin interaktiv. (Muss drin stehen, weil das grid im Hintergrund (hinter dem Three.js Canvas) ist und sonst die Buttons nicht anklickbar sind!)) */
+    .grid-container button {
+      pointer-events: auto;
     }
 
     .grid-container>div {
@@ -157,6 +167,9 @@
 			renderer.setSize(window.innerWidth, window.innerHeight);
 			renderer.xr.enabled = true; // we have to enable the renderer for webxr
 			container.appendChild(renderer.domElement);
+
+      renderer.domElement.classList.add("three.js-canvas"); // Hiermit werden alle Elemente von Three.js (also der Canvas von Three.js) in den Vordergrund gerückt (über CSS-style oben gennent three.js-canvas), sodass das grid nicht die Interaktion mit den Modellen blockiert! 
+
 
 			var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
 			light.position.set(0.5, 1, 0.25);
