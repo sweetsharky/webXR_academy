@@ -263,40 +263,55 @@
         //modell rotieren       
         let previousTouch = null;
         let rotating = false; // Flag, ob Rotation aktiv ist. Erst sobald raycasting anzeigt, dass auf Model geklickt wurde wird rotating auf true gesetzt. Nur wenn Modell berührt wird, kann Modell also gedreht werden.
+        let activeModel = null;
 
-        renderer.domElement.addEventListener('touchstart', (event) => {
-          if (event.touches.length === 1 && model) {
-            const touch = new THREE.Vector2();
-            touch.x = (event.touches[0].pageX / window.innerWidth) * 2 - 1;
-            touch.y = -(event.touches[0].pageY / window.innerHeight) * 2 + 1;
+        
+          renderer.domElement.addEventListener('touchstart', (event) => {
+            if (event.touches.length === 1) {
+              const touch = new THREE.Vector2();
+              touch.x = (event.touches[0].pageX / window.innerWidth) * 2 - 1;
+              touch.y = -(event.touches[0].pageY / window.innerHeight) * 2 + 1;
 
-            const raycaster = new THREE.Raycaster();
-            raycaster.setFromCamera(touch, camera);
-            const intersects = raycaster.intersectObject(model, true);
+              const raycaster = new THREE.Raycaster();
+              raycaster.setFromCamera(touch, camera);
 
-            if (intersects.length > 0) {
-              rotating = true; // Drehung aktivieren
+              // Nur sichtbare Modelle prüfen
+              const visibleModels = Object.values(models).filter(m => m.visible);
+              const intersects = raycaster.intersectObjects(visibleModels, true);
+
+              if (intersects.length > 0) {
+                // Das getroffene Modell als activeModel speichern
+                let intersected = intersects[0].object;
+
+                // Falls das getroffene Objekt ein Kind ist, gehe zum Root-Model
+                while (!visibleModels.includes(intersected)) {
+                  intersected = intersected.parent;
+                }
+
+                activeModel = intersected;
+                rotating = true;
+                previousTouch = { x: event.touches[0].pageX, y: event.touches[0].pageY };
+              }
+            }
+          }, false);
+
+          renderer.domElement.addEventListener('touchmove', (event) => {
+            if (event.touches.length === 1 && previousTouch && rotating && activeModel) {
+              const deltaX = event.touches[0].pageX - previousTouch.x;
+              const deltaY = event.touches[0].pageY - previousTouch.y;
+
+              activeModel.rotation.y += deltaX * 0.01;
+              activeModel.rotation.x += deltaY * 0.01;
+
               previousTouch = { x: event.touches[0].pageX, y: event.touches[0].pageY };
             }
-          }
-        }, false);
+          }, false);
 
-        renderer.domElement.addEventListener('touchmove', (event) => {
-          if (event.touches.length === 1 && previousTouch && rotating && model) {
-            const deltaX = event.touches[0].pageX - previousTouch.x;
-            const deltaY = event.touches[0].pageY - previousTouch.y;
-
-            model.rotation.y += deltaX * 0.01;
-            model.rotation.x += deltaY * 0.01;
-
-            previousTouch = { x: event.touches[0].pageX, y: event.touches[0].pageY };
-          }
-        }, false);
-
-        renderer.domElement.addEventListener('touchend', () => {
-          rotating = false;
-          previousTouch = null;
-        }, false);
+          renderer.domElement.addEventListener('touchend', () => {
+            rotating = false;
+            previousTouch = null;
+            activeModel = null;
+          }, false);
 
           //model anklickbar machen
 
