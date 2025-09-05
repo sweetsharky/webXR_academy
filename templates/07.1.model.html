@@ -152,7 +152,7 @@
     
 		let camera, scene, renderer;
 		let loader; // we need to create a variable for a gltf model loader
-    let model; // das geladene 3D-Model wird hierdrunter gespeichert
+    const models = {}; // hier speichern wir die geladenen Modelle
 
 		init();
 		animate();
@@ -186,41 +186,44 @@
       // fast and efficient to use, which is ideal for the web
 			loader = new THREE.GLTFLoader();
       
+
+          // 📌 Liste der Modelle
+      const modelList = [
+        {
+          name: "Nietplatte",
+          url: "https://raw.githubusercontent.com/sweetsharky/medien/refs/heads/main/nietplatte_bearbeitet0.1_gltf/nietplatte_bearbeitet0.1.gltf",
+          position: { x: 0, y: 0, z: -0.3 },
+          scale: 0.002
+        },
+        {
+          name: "Schiff",
+          url: "https://raw.githubusercontent.com/sweetsharky/medien/refs/heads/main/the_gokstad_ship__gokstadsskeppet/scene.gltf",
+          position: { x: 0.3, y: 0, z: -0.3 },
+          scale: 0.01
+        }
+      ];
+
+          // 📌 Modelle laden
+      modelList.forEach(item => {
+        loader.load(item.url, gltf => {
+          const model = gltf.scene;
+          model.scale.multiplyScalar(item.scale);
+          model.position.set(item.position.x, item.position.y, item.position.z);
+          model.visible = false; // unsichtbar am Anfang
+          scene.add(model);
+          models[item.name] = model; // im Objekt speichern
+          console.log(`Model "${item.name}" geladen`);
+        });
+      });
       // learn about other types of 3D model formats you can use here: 
       // https://threejs.org/docs/#manual/en/introduction/Loading-3D-models
-      
-      // load the model
-      // loader takes in a few arguments loader(model url, onLoad callback, onProgress callback, onError callback)
-			loader.load(
-				// model URL
-				modelUrl,
-				// onLoad callback: what get's called once the full model has loaded
-				function (gltf) {
-          // gltf.scene contains the Three.js object group that represents the 3d object of the model
-					model = gltf.scene;
-          scene.add(model);
-          console.log("Model added to scene");
-          
-
-		  // scaling model
-		  model.scale.multiplyScalar(0.002);
-          // you can optionally change the position of the model
-            model.position.z = -0.3; // negative Z moves the model in the opposite direction the camera is facing
-           model.position.y = 0; // positive Y moves the model up
-            model.position.x = 0; // positive X moves hte model to the right
-			},
 
 
 				// onProgress callback: optional function for showing progress on model load
 				//function (xhr) {
 		      // console.log((xhr.loaded / xhr.total * 100) + '% loaded' );},
 				
-			 
-			  // onError callback
-				function (error) {
-					console.error(error);
-				}
-			);
+			
 
 			document.body.appendChild(ARButton.createButton(renderer, {
 				optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],
@@ -245,7 +248,16 @@
 
             window.addEventListener('resize', onWindowResize, false);
 
+              // 📌 Buttons für Modelle
+                document.getElementById("toggle-nietplatte").addEventListener("click", () => toggleModel("Nietplatte"));
+                document.getElementById("toggle-schiff").addEventListener("click", () => toggleModel("Schiff"));
+              }
 
+              function toggleModel(name) {
+                if (models[name]) {
+                  models[name].visible = !models[name].visible;
+                  console.log(`${name} ist jetzt ${models[name].visible ? "sichtbar" : "unsichtbar"}`);
+                }
 
       //ft_model_rot/clickable - Funktion, um Modell mit touch-swipes zu rotieren und anglickbar zu machen
         //modell rotieren       
@@ -334,6 +346,9 @@
 
   <div class="item4">
   	<div id="textBox"></div>
+      <!-- 📌 Buttons im HTML -->
+      <button id="toggle-nietplatte">Nietplatte an/aus</button>
+      <button id="toggle-schiff">Schiff an/aus</button>
     </div>
     
   <div class="item5">
