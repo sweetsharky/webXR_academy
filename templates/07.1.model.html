@@ -205,7 +205,7 @@
         {
           name: "Schiff",
           url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/gislinge_viking_boat/scene.gltf",
-          position: { x: 0, y: -1.5, z: -0.7 },
+          position: { x: 0, y: -1.5, z: -2.0 },
           scale: 0.01,
           rotatable: false,
         }
@@ -271,11 +271,11 @@
                   if (name === "Nietplatte") {
                     document.getElementById("grab-nietplatte").style.display = models[name].visible ? "block" : "none";
                   }
-                
                 }
+              }  
 
-      //ft_model_rot/clickable - Funktion, um Modell mit touch-swipes zu rotieren und anglickbar zu machen
-        //modell rotieren, wenn sichtbar    
+        //ft_model_rot/clickable - Funktion, um Modell mit touch-swipes zu rotieren und anglickbar zu machen
+          //modell rotieren, wenn sichtbar    
         let previousTouch = null;
         let rotating = false; // Flag, ob Rotation aktiv ist. Erst sobald raycasting anzeigt, dass auf Model geklickt wurde wird rotating auf true gesetzt. Nur wenn Modell berührt wird, kann Modell also gedreht werden.
         let activeModel = null;
