@@ -193,13 +193,15 @@
           name: "Nietplatte",
           url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_bearbeitet0.1_gltf/nietplatte_bearbeitet0.1.gltf",
           position: { x: 0, y: 0, z: -0.3 },
-          scale: 0.002
+          scale: 0.002,
+          rotatable: true,
         },
         {
           name: "Schiff",
           url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/gislinge_viking_boat/scene.gltf",
           position: { x: 0, y: -1.5, z: -0.7 },
-          scale: 0.01
+          scale: 0.01,
+          rotatable: false,
         }
       ];
 
@@ -210,6 +212,7 @@
           model.scale.multiplyScalar(item.scale);
           model.position.set(item.position.x, item.position.y, item.position.z);
           model.visible = false; // unsichtbar am Anfang
+          model.userData.rotatable = item.rotatable; // Flag gespeichert, ob rotierbar oder nicht
           scene.add(model);
           models[item.name] = model; // im Objekt speichern
           console.log(`Model "${item.name}" geladen`);
@@ -287,10 +290,13 @@
                 while (!visibleModels.includes(intersected)) {
                   intersected = intersected.parent;
                 }
-
+                
+                // nur Modelle, die rotiert werden sollen (='rotatabel: true,') auf "rotating = true" setzen
+                if (intersected.userData.rotatable) {
                 activeModel = intersected;
                 rotating = true;
                 previousTouch = { x: event.touches[0].pageX, y: event.touches[0].pageY };
+                }
               }
             }
           }, false);
