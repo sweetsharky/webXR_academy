@@ -158,7 +158,7 @@
     //Flags für Greifen/Ablgegen:Modell greifbar machen und an anderer Position ablegen: Greifen-und-Ablegen-Feature
     let isGrabbed = false;
     let grabbedModel = null;
-        
+    const grabButton = document.getElementById("grab-nietplatte");
 
 		init();
 		animate();
@@ -331,7 +331,7 @@
             activeModel = null;
           }, false);
 
-          //Greif-Button-Logik
+          //Greif-Button-Logik: während Event 'touchstart' das Modell mitführen. Bei 'touchend' ablegen
           grabButton.addEventListener("touchstart", (e) => {
             e.preventDefault(); // verhindert Ghost-Clicks
             if (models["Nietplatte"] && models["Nietplatte"].visible) {
