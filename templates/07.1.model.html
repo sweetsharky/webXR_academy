@@ -154,6 +154,12 @@
 		let loader; // we need to create a variable for a gltf model loader
     const models = {}; // hier speichern wir die geladenen Modelle
 
+
+    //Flags für Greifen/Ablgegen:Modell greifbar machen und an anderer Position ablegen: Greifen-und-Ablegen-Feature
+    let isGrabbed = false;
+    let grabbedModel = null;
+        
+
 		init();
 		animate();
 
@@ -254,12 +260,18 @@
               // 📌 Buttons für Modelle
                 document.getElementById("toggle-nietplatte").addEventListener("click", () => toggleModel("Nietplatte"));
                 document.getElementById("toggle-schiff").addEventListener("click", () => toggleModel("Schiff"));
-              }
+    
 
               function toggleModel(name) {
                 if (models[name]) {
                   models[name].visible = !models[name].visible;
                   console.log(`${name} ist jetzt ${models[name].visible ? "sichtbar" : "unsichtbar"}`);
+                  
+                  // 📌 Greif-Button nur für Nietplatte sichtbar machen
+                  if (name === "Nietplatte") {
+                    document.getElementById("grab-nietplatte").style.display = models[name].visible ? "block" : "none";
+                  }
+                
                 }
 
       //ft_model_rot/clickable - Funktion, um Modell mit touch-swipes zu rotieren und anglickbar zu machen
@@ -267,7 +279,7 @@
         let previousTouch = null;
         let rotating = false; // Flag, ob Rotation aktiv ist. Erst sobald raycasting anzeigt, dass auf Model geklickt wurde wird rotating auf true gesetzt. Nur wenn Modell berührt wird, kann Modell also gedreht werden.
         let activeModel = null;
-
+        
         
           renderer.domElement.addEventListener('touchstart', (event) => {
             if (event.touches.length === 1) {
@@ -319,7 +331,24 @@
             activeModel = null;
           }, false);
 
-          //model anklickbar machen
+          //Greif-Button-Logik
+          document.getElementById("grab-nietplatte").addEventListener("click", () => {
+            if (!models["Nietplatte"]) return;
+
+            if (!isGrabbed) {
+              // ✅ Start: Modell greifen
+              grabbedModel = models["Nietplatte"];
+              isGrabbed = true;
+              document.getElementById("grab-nietplatte").innerText = "Ablegen";
+              console.log("Nietplatte wird mitgeführt");
+            } else {
+              // ✅ Stop: Modell ablegen
+              isGrabbed = false;
+              grabbedModel = null;
+              document.getElementById("grab-nietplatte").innerText = "Greifen";
+              console.log("Nietplatte abgelegt");
+            }
+          });
 
 		}/*function init() zuende*/
 
@@ -338,8 +367,17 @@
 		function animate() {
 			renderer.setAnimationLoop(render);
 		}
-
+    
+    //alles,was pro Frame ausgeführt werden soll
 		function render() {
+      //Gegriffenes Modell soll mit Camera "mitwandern", um Position im Raum zu verändern.
+      if (isGrabbed && grabbedModel) {
+        // Position etwas vor die Kamera setzen (z.B. 0.5m)
+        const offset = new THREE.Vector3(0, 0, -0.5);
+        offset.applyMatrix4(camera.matrixWorld);
+        grabbedModel.position.copy(offset);
+      }
+
 			renderer.render(scene, camera);
 		}
 
@@ -374,11 +412,12 @@
     </div>
     
   <div class="item5">
-   <button id="nextButton" class="button" style="display:none;">Weiter</button>
-  <button id="nextStepButton" class="button" style="display:none;">Nächster Lernschritt</button>
+    <button id="nextButton" class="button" style="display:none;">Weiter</button>
+    <button id="nextStepButton" class="button" style="display:none;">Nächster Lernschritt</button>
+    
+    <button id="grab-nietplatte" style="display:none;">Greifen</button>
+  </div>
 
-
-</div>
   <button id="toggle-panel">Toggle Panel</button></div>
 
 <!-- Script für Textleiste unten, um Typewriter-Effekt, Pagination und Overflow-Handling des Textes hinzubekommen.-->
