@@ -143,6 +143,27 @@
     align-items: center;
   }
   /*Hinweis-Icons Ende*/
+
+  /*Start: Button für grab-nietplatte und änderung der Farbe als Feedback*/
+  #grab-nietplatte {
+  padding: 1em 2em;
+  border-radius: 0.5em;
+  background-color: #04AA6D;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+/* Visuelles Feedback beim Drücken */
+#grab-nietplatte.grabbing {
+  background-color: #FF8800; /* z.B. orange während Greifen */
+  transform: scale(0.98);     /* leichter "Button gedrückt"-Effekt */
+}
+/*Ende: Button für grab-nietplatte*/
+
+
+
 </style>
 
 </head>
@@ -338,14 +359,14 @@
             if (models["Nietplatte"] && models["Nietplatte"].visible) {
               grabbedModel = models["Nietplatte"];
               isGrabbed = true;
-              console.log("Nietplatte wird mitgeführt (Touch)");
+              grabButton.classList.add("grabbing"); // visuelles Feedback aktiv
             }
           });
 
           grabButton.addEventListener("touchend", () => {
             isGrabbed = false;
             grabbedModel = null;
-            console.log("Nietplatte abgelegt (Touch)");
+            grabButton.classList.remove("grabbing"); // visuelles Feedback deaktivieren
           });
 
 		}/*function init() zuende*/
