@@ -205,7 +205,7 @@
         {
           name: "Schiff",
           url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/gislinge_viking_boat/scene.gltf",
-          position: { x: 0, y: -1.5, z: -2.0 },
+          position: { x: 0, y: -1.5, z: -4.0 },
           scale: 0.01,
           rotatable: false,
         }
@@ -332,22 +332,19 @@
           }, false);
 
           //Greif-Button-Logik
-          document.getElementById("grab-nietplatte").addEventListener("click", () => {
-            if (!models["Nietplatte"]) return;
-
-            if (!isGrabbed) {
-              // ✅ Start: Modell greifen
+          grabButton.addEventListener("touchstart", (e) => {
+            e.preventDefault(); // verhindert Ghost-Clicks
+            if (models["Nietplatte"] && models["Nietplatte"].visible) {
               grabbedModel = models["Nietplatte"];
               isGrabbed = true;
-              document.getElementById("grab-nietplatte").innerText = "Ablegen";
-              console.log("Nietplatte wird mitgeführt");
-            } else {
-              // ✅ Stop: Modell ablegen
-              isGrabbed = false;
-              grabbedModel = null;
-              document.getElementById("grab-nietplatte").innerText = "Greifen";
-              console.log("Nietplatte abgelegt");
+              console.log("Nietplatte wird mitgeführt (Touch)");
             }
+          });
+
+          grabButton.addEventListener("touchend", () => {
+            isGrabbed = false;
+            grabbedModel = null;
+            console.log("Nietplatte abgelegt (Touch)");
           });
 
 		}/*function init() zuende*/
