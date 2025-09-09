@@ -162,7 +162,39 @@
 }
 /*Ende: Button für grab-nietplatte*/
 
+/*Start: Intro-video und -Button*/
+#intro-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: black;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* ganz oben */
+}
 
+#intro-video {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+}
+
+#continue-button {
+  position: absolute;
+  bottom: 30px;
+  padding: 1em 2em;
+  border-radius: 0.5em;
+  background-color: #04AA6D;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+}
+/*Ende: Intro-video und -Button*/
 
 </style>
 
@@ -181,6 +213,12 @@
     let isGrabbed = false;
     let grabbedModel = null;
     const grabButton = document.getElementById("grab-nietplatte");
+
+    //Intro-video und -Button
+    const overlay = document.getElementById("intro-overlay");
+    const introVideo = document.getElementById("intro-video");
+    const continueButton = document.getElementById("continue-button");
+
 
 		init();
 		animate();
@@ -371,7 +409,16 @@
 
 		}/*function init() zuende*/
 
+  //Start:Intro-video und -Button
+    // Wenn das Video fertig ist → Button anzeigen
+    introVideo.addEventListener("ended", () => {
+      continueButton.style.display = "block";
+    });
 
+    // Wenn der User "Weiter" klickt → Intro-Overlay schließen
+    continueButton.addEventListener("click", () => {
+      overlay.remove(); // mit remove() wird das Video auch vom DOM getrennt, statt nur overlay.style.display = "none"; --> mehr Speicher wird frei
+    });
 
     // Anpassung bei Fenstergröße ändern → Kamera, Renderer und Grid
     function onWindowResize() {
@@ -401,6 +448,15 @@
 		}
 
 	</script>
+
+<!-- Intro-Video Overlay -->
+<div id="intro-overlay">
+  <video id="intro-video" autoplay playsinline>
+    <source src="/webXR_academy/staticfiles/videos/probeVideo.mp4" type="video/mp4">
+    Dein Browser unterstützt kein HTML5-Video.
+  </video>
+  <button id="continue-button" style="display:none;">Weiter</button>
+</div>
 
 <div class="grid-container">
   <div class="item1">Auf den Spuren der Wikinger in Duisburg</div>
