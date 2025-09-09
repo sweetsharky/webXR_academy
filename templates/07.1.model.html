@@ -304,17 +304,12 @@
         renderer.xr.addEventListener('sessionstart', () => {
           // 1. Intro-Overlay anzeigen und video starten
           overlay.style.display = "flex";
-          introvideo.play();
+          introVideo.play();
           //2. während Intro läuft bleibt grid unsichtbar.
           document.querySelector('.grid-container').style.display = 'none';
         });
 
-        // Wenn AR-Session beendet → UI ausblenden
-        renderer.xr.addEventListener('sessionend', () => {
-          document.querySelector('.grid-container').style.display = 'none';
-        });
-
-        //VIdeo-Ende --> Continue-Button anzeigen
+        //Video-Ende --> Continue-Button anzeigen
         introVideo.addEventListener("ended", () => {
           continueButton.style.display ="block";
         })
@@ -323,6 +318,14 @@
           overlay.remove(); // mit remove() wird das Video auch vom DOM getrennt, statt nur overlay.style.display = "none"; --> mehr Speicher wird frei
           document.querySelector('.grid-container').style.display = "grid"; // UI freigeben
         });
+
+
+        // Wenn AR-Session beendet → UI ausblenden
+        renderer.xr.addEventListener('sessionend', () => {
+          document.querySelector('.grid-container').style.display = 'none';
+        });
+
+        
 
 
 
