@@ -407,18 +407,20 @@
             grabButton.classList.remove("grabbing"); // visuelles Feedback deaktivieren
           });
 
+
+          //Start:Intro-video und -Button Logik
+          // Wenn das Video fertig ist → Button anzeigen
+          introVideo.addEventListener("ended", () => {
+            continueButton.style.display = "block";
+          });
+
+          // Wenn der User "Weiter" klickt → Intro-Overlay schließen
+          continueButton.addEventListener("click", () => {
+            overlay.remove(); // mit remove() wird das Video auch vom DOM getrennt, statt nur overlay.style.display = "none"; --> mehr Speicher wird frei
+          });
 		}/*function init() zuende*/
 
-  //Start:Intro-video und -Button
-    // Wenn das Video fertig ist → Button anzeigen
-    introVideo.addEventListener("ended", () => {
-      continueButton.style.display = "block";
-    });
 
-    // Wenn der User "Weiter" klickt → Intro-Overlay schließen
-    continueButton.addEventListener("click", () => {
-      overlay.remove(); // mit remove() wird das Video auch vom DOM getrennt, statt nur overlay.style.display = "none"; --> mehr Speicher wird frei
-    });
 
     // Anpassung bei Fenstergröße ändern → Kamera, Renderer und Grid
     function onWindowResize() {
