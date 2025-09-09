@@ -20,7 +20,7 @@
 
     .grid-container {
       position: absolute;
-      display: none; /*wird bei sessionstart durch den ARButton in display: grid; verändert*/
+      display: none; /*wird nach sessionstart und nach Ende des Intro-Videos durch den continueButton in display: grid; verändert*/
       grid-template-columns: 80% 20%;
       grid-template-rows: 1fr 4fr 2fr;
       gap: 0.2em;
@@ -185,8 +185,7 @@
 
 #continue-button {
   position: absolute;
-  bottom: 30px;
-  left: 20px;
+  bottom: 200px;
   padding: 1em 2em;
   border-radius: 0.5em;
   background-color: #04AA6D;
@@ -194,7 +193,6 @@
   border: none;
   cursor: pointer;
   font-size: 1em;
-  z-index: 10000;
 }
 /*Ende: Intro-video und -Button*/
 
@@ -248,7 +246,7 @@
 			scene.add(light);
 
       // specify a model URL
-      const modelUrl = 'https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_bearbeitet0.1_gltf/nietplatte_bearbeitet0.1.gltf'; 
+      //const modelUrl = 'https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_bearbeitet0.1_gltf/nietplatte_bearbeitet0.1.gltf'; 
       
 			// create a GLTF loader object. GLTF is a 3D model format usually called the "JPEG of 3D" because it is
       // fast and efficient to use, which is ideal for the web
@@ -302,15 +300,31 @@
 			}));
 
 
-      // Wenn eine AR-Session startet → UI einblenden
+      // Wenn eine AR-Session startet → Intro-video starten und später UI einblenden
         renderer.xr.addEventListener('sessionstart', () => {
-          document.querySelector('.grid-container').style.display = 'grid';
+          // 1. Intro-Overlay anzeigen und video starten
+          overlay.style.display = "flex";
+          introvideo.play();
+          //2. während Intro läuft bleibt grid unsichtbar.
+          document.querySelector('.grid-container').style.display = 'none';
         });
 
         // Wenn AR-Session beendet → UI ausblenden
         renderer.xr.addEventListener('sessionend', () => {
           document.querySelector('.grid-container').style.display = 'none';
         });
+
+        //VIdeo-Ende --> Continue-Button anzeigen
+        introVideo.addEventListener("ended", () => {
+          continueButton.style.display ="block";
+        })
+        // Continue-Button → Overlay schließen und Grid freigeben
+        continueButton.addEventListener("click", () => {
+          overlay.remove(); // mit remove() wird das Video auch vom DOM getrennt, statt nur overlay.style.display = "none"; --> mehr Speicher wird frei
+          document.querySelector('.grid-container').style.display = "grid"; // UI freigeben
+        });
+
+
 
               //Button, um UI-Panel(grid-Layout) zu sichtbar zu machen/unsichtbar
       document.getElementById('toggle-panel').addEventListener('click', () => {
@@ -410,16 +424,8 @@
           });
 
 
-          //Start:Intro-video und -Button Logik
-          // Wenn das Video fertig ist → Button anzeigen
-          introVideo.addEventListener("ended", () => {
-            continueButton.style.display = "block";
-          });
 
-          // Wenn der User "Weiter" klickt → Intro-Overlay schließen
-          continueButton.addEventListener("click", () => {
-            overlay.remove(); // mit remove() wird das Video auch vom DOM getrennt, statt nur overlay.style.display = "none"; --> mehr Speicher wird frei
-          });
+
 		}/*function init() zuende*/
 
 
@@ -454,8 +460,8 @@
 	</script>
 
 <!-- Intro-Video Overlay -->
-<div id="intro-overlay">
-  <video id="intro-video" autoplay playsinline>
+<div id="intro-overlay" style="display:none;">
+  <video id="intro-video" playsinline>
     <source src="/webXR_academy/staticfiles/videos/probeVideo.mp4" type="video/mp4">
     Dein Browser unterstützt kein HTML5-Video.
   </video>
