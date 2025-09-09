@@ -305,14 +305,11 @@
           // 1. Intro-Overlay anzeigen und video starten
           overlay.style.display = "flex";
           introVideo.play();
+          continueButton.style.display ="block";
           //2. während Intro läuft bleibt grid unsichtbar.
           document.querySelector('.grid-container').style.display = 'none';
         });
 
-        //Video-Ende --> Continue-Button anzeigen
-        introVideo.addEventListener("ended", () => {
-          continueButton.style.display ="block";
-        })
         // Continue-Button → Overlay schließen und Grid freigeben
         continueButton.addEventListener("click", () => {
           overlay.remove(); // mit remove() wird das Video auch vom DOM getrennt, statt nur overlay.style.display = "none"; --> mehr Speicher wird frei
@@ -465,10 +462,10 @@
 <!-- Intro-Video Overlay -->
 <div id="intro-overlay" style="display:none;">
   <video id="intro-video" playsinline>
-    <source src="/webXR_academy/staticfiles/videos/probeVideo.mp4" type="video/mp4">
+    <source src="/webXR_academy/staticfiles/videos/WikingAR_intro.mp4" type="video/mp4">
     Dein Browser unterstützt kein HTML5-Video.
   </video>
-  <button id="continue-button" style="display:none;">Weiter</button>
+  <button id="continue-button" style="display:none;">Los geht's!</button>
 </div>
 
 <div class="grid-container">
