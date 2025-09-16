@@ -574,14 +574,18 @@ function showPage(pageIndex) {
   typeWriterEffect(pageText, () => {
     if (end < fullText.length) {
       nextButton.style.display = "block";  // normale Weiter-Page
-    } else {      // wir sind am Ende eines Textes
+    } else {     // wir sind am Ende eines Textes
       //Wenn am Ende des ersten Textes, dann...
-      if (currentStep === 2) {
-          models["Werkzeug"].visible = true; //Werkzeug automatisch einblenden bei Step 2.");
-      }
+
       if (currentStep === 3) {
         document.querySelector('.item2').style.display = 'block';
       }
+      else if (currentStep === 2) {
+        if (models["Werkzeug"]) {
+          models["Werkzeug"].visible = true; //Werkzeug automatisch einblenden bei Step 2.");
+        }
+      }
+    
  
       //Wenn am Ende aller weiteren Texte, dann...
       else if (currentStep < fullTexts.length - 1) {
