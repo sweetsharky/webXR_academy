@@ -268,7 +268,24 @@
           position: { x: 0, y: -1.5, z: -4.0 },
           scale: 0.01,
           rotatable: false,
+        },
+
+        {
+          name: "Nietplatte_mit_Rost",
+          url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_Rost/nietplatte_mit_Rost.gltf", 
+          position: { x: 0, y: 0, z: -0.3 }, 
+          scale: 0.002,
+          rotatable: false,
+        },
+        {
+          name: "Werkzeug",
+          url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/werkzeug_arch%C3%A4ologe/Werkzeug_arch%C3%A4ologe.gltf", 
+          position: { x: 0.2, y: 0, z: -0.3 }, // etwas versetzt neben der Nietplatte
+          scale: 0.002,
+          rotatable: false,
         }
+
+
       ];
 
           // 📌 Modelle laden
@@ -334,6 +351,8 @@
               // 📌 Buttons für Modelle
                 document.getElementById("toggle-nietplatte").addEventListener("click", () => toggleModel("Nietplatte"));
                 document.getElementById("toggle-schiff").addEventListener("click", () => toggleModel("Schiff"));
+                document.getElementById("toggle-nietplatte-rost").addEventListener("click", () => toggleModel("Nietplatte_mit_Rost"));
+                document.getElementById("toggle-werkzeug").addEventListener("click", () => toggleModel("Werkzeug"));
     
 
               function toggleModel(name) {
@@ -486,6 +505,8 @@
             <!-- 📌 Buttons im HTML -->
       <button id="toggle-nietplatte">Nietplatte an/aus</button>
       <button id="toggle-schiff">Schiff an/aus</button>
+      <button id="toggle-nietplatte-rost">NietplatteRost an/aus</button>
+      <button id="toggle-werkzeug">Werkzeug an/aus</button>
     </div>
   </div>  
 
@@ -561,6 +582,12 @@ function showPage(pageIndex) {
       //Wenn am Ende aller weiteren Texte, dann...
       else if (currentStep < fullTexts.length - 1) {
         nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
+      }
+    }
+
+    if (currentStep === 2) {
+      if (models["Werkzeug"]) {
+        models["Werkzeug"].visible = true; //Werkzeug automatisch einblenden bei Step 2.");
       }
     }
   });
