@@ -201,6 +201,55 @@
 </head>
 
 <body>
+
+<!-- Intro-Video Overlay -->
+<div id="intro-overlay" style="display:none;">
+  <video id="intro-video" playsinline>
+    <source src="/webXR_academy/staticfiles/videos/WikingAR_intro.mp4" type="video/mp4">
+    Dein Browser unterstützt kein HTML5-Video.
+  </video>
+  <button id="continue-button" style="display:none;">Los geht's!</button>
+</div>
+
+<div class="grid-container">
+  <div class="item1">Auf den Spuren der Wikinger in Duisburg</div>
+  <div class="empty-gameObject-item2">
+    <div class="item2">  
+    <p style="background: green;"></p>Das Objekt, das du siehst ist es ein Teil von...(wähle aus):</p>
+    <div class="answers">
+      <button class="quiz-button" id="schiff">einem Schiff</button>
+      <button class="quiz-button" id="waffe">einer Waffe</button>
+      <button class="quiz-button" id="eimer">einem Wassereimer</button>
+    </div>
+    </div>
+  </div>
+    
+  <div class="item3">3
+    <div class="icon-column">
+      <img src="/webXR_academy/staticfiles/images/feuerstahlbeschlag_duisburg_einzeln.svg" alt="Feuerstahlbeschlag" width="10"/>
+      <img src="/webXR_academy/staticfiles/images/logo_schrift.svg" alt="logoSchrift" width="20"/>
+            <!-- 📌 Buttons im HTML -->
+      <button id="toggle-nietplatte">Nietplatte an/aus</button>
+      <button id="toggle-schiff">Schiff an/aus</button>
+      <button id="toggle-nietplatte-rost">NietplatteRost an/aus</button>
+      <button id="toggle-werkzeug">Werkzeug an/aus</button>
+    </div>
+  </div>  
+
+  <div class="item4">
+  	<div id="textBox"></div>
+
+    </div>
+    
+  <div class="item5">
+    <button id="nextButton" class="button" style="display:none;">Weiter</button>
+    <button id="nextStepButton" class="button" style="display:none;">Nächster Lernschritt</button>
+    
+    <button id="grab-nietplatte" style="display:none;">Greifen</button>
+  </div>
+
+  <button id="toggle-panel">Toggle Panel</button></div>
+
 	<script type="module">
     import { ARButton } from 'https://unpkg.com/three@0.133.0/examples/jsm/webxr/ARButton.js';
     
@@ -474,146 +523,98 @@
 			renderer.render(scene, camera);
 		}
 
+
+
+    //Start: Script für Textleiste unten, um Typewriter-Effekt, Pagination und Overflow-Handling des Textes hinzubekommen.
+    const fullTexts = [
+      'Hallo angehender Archäologe!',
+      'Siehst du diesen verrosteten Klumpen Metall? Er wurde 1990 genau hier bei archöologischen Ausgrabungen gefunden.',
+      'Befreie es von der Korrosion! ',
+      'Was glaubst du, wozu dieses Metallstück gehören könnte?',
+      'Dieses alte Metallstück ist Teil von einem Schiff. Die Erdschicht, in dem es gefunden wurde, ist dem 9. Jahrhundert zuzuordnen. Aus einer schriftlichen Überlieferung wissen wir, dass es einen Überfall auf das Handelszentrum von Duisburg gegeben haben soll.', 
+      `Dieser Überfall ist von den Normannen, den Wikingern ausgegangen. Dieser Schiffsniet ist Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind. Denn nur an den Schiffen der Wikinger finden sich Schiffsnieten der gleichen Bauart. Schau dir den Schiffsniet genauer an und entdecke neue Informationen.`,
+      `Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben. Finde es heraus, indem du auch die anderen Gegenstände erkundest!`,
+      `Jetzt erfährst du noch mehr über die Wikinger ...`
+    ];
+
+
+    const charsPerPage = 100; // Anzahl Zeichen pro "Seite" (kannst du anpassen)
+    let currentStep = 0;   // startet bei Lernschritt 0
+    let currentPage = 0;   // Seite im aktuellen Schritt
+
+
+    const textBox = document.getElementById('textBox');
+    const nextButton = document.getElementById('nextButton');
+    const nextStepButton = document.getElementById('nextStepButton');
+
+    function typeWriterEffect(text, callback) {
+      let i = 0;
+      textBox.textContent = "";
+      const interval = setInterval(() => {
+        textBox.textContent += text[i];
+        i++;
+        if (i >= text.length) {
+          clearInterval(interval);
+          callback();
+        }
+      }, 30); // Geschwindigkeit (ms pro Buchstabe)
+    }
+
+    function showPage(pageIndex) {
+      const fullText = fullTexts[currentStep]; // Text vom aktuellen Lernschritt
+      const start = pageIndex * charsPerPage;
+      const end = start + charsPerPage;
+      let pageText = fullText.slice(start, end);
+
+      if (end < fullText.length) {
+        pageText += "...";
+      }
+
+
+
+      typeWriterEffect(pageText, () => {
+        if (end < fullText.length) {
+          nextButton.style.display = "block";  // normale Weiter-Page
+        } else {     // wir sind am Ende eines Textes
+          //Wenn am Ende des ersten Textes, dann...
+                if (currentStep ===2){
+                    models["Werkzeug"].visible = true;
+                    nextStepButton.style.display = "block";
+                } else if (currentStep === 3) {
+                  document.querySelector('.item2').style.display = 'block';
+                } else if (currentStep < fullTexts.length - 1) {//Wenn am Ende aller weiteren Texte, dann...
+                  nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
+                }
+        }
+      });
+    }
+
+    /*Auswahl der Buttons und definieren, was sie auslesen sollen*/
+    nextStepButton.addEventListener('click', () => {
+      currentStep++;       // nächster Lernschritt
+      currentPage = 0;     // wieder von Seite 0 starten
+      nextStepButton.style.display = "none";
+      showPage(currentPage);
+    });
+
+    nextButton.addEventListener('click', () => {
+      currentPage++;
+      nextButton.style.display = "none";
+      showPage(currentPage);
+    });
+
+    document.getElementById('schiff').addEventListener('click', () => {
+      currentStep++;
+      currentPage = 0;
+      document.querySelector('.item2').style.display = 'none';
+      showPage(currentPage);
+    });
+
+    // Start bei Seite 0
+    showPage(0);
+
+    //End: Script für Textleiste unten, um Typewriter-Effekt, Pagination und Overflow-Handling des Textes hinzubekommen.
 	</script>
-
-<!-- Intro-Video Overlay -->
-<div id="intro-overlay" style="display:none;">
-  <video id="intro-video" playsinline>
-    <source src="/webXR_academy/staticfiles/videos/WikingAR_intro.mp4" type="video/mp4">
-    Dein Browser unterstützt kein HTML5-Video.
-  </video>
-  <button id="continue-button" style="display:none;">Los geht's!</button>
-</div>
-
-<div class="grid-container">
-  <div class="item1">Auf den Spuren der Wikinger in Duisburg</div>
-  <div class="empty-gameObject-item2">
-    <div class="item2">  
-    <p style="background: green;"></p>Das Objekt, das du siehst ist es ein Teil von...(wähle aus):</p>
-    <div class="answers">
-      <button class="quiz-button" id="schiff">einem Schiff</button>
-      <button class="quiz-button" id="waffe">einer Waffe</button>
-      <button class="quiz-button" id="eimer">einem Wassereimer</button>
-    </div>
-    </div>
-  </div>
-    
-  <div class="item3">3
-    <div class="icon-column">
-      <img src="/webXR_academy/staticfiles/images/feuerstahlbeschlag_duisburg_einzeln.svg" alt="Feuerstahlbeschlag" width="10"/>
-      <img src="/webXR_academy/staticfiles/images/logo_schrift.svg" alt="logoSchrift" width="20"/>
-            <!-- 📌 Buttons im HTML -->
-      <button id="toggle-nietplatte">Nietplatte an/aus</button>
-      <button id="toggle-schiff">Schiff an/aus</button>
-      <button id="toggle-nietplatte-rost">NietplatteRost an/aus</button>
-      <button id="toggle-werkzeug">Werkzeug an/aus</button>
-    </div>
-  </div>  
-
-  <div class="item4">
-  	<div id="textBox"></div>
-
-    </div>
-    
-  <div class="item5">
-    <button id="nextButton" class="button" style="display:none;">Weiter</button>
-    <button id="nextStepButton" class="button" style="display:none;">Nächster Lernschritt</button>
-    
-    <button id="grab-nietplatte" style="display:none;">Greifen</button>
-  </div>
-
-  <button id="toggle-panel">Toggle Panel</button></div>
-
-<!-- Script für Textleiste unten, um Typewriter-Effekt, Pagination und Overflow-Handling des Textes hinzubekommen.-->
-<script>
-const fullTexts = [
-  'Hallo angehender Archäologe!',
-  'Siehst du diesen verrosteten Klumpen Metall? Er wurde 1990 genau hier bei archöologischen Ausgrabungen gefunden.',
-  'Befreie es von der Korrosion! ',
-  'Was glaubst du, wozu dieses Metallstück gehören könnte?',
-  'Dieses alte Metallstück ist Teil von einem Schiff. Die Erdschicht, in dem es gefunden wurde, ist dem 9. Jahrhundert zuzuordnen. Aus einer schriftlichen Überlieferung wissen wir, dass es einen Überfall auf das Handelszentrum von Duisburg gegeben haben soll.', 
-  `Dieser Überfall ist von den Normannen, den Wikingern ausgegangen. Dieser Schiffsniet ist Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind. Denn nur an den Schiffen der Wikinger finden sich Schiffsnieten der gleichen Bauart. Schau dir den Schiffsniet genauer an und entdecke neue Informationen.`,
-  `Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben. Finde es heraus, indem du auch die anderen Gegenstände erkundest!`,
-  `Jetzt erfährst du noch mehr über die Wikinger ...`
-];
-
-
-const charsPerPage = 100; // Anzahl Zeichen pro "Seite" (kannst du anpassen)
-let currentStep = 0;   // startet bei Lernschritt 0
-let currentPage = 0;   // Seite im aktuellen Schritt
-
-
-const textBox = document.getElementById('textBox');
-const nextButton = document.getElementById('nextButton');
-const nextStepButton = document.getElementById('nextStepButton');
-
-function typeWriterEffect(text, callback) {
-  let i = 0;
-  textBox.textContent = "";
-  const interval = setInterval(() => {
-    textBox.textContent += text[i];
-    i++;
-    if (i >= text.length) {
-      clearInterval(interval);
-      callback();
-    }
-  }, 30); // Geschwindigkeit (ms pro Buchstabe)
-}
-
-function showPage(pageIndex) {
-  const fullText = fullTexts[currentStep]; // Text vom aktuellen Lernschritt
-  const start = pageIndex * charsPerPage;
-  const end = start + charsPerPage;
-  let pageText = fullText.slice(start, end);
-
-  if (end < fullText.length) {
-    pageText += "...";
-  }
-
-
-
-  typeWriterEffect(pageText, () => {
-    if (end < fullText.length) {
-      nextButton.style.display = "block";  // normale Weiter-Page
-    } else {     // wir sind am Ende eines Textes
-      //Wenn am Ende des ersten Textes, dann...
-            if (currentStep ===2){
-                models["Werkzeug"].visible = true;
-                nextStepButton.style.display = "block";
-            } else if (currentStep === 3) {
-              document.querySelector('.item2').style.display = 'block';
-            } else if (currentStep < fullTexts.length - 1) {//Wenn am Ende aller weiteren Texte, dann...
-              nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
-            }
-    }
-  });
-}
-
-/*Auswahl der Buttons und definieren, was sie auslesen sollen*/
-nextStepButton.addEventListener('click', () => {
-  currentStep++;       // nächster Lernschritt
-  currentPage = 0;     // wieder von Seite 0 starten
-  nextStepButton.style.display = "none";
-  showPage(currentPage);
-});
-
-nextButton.addEventListener('click', () => {
-  currentPage++;
-  nextButton.style.display = "none";
-  showPage(currentPage);
-});
-
-document.getElementById('schiff').addEventListener('click', () => {
-  currentStep++;
-  currentPage = 0;
-  document.querySelector('.item2').style.display = 'none';
-  showPage(currentPage);
-});
-
-// Start bei Seite 0
-showPage(0);
-</script>
-
 
 </body>
 
