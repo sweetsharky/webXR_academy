@@ -582,7 +582,7 @@ function showPage(pageIndex) {
       }
       if (currentStep === 2) {
         if (models["Werkzeug"]) {
-          models["Werkzeug"].visible = true; //Werkzeug automatisch einblenden bei Step 2.");
+          models["Werkzeug"].visible = !models["Werkzeug"].visible;
         }
       }
       //Wenn am Ende aller weiteren Texte, dann...
