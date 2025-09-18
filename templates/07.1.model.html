@@ -580,13 +580,11 @@ function showPage(pageIndex) {
       if (currentStep === 3) {
         document.querySelector('.item2').style.display = 'block';
       }
-      else if (currentStep === 2) {
+      if (currentStep === 2) {
         if (models["Werkzeug"]) {
           models["Werkzeug"].visible = true; //Werkzeug automatisch einblenden bei Step 2.");
         }
       }
-    
- 
       //Wenn am Ende aller weiteren Texte, dann...
       else if (currentStep < fullTexts.length - 1) {
         nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
