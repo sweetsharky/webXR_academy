@@ -577,7 +577,8 @@ function showPage(pageIndex) {
     } else {     // wir sind am Ende eines Textes
       //Wenn am Ende des ersten Textes, dann...
             if (currentStep ===2){
-                document.querySelector('.item2').style.display = 'block';
+                models["Werkzeug"].visible = true;
+                nextStepButton.style.display = "block";
             } else if (currentStep === 3) {
               document.querySelector('.item2').style.display = 'block';
             } else if (currentStep < fullTexts.length - 1) {//Wenn am Ende aller weiteren Texte, dann...
