@@ -576,16 +576,13 @@ function showPage(pageIndex) {
       nextButton.style.display = "block";  // normale Weiter-Page
     } else {     // wir sind am Ende eines Textes
       //Wenn am Ende des ersten Textes, dann...
-
-      if (currentStep === 3) {
-        document.querySelector('.item2').style.display = 'block';
-      }
-    
- 
-      //Wenn am Ende aller weiteren Texte, dann...
-      else if (currentStep < fullTexts.length - 1) {
-        nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
-      }
+            if (currentStep ===2){
+                document.querySelector('.item2').style.display = 'block';
+            } else if (currentStep === 3) {
+              document.querySelector('.item2').style.display = 'block';
+            } else if (currentStep < fullTexts.length - 1) {//Wenn am Ende aller weiteren Texte, dann...
+              nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
+            }
     }
   });
 }
