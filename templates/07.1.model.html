@@ -574,20 +574,20 @@ function showPage(pageIndex) {
   typeWriterEffect(pageText, () => {
     if (end < fullText.length) {
       nextButton.style.display = "block";  // normale Weiter-Page
-    } else if     // wir sind am Ende eines Textes
-      //Wenn am Ende des dritten Textes, dann...
-             (currentStep === 2) {
-              if (models["Werkzeug"]) {
-                models["Werkzeug"].visible = true;
-                nextStepButton.style.display = "block";
-              }}
-             else if (currentStep === 3) {
-                document.querySelector('.item2').style.display = 'block';
-                nextStepButton.style.display = "block";
-            } else if (currentStep < fullTexts.length - 1) { //Wenn am Ende aller weiteren Texte, dann...
-                nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
-                }
-    });
+    } else {     // wir sind am Ende eines Textes
+      //Wenn am Ende des ersten Textes, dann...
+
+      if (currentStep === 3) {
+        document.querySelector('.item2').style.display = 'block';
+      }
+    
+ 
+      //Wenn am Ende aller weiteren Texte, dann...
+      else if (currentStep < fullTexts.length - 1) {
+        nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
+      }
+    }
+  });
 }
 
 /*Auswahl der Buttons und definieren, was sie auslesen sollen*/
