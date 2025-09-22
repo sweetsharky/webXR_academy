@@ -280,7 +280,7 @@
       scene = new THREE.Scene();
 
       camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 40);
-
+      scene.add(camera); // wichtig: Kamera in die Szene hängen, damit camera.add(...) Kinder gerendert werden
       renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
       renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
@@ -365,7 +365,6 @@
             // x: links/rechts, y: hoch/runter, z: vor(-) / hinter(+) der Kamera
             model.position.set(0, -0.15, -0.4); // anpassen: -0.4 = 40cm vor der Kamera, -0.15 = etwas unter Mitte
             model.rotation.set(0, 0, 0); // optional: Orientierung zurücksetzen
-            model.scale.multiplyScalar(item.scale); // schon gemacht oben, hier nur sicherheitshalber
 
             // Sicherstellen, dass das Modell im Kamera-Raum gerendert wird
             camera.add(model);
@@ -896,7 +895,7 @@
                 nextButton.style.display = "block";  // normale Weiter-Page
               } else {     // wir sind am Ende eines Textes
                 //Wenn am Ende des ersten Textes, dann...
-                      if (currentStep ===1){
+                      if (currentStep === 1){
                           models["Nietplatte_mit_Rost"].visible = true;
                           nextStepButton.style.display = "block";
                       } else if (currentStep === 3) {
