@@ -428,7 +428,7 @@
       }
 
       // Fade helper (in/aus) - animiert opacity über duration (ms)
-      function fadeModel(model, from, to, duration = 600, onComplete = null) {
+      function fadeModel(model, from, to, duration = 6000, onComplete = null) {
         const start = performance.now();
         // ensure materials are ready for opacity animation
         model.traverse(m => {
