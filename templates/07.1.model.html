@@ -269,384 +269,384 @@
     const continueButton = document.getElementById("continue-button");
 
 
-      init();
-      animate();
+    init();
+    animate();
 
 
-      function init() {
-            const container = document.createElement('div');
-            document.body.appendChild(container);
+    function init() {
+      const container = document.createElement('div');
+      document.body.appendChild(container);
 
-            scene = new THREE.Scene();
+      scene = new THREE.Scene();
 
-            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 40);
+      camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 40);
 
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setPixelRatio(window.devicePixelRatio);
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.xr.enabled = true; // we have to enable the renderer for webxr
-            container.appendChild(renderer.domElement);
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.xr.enabled = true; // we have to enable the renderer for webxr
+      container.appendChild(renderer.domElement);
 
-            renderer.domElement.classList.add("three.js-canvas"); // Hiermit werden alle Elemente von Three.js (also der Canvas von Three.js) in den Vordergrund gerückt (über CSS-style oben gennent three.js-canvas), sodass das grid nicht die Interaktion mit den Modellen blockiert! 
+      renderer.domElement.classList.add("three.js-canvas"); // Hiermit werden alle Elemente von Three.js (also der Canvas von Three.js) in den Vordergrund gerückt (über CSS-style oben gennent three.js-canvas), sodass das grid nicht die Interaktion mit den Modellen blockiert! 
 
 
-            var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
-            light.position.set(0.5, 1, 0.25);
-            scene.add(light);
+      var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+      light.position.set(0.5, 1, 0.25);
+      scene.add(light);
 
-            // specify a model URL
-            //const modelUrl = 'https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_bearbeitet0.1_gltf/nietplatte_bearbeitet0.1.gltf'; 
-            
-            // create a GLTF loader object. GLTF is a 3D model format usually called the "JPEG of 3D" because it is
-            // fast and efficient to use, which is ideal for the web
-            loader = new THREE.GLTFLoader();
-            
+      // specify a model URL
+      //const modelUrl = 'https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_bearbeitet0.1_gltf/nietplatte_bearbeitet0.1.gltf'; 
+      
+      // create a GLTF loader object. GLTF is a 3D model format usually called the "JPEG of 3D" because it is
+      // fast and efficient to use, which is ideal for the web
+      loader = new THREE.GLTFLoader();
+  
 
-                // 📌 Liste der Modelle
-              const modelList = [
-              {
-                name: "Nietplatte",
-                url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_bearbeitet0.1_gltf/nietplatte_bearbeitet0.1.gltf",
-                position: { x: 0, y: 0, z: -0.3 },
-                scale: 0.002,
-                rotatable: true,
-              },
-              {
-                name: "Schiff",
-                url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/gislinge_viking_boat/scene.gltf",
-                position: { x: 0, y: -1.5, z: -4.0 },
-                scale: 0.01,
-                rotatable: false,
-              },
+        // 📌 Liste der Modelle
+      const modelList = [
+      {
+        name: "Nietplatte",
+        url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_bearbeitet0.1_gltf/nietplatte_bearbeitet0.1.gltf",
+        position: { x: 0, y: 0, z: -0.3 },
+        scale: 0.002,
+        rotatable: true,
+      },
+      {
+        name: "Schiff",
+        url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/gislinge_viking_boat/scene.gltf",
+        position: { x: 0, y: -1.5, z: -4.0 },
+        scale: 0.01,
+        rotatable: false,
+      },
 
-              {
-                name: "Nietplatte_mit_Rost",
-                url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_Rost/nietplatte_mit_Rost.gltf", 
-                position: { x: 0, y: 0, z: -0.3 }, 
-                scale: 0.002,
-                rotatable: false,
-              },
-              {
-                name: "Werkzeug",
-                url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/werkzeug_arch%C3%A4ologe/Werkzeug_arch%C3%A4ologe.gltf", 
-                position: { x: 0.2, y: 0, z: -0.3 }, // etwas versetzt neben der Nietplatte
-                scale: 0.002,
-                rotatable: false,
+      {
+        name: "Nietplatte_mit_Rost",
+        url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_Rost/nietplatte_mit_Rost.gltf", 
+        position: { x: 0, y: 0, z: -0.3 }, 
+        scale: 0.002,
+        rotatable: false,
+      },
+      {
+        name: "Werkzeug",
+        url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/werkzeug_arch%C3%A4ologe/Werkzeug_arch%C3%A4ologe.gltf", 
+        position: { x: 0.2, y: 0, z: -0.3 }, // etwas versetzt neben der Nietplatte
+        scale: 0.002,
+        rotatable: false,
+      }
+
+
+      ];
+
+
+            // --- Erweiterte Model-Loader-Callback-Logik --- durch Drag&Drop Feature bei Rostpartikeln ergänzt
+      // (Ersetze oder ergänze deinen loader.load Callback mit dem folgenden Verhalten)
+      // 📌 Modelle laden
+      modelList.forEach(item => {
+        loader.load(item.url, gltf => {
+          const model = gltf.scene;
+          model.scale.multiplyScalar(item.scale);
+          model.position.set(item.position.x, item.position.y, item.position.z);
+          model.visible = false; // unsichtbar am Anfang
+          model.userData.rotatable = item.rotatable; // Flag gespeichert, ob rotierbar oder nicht
+          scene.add(model);
+          models[item.name] = model; // im Objekt speichern
+          console.log(`Model "${item.name}" geladen`);
+
+          // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
+          if (item.name === "Nietplatte_mit_Rost") {
+            // Versuche, Kinder per Name zu finden; falls nicht benannt, suche Meshes mit 'rost' im Namen
+            const rostParts = [];
+            model.traverse((child) => {
+              if (child.isMesh) {
+                const n = (child.name || "").toLowerCase();
+                if (n.includes("rost1") || n.includes("rost2") || n.includes("rost3") || n.includes("rost")) {
+                  rostParts.push(child);
+                }
               }
+            });
 
+            // Falls Namen im Asset exakt "rost1" etc. sind, bessere Suche:
+            // try direct lookup
+            /*
+            ["rost1","rost2","rost3"].forEach(rname => {
+              const found = model.getObjectByName(rname);
+              if (found && found.isMesh && !rostParts.includes(found)) rostParts.push(found);
+            });
 
-              ];
-
-
-                    // --- Erweiterte Model-Loader-Callback-Logik --- durch Drag&Drop Feature bei Rostpartikeln ergänzt
-              // (Ersetze oder ergänze deinen loader.load Callback mit dem folgenden Verhalten)
-              // 📌 Modelle laden
-              modelList.forEach(item => {
-                loader.load(item.url, gltf => {
-                  const model = gltf.scene;
-                  model.scale.multiplyScalar(item.scale);
-                  model.position.set(item.position.x, item.position.y, item.position.z);
-                  model.visible = false; // unsichtbar am Anfang
-                  model.userData.rotatable = item.rotatable; // Flag gespeichert, ob rotierbar oder nicht
-                  scene.add(model);
-                  models[item.name] = model; // im Objekt speichern
-                  console.log(`Model "${item.name}" geladen`);
-
-                  // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
-                  if (item.name === "Nietplatte_mit_Rost") {
-                    // Versuche, Kinder per Name zu finden; falls nicht benannt, suche Meshes mit 'rost' im Namen
-                    const rostParts = [];
-                    model.traverse((child) => {
-                      if (child.isMesh) {
-                        const n = (child.name || "").toLowerCase();
-                        if (n.includes("rost1") || n.includes("rost2") || n.includes("rost3") || n.includes("rost")) {
-                          rostParts.push(child);
-                        }
-                      }
-                    });
-
-                    // Falls Namen im Asset exakt "rost1" etc. sind, bessere Suche:
-                    // try direct lookup
-                    /*
-                    ["rost1","rost2","rost3"].forEach(rname => {
-                      const found = model.getObjectByName(rname);
-                      if (found && found.isMesh && !rostParts.includes(found)) rostParts.push(found);
-                    });
-
-                    // Wenn trotzdem leer => nimm die 3 erstbesten Meshes (Fallback)
-                    if (rostParts.length === 0) {
-                      let count = 0;
-                      model.traverse((child) => {
-                        if (child.isMesh && count < 3) { rostParts.push(child); count++; }
-                      });
-                    }
-                    */
-
-
-                    // sicherstellen, dass die Materialien transparent sind, damit wir fade/opacity verändern können
-                    rostParts.forEach(m => ensureTransparentMaterials(m, 1));
-
-                    models["Nietplatte_mit_Rost_children"] = rostParts;
-                    // status-flag
-                    models["Nietplatte_mit_Rost_removedCount"] = 0;
-
-                    console.log("Gefundene Rost-Teile:", rostParts.map(p => p.name || p.uuid));
-                  }
-
-                  // Wenn es die saubere Nietplatte ist: ensure materials support opacity (für fade-in)
-                  if (item.name === "Nietplatte") {
-                    ensureTransparentMaterials(model, 0); // start bei 0 opacity (für fade-in)
-                    model.visible = false;
-                  }
-
-                }, undefined, (err) => {
-                  console.error("Fehler beim Laden von", item.url, err);
-                });
+            // Wenn trotzdem leer => nimm die 3 erstbesten Meshes (Fallback)
+            if (rostParts.length === 0) {
+              let count = 0;
+              model.traverse((child) => {
+                if (child.isMesh && count < 3) { rostParts.push(child); count++; }
               });
+            }
+            */
 
-              /*Start: Drag&Drop Feature*/
-              /* ---------------------------
-                Ergänzungen: Drag/Remove Rost-Teile + Fade Animationen
-                Einfügen nach deinem modelList.forEach(...) / im selben scope wie models, loader, camera, renderer
-              ----------------------------*/
 
-              // Hilfsfunktion: setzt alle Mesh-Materialien transparent und initial opacity
-              function ensureTransparentMaterials(object, initialOpacity = 1) {
-                object.traverse((child) => {
-                  if (child.isMesh) {
-                    const mat = child.material;
-                    // handle Array-Material (multi-material)
-                    if (Array.isArray(mat)) {
-                      mat.forEach(m => { m.transparent = true; if (m.opacity === undefined) m.opacity = initialOpacity; m.opacity = initialOpacity; });
-                    } else if (mat) {
-                      mat.transparent = true;
-                      if (mat.opacity === undefined) mat.opacity = initialOpacity;
-                      mat.opacity = initialOpacity;
-                    }
-                  }
-                });
+            // sicherstellen, dass die Materialien transparent sind, damit wir fade/opacity verändern können
+            rostParts.forEach(m => ensureTransparentMaterials(m, 1));
+
+            models["Nietplatte_mit_Rost_children"] = rostParts;
+            // status-flag
+            models["Nietplatte_mit_Rost_removedCount"] = 0;
+
+            console.log("Gefundene Rost-Teile:", rostParts.map(p => p.name || p.uuid));
+          }
+
+          // Wenn es die saubere Nietplatte ist: ensure materials support opacity (für fade-in)
+          if (item.name === "Werkzeug") {
+            ensureTransparentMaterials(model, 0); // start bei 0 opacity (für fade-in)
+            model.visible = false;
+          }
+
+        }, undefined, (err) => {
+          console.error("Fehler beim Laden von", item.url, err);
+        });
+      });
+
+      /*Start: Drag&Drop Feature*/
+      /* ---------------------------
+        Ergänzungen: Drag/Remove Rost-Teile + Fade Animationen
+        Einfügen nach deinem modelList.forEach(...) / im selben scope wie models, loader, camera, renderer
+      ----------------------------*/
+
+      // Hilfsfunktion: setzt alle Mesh-Materialien transparent und initial opacity
+      function ensureTransparentMaterials(object, initialOpacity = 1) {
+        object.traverse((child) => {
+          if (child.isMesh) {
+            const mat = child.material;
+            // handle Array-Material (multi-material)
+            if (Array.isArray(mat)) {
+              mat.forEach(m => { m.transparent = true; if (m.opacity === undefined) m.opacity = initialOpacity; m.opacity = initialOpacity; });
+            } else if (mat) {
+              mat.transparent = true;
+              if (mat.opacity === undefined) mat.opacity = initialOpacity;
+              mat.opacity = initialOpacity;
+            }
+          }
+        });
+      }
+
+      // Fade helper (in/aus) - animiert opacity über duration (ms)
+      function fadeModel(model, from, to, duration = 600, onComplete = null) {
+        const start = performance.now();
+        // ensure materials are ready for opacity animation
+        model.traverse(m => {
+          if (m.isMesh) {
+            if (Array.isArray(m.material)) {
+              m.material.forEach(mm => mm.transparent = true);
+            } else if (m.material) m.material.transparent = true;
+          }
+        });
+
+        function frame(t) {
+          const elapsed = t - start;
+          const p = Math.min(1, elapsed / duration);
+          const value = from + (to - from) * p;
+          model.traverse((child) => {
+            if (child.isMesh) {
+              if (Array.isArray(child.material)) {
+                child.material.forEach(m => { if (m) m.opacity = value; });
+              } else if (child.material) {
+                child.material.opacity = value;
               }
+            }
+          });
+          if (p < 1) {
+            requestAnimationFrame(frame);
+          } else {
+            // Ende
+            if (to === 0) model.visible = false;
+            if (onComplete) onComplete();
+          }
+        }
+        // make sure model visible when fading in
+        if (to > 0) model.visible = true;
+        requestAnimationFrame(frame);
+      }
 
-              // Fade helper (in/aus) - animiert opacity über duration (ms)
-              function fadeModel(model, from, to, duration = 600, onComplete = null) {
-                const start = performance.now();
-                // ensure materials are ready for opacity animation
-                model.traverse(m => {
-                  if (m.isMesh) {
-                    if (Array.isArray(m.material)) {
-                      m.material.forEach(mm => mm.transparent = true);
-                    } else if (m.material) m.material.transparent = true;
-                  }
-                });
 
-                function frame(t) {
-                  const elapsed = t - start;
-                  const p = Math.min(1, elapsed / duration);
-                  const value = from + (to - from) * p;
-                  model.traverse((child) => {
-                    if (child.isMesh) {
-                      if (Array.isArray(child.material)) {
-                        child.material.forEach(m => { if (m) m.opacity = value; });
-                      } else if (child.material) {
-                        child.material.opacity = value;
-                      }
+
+
+
+      /* ---------------------------
+        Drag & Drop via Touch (Raycast + Ebenenprojektion)
+      ----------------------------*/
+
+      let raycaster = new THREE.Raycaster();
+      let touchPos = new THREE.Vector2();
+      let dragging = null; // das aktuell gezogene Rost-Mesh
+      let dragOffset = new THREE.Vector3();
+      let dragPlane = new THREE.Plane();
+      let planeIntersectPoint = new THREE.Vector3();
+
+      renderer.domElement.addEventListener('touchstart', (ev) => {
+        if (!models["Nietplatte_mit_Rost"] || !models["Nietplatte_mit_Rost"].visible) return;
+        if (ev.touches.length !== 1) return;
+
+        const t = ev.touches[0];
+        touchPos.x = (t.pageX / window.innerWidth) * 2 - 1;
+        touchPos.y = -(t.pageY / window.innerHeight) * 2 + 1;
+
+        raycaster.setFromCamera(touchPos, camera);
+
+        // wir prüfen nur die Rost-Teile (falls vorhanden)
+        const rostParts = models["Nietplatte_mit_Rost_children"] || [];
+        if (rostParts.length === 0) return;
+
+        // Intersect mit diesen Teilen
+        const intersects = raycaster.intersectObjects(rostParts, true);
+        if (intersects.length > 0) {
+          // wähle den Mesh, setze dragging
+          dragging = intersects[0].object;
+          // setze Plane: senkrecht zur Kamera durch das Objekt (so bleibt es "auf dem Bildschirm")
+          const objWorldPos = new THREE.Vector3();
+          dragging.getWorldPosition(objWorldPos);
+          // plane normal entlang camera.getWorldDirection()
+          const camDir = new THREE.Vector3();
+          camera.getWorldDirection(camDir).negate(); // für Plane-Normal
+          dragPlane.setFromNormalAndCoplanarPoint(camDir, objWorldPos);
+          // berechne initialen offset (maintain grab point)
+          raycaster.ray.intersectPlane(dragPlane, planeIntersectPoint);
+          dragOffset.copy(planeIntersectPoint).sub(objWorldPos);
+
+          // Optionale visuelle Rückmeldung: etwas skalieren / highlight
+          dragging.scale.multiplyScalar(1.05);
+        }
+      }, { passive: false });
+
+      renderer.domElement.addEventListener('touchmove', (ev) => {
+        if (!dragging) return;
+        if (ev.touches.length !== 1) return;
+        ev.preventDefault();
+        const t = ev.touches[0];
+        touchPos.x = (t.pageX / window.innerWidth) * 2 - 1;
+        touchPos.y = -(t.pageY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(touchPos, camera);
+        if (raycaster.ray.intersectPlane(dragPlane, planeIntersectPoint)) {
+          // berechne neue Weltposition - offset abziehen
+          const newWorldPos = new THREE.Vector3().copy(planeIntersectPoint).sub(dragOffset);
+          // wenn das dragging Objekt Kind eines Modells ist => transformiere ggf. in lokalen Koordinaten
+          // Wir setzen position in world space, dazu parent.worldToLocal
+          const parent = dragging.parent;
+          if (parent) {
+            parent.worldToLocal(newWorldPos);
+            dragging.position.copy(newWorldPos);
+          } else {
+            dragging.position.copy(newWorldPos);
+          }
+        }
+      }, { passive: false });
+
+      renderer.domElement.addEventListener('touchend', (ev) => {
+        if (!dragging) return;
+
+        // kleine Rücksetzung der Skalierung
+        dragging.scale.multiplyScalar(1 / 1.05);
+
+        // Entfernen-Logik: wenn das Teil weit genug weg vom Ursprung der Nietplatte ist oder außerhalb eines Radius --> entfernen
+        const parentModel = models["Nietplatte_mit_Rost"];
+        const worldPos = new THREE.Vector3();
+        dragging.getWorldPosition(worldPos);
+
+        // referenzpunkt: parentModel world pos (falls vorhanden)
+        const parentWorld = new THREE.Vector3();
+        parentModel.getWorldPosition(parentWorld);
+
+        const dist = worldPos.distanceTo(parentWorld);
+        const removeThreshold = 0.25; // in Metern: anpassen falls nötig
+
+        if (dist > removeThreshold) {
+          // animate scale & fade-out, dann visible=false und count++
+          const removedMesh = dragging;
+          // fade out this mesh (material opacity -> 0)
+          const fadeDuration = 400;
+          const startTime = performance.now();
+          // ensure materials transparent
+          removedMesh.traverse((c) => { if (c.isMesh) { if (Array.isArray(c.material)) c.material.forEach(m=>m.transparent=true); else if(c.material) c.material.transparent=true; }});
+          function fadeStep(t) {
+            const p = Math.min(1, (t - startTime) / fadeDuration);
+            const val = 1 - p;
+            removedMesh.traverse((c) => {
+              if (c.isMesh) {
+                if (Array.isArray(c.material)) c.material.forEach(m => { if (m) m.opacity = val; });
+                else if (c.material) c.material.opacity = val;
+              }
+            });
+            removedMesh.scale.setScalar(1 - 0.7 * p); // leicht schrumpfen
+            if (p < 1) requestAnimationFrame(fadeStep);
+            else {
+              removedMesh.visible = false;
+              // markiere als entfernt
+              const childrenList = models["Nietplatte_mit_Rost_children"] || [];
+              // Setze removedCount
+              models["Nietplatte_mit_Rost_removedCount"] = (models["Nietplatte_mit_Rost_removedCount"] || 0) + 1;
+              // optional: entferne aus array
+              const idx = childrenList.indexOf(removedMesh);
+              if (idx !== -1) childrenList.splice(idx, 1);
+              console.log("Rost-Teil entfernt, verbleibend:", childrenList.length);
+              // wenn alle entfernt -> trigger nextStep
+              if (childrenList.length === 0) {
+                // Fade: Nietplatte einblenden, Nietplatte_mit_Rost ausblenden
+                const clean = models["Werkzeug"];
+                const rusty = models["Nietplatte_mit_Rost"];
+                if (clean) {
+                  // ensure clean visible and start from 0 opacity
+                  ensureTransparentMaterials(clean, 0);
+                  clean.visible = true;
+                  fadeModel(clean, 0, 1, 800);
+                }
+                if (rusty) {
+                  // fade out rusty
+                  fadeModel(rusty, 1, 0, 800, () => {
+                    // nach fade komplett: trigger next learning step
+                    console.log("Alle Rost-Teile entfernt -> nextStepButton triggern");
+                    // wenn nextStepButton existiert: click auslösen
+                    if (nextStepButton) {
+                      // Sicherheit: make it visible then trigger click so die UI-Logik läuft
+                      nextStepButton.style.display = "block";
+                      nextStepButton.click();
                     }
                   });
-                  if (p < 1) {
-                    requestAnimationFrame(frame);
-                  } else {
-                    // Ende
-                    if (to === 0) model.visible = false;
-                    if (onComplete) onComplete();
-                  }
-                }
-                // make sure model visible when fading in
-                if (to > 0) model.visible = true;
-                requestAnimationFrame(frame);
-              }
-
-
-
-
-
-              /* ---------------------------
-                Drag & Drop via Touch (Raycast + Ebenenprojektion)
-              ----------------------------*/
-
-              let raycaster = new THREE.Raycaster();
-              let touchPos = new THREE.Vector2();
-              let dragging = null; // das aktuell gezogene Rost-Mesh
-              let dragOffset = new THREE.Vector3();
-              let dragPlane = new THREE.Plane();
-              let planeIntersectPoint = new THREE.Vector3();
-
-              renderer.domElement.addEventListener('touchstart', (ev) => {
-                if (!models["Nietplatte_mit_Rost"] || !models["Nietplatte_mit_Rost"].visible) return;
-                if (ev.touches.length !== 1) return;
-
-                const t = ev.touches[0];
-                touchPos.x = (t.pageX / window.innerWidth) * 2 - 1;
-                touchPos.y = -(t.pageY / window.innerHeight) * 2 + 1;
-
-                raycaster.setFromCamera(touchPos, camera);
-
-                // wir prüfen nur die Rost-Teile (falls vorhanden)
-                const rostParts = models["Nietplatte_mit_Rost_children"] || [];
-                if (rostParts.length === 0) return;
-
-                // Intersect mit diesen Teilen
-                const intersects = raycaster.intersectObjects(rostParts, true);
-                if (intersects.length > 0) {
-                  // wähle den Mesh, setze dragging
-                  dragging = intersects[0].object;
-                  // setze Plane: senkrecht zur Kamera durch das Objekt (so bleibt es "auf dem Bildschirm")
-                  const objWorldPos = new THREE.Vector3();
-                  dragging.getWorldPosition(objWorldPos);
-                  // plane normal entlang camera.getWorldDirection()
-                  const camDir = new THREE.Vector3();
-                  camera.getWorldDirection(camDir).negate(); // für Plane-Normal
-                  dragPlane.setFromNormalAndCoplanarPoint(camDir, objWorldPos);
-                  // berechne initialen offset (maintain grab point)
-                  raycaster.ray.intersectPlane(dragPlane, planeIntersectPoint);
-                  dragOffset.copy(planeIntersectPoint).sub(objWorldPos);
-
-                  // Optionale visuelle Rückmeldung: etwas skalieren / highlight
-                  dragging.scale.multiplyScalar(1.05);
-                }
-              }, { passive: false });
-
-              renderer.domElement.addEventListener('touchmove', (ev) => {
-                if (!dragging) return;
-                if (ev.touches.length !== 1) return;
-                ev.preventDefault();
-                const t = ev.touches[0];
-                touchPos.x = (t.pageX / window.innerWidth) * 2 - 1;
-                touchPos.y = -(t.pageY / window.innerHeight) * 2 + 1;
-                raycaster.setFromCamera(touchPos, camera);
-                if (raycaster.ray.intersectPlane(dragPlane, planeIntersectPoint)) {
-                  // berechne neue Weltposition - offset abziehen
-                  const newWorldPos = new THREE.Vector3().copy(planeIntersectPoint).sub(dragOffset);
-                  // wenn das dragging Objekt Kind eines Modells ist => transformiere ggf. in lokalen Koordinaten
-                  // Wir setzen position in world space, dazu parent.worldToLocal
-                  const parent = dragging.parent;
-                  if (parent) {
-                    parent.worldToLocal(newWorldPos);
-                    dragging.position.copy(newWorldPos);
-                  } else {
-                    dragging.position.copy(newWorldPos);
-                  }
-                }
-              }, { passive: false });
-
-              renderer.domElement.addEventListener('touchend', (ev) => {
-                if (!dragging) return;
-
-                // kleine Rücksetzung der Skalierung
-                dragging.scale.multiplyScalar(1 / 1.05);
-
-                // Entfernen-Logik: wenn das Teil weit genug weg vom Ursprung der Nietplatte ist oder außerhalb eines Radius --> entfernen
-                const parentModel = models["Nietplatte_mit_Rost"];
-                const worldPos = new THREE.Vector3();
-                dragging.getWorldPosition(worldPos);
-
-                // referenzpunkt: parentModel world pos (falls vorhanden)
-                const parentWorld = new THREE.Vector3();
-                parentModel.getWorldPosition(parentWorld);
-
-                const dist = worldPos.distanceTo(parentWorld);
-                const removeThreshold = 0.25; // in Metern: anpassen falls nötig
-
-                if (dist > removeThreshold) {
-                  // animate scale & fade-out, dann visible=false und count++
-                  const removedMesh = dragging;
-                  // fade out this mesh (material opacity -> 0)
-                  const fadeDuration = 400;
-                  const startTime = performance.now();
-                  // ensure materials transparent
-                  removedMesh.traverse((c) => { if (c.isMesh) { if (Array.isArray(c.material)) c.material.forEach(m=>m.transparent=true); else if(c.material) c.material.transparent=true; }});
-                  function fadeStep(t) {
-                    const p = Math.min(1, (t - startTime) / fadeDuration);
-                    const val = 1 - p;
-                    removedMesh.traverse((c) => {
-                      if (c.isMesh) {
-                        if (Array.isArray(c.material)) c.material.forEach(m => { if (m) m.opacity = val; });
-                        else if (c.material) c.material.opacity = val;
-                      }
-                    });
-                    removedMesh.scale.setScalar(1 - 0.7 * p); // leicht schrumpfen
-                    if (p < 1) requestAnimationFrame(fadeStep);
-                    else {
-                      removedMesh.visible = false;
-                      // markiere als entfernt
-                      const childrenList = models["Nietplatte_mit_Rost_children"] || [];
-                      // Setze removedCount
-                      models["Nietplatte_mit_Rost_removedCount"] = (models["Nietplatte_mit_Rost_removedCount"] || 0) + 1;
-                      // optional: entferne aus array
-                      const idx = childrenList.indexOf(removedMesh);
-                      if (idx !== -1) childrenList.splice(idx, 1);
-                      console.log("Rost-Teil entfernt, verbleibend:", childrenList.length);
-                      // wenn alle entfernt -> trigger nextStep
-                      if (childrenList.length === 0) {
-                        // Fade: Nietplatte einblenden, Nietplatte_mit_Rost ausblenden
-                        const clean = models["Nietplatte"];
-                        const rusty = models["Nietplatte_mit_Rost"];
-                        if (clean) {
-                          // ensure clean visible and start from 0 opacity
-                          ensureTransparentMaterials(clean, 0);
-                          clean.visible = true;
-                          fadeModel(clean, 0, 1, 800);
-                        }
-                        if (rusty) {
-                          // fade out rusty
-                          fadeModel(rusty, 1, 0, 800, () => {
-                            // nach fade komplett: trigger next learning step
-                            console.log("Alle Rost-Teile entfernt -> nextStepButton triggern");
-                            // wenn nextStepButton existiert: click auslösen
-                            if (nextStepButton) {
-                              // Sicherheit: make it visible then trigger click so die UI-Logik läuft
-                              nextStepButton.style.display = "block";
-                              nextStepButton.click();
-                            }
-                          });
-                        } else {
-                          // fallback: direkt triggern
-                          if (nextStepButton) { nextStepButton.style.display = "block"; nextStepButton.click(); }
-                        }
-                      }
-                    }
-                  }
-                  requestAnimationFrame(fadeStep);
                 } else {
-                  // nicht weit genug verschoben: sanfte Rückkehr an ursprüngliche Position
-                  // Du kannst hier eine kleine Animation hinzufügen (als lineare Interpolation)
-                  // Wir finden original world position vom parentModel (oder setze auf parentWorld)
-                  const originalWorld = new THREE.Vector3();
-                  // Wir versuchen, falls das rost-Teil ein child war: dessen original Position relativ zum Model ist schwer zu erinnern.
-                  // Simpler: wir bewegen es zurück in die Nähe des parentWorld + small random offset
-                  const targetWorld = parentWorld.clone().add(new THREE.Vector3(0, 0, 0.02));
-                  const startWorld = worldPos.clone();
-                  const t0 = performance.now();
-                  const duration = 280;
-                  function returnStep(t) {
-                    const p = Math.min(1, (t - t0) / duration);
-                    const lerpWorld = startWorld.clone().lerp(targetWorld, p);
-                    // transform to local of parent
-                    const parent = dragging.parent;
-                    if (parent) {
-                      parent.worldToLocal(lerpWorld);
-                      dragging.position.copy(lerpWorld);
-                    } else dragging.position.copy(lerpWorld);
-                    if (p < 1) requestAnimationFrame(returnStep);
-                  }
-                  requestAnimationFrame(returnStep);
+                  // fallback: direkt triggern
+                  if (nextStepButton) { nextStepButton.style.display = "block"; nextStepButton.click(); }
                 }
+              }
+            }
+          }
+          requestAnimationFrame(fadeStep);
+        } else {
+          // nicht weit genug verschoben: sanfte Rückkehr an ursprüngliche Position
+          // Du kannst hier eine kleine Animation hinzufügen (als lineare Interpolation)
+          // Wir finden original world position vom parentModel (oder setze auf parentWorld)
+          const originalWorld = new THREE.Vector3();
+          // Wir versuchen, falls das rost-Teil ein child war: dessen original Position relativ zum Model ist schwer zu erinnern.
+          // Simpler: wir bewegen es zurück in die Nähe des parentWorld + small random offset
+          const targetWorld = parentWorld.clone().add(new THREE.Vector3(0, 0, 0.02));
+          const startWorld = worldPos.clone();
+          const t0 = performance.now();
+          const duration = 280;
+          function returnStep(t) {
+            const p = Math.min(1, (t - t0) / duration);
+            const lerpWorld = startWorld.clone().lerp(targetWorld, p);
+            // transform to local of parent
+            const parent = dragging.parent;
+            if (parent) {
+              parent.worldToLocal(lerpWorld);
+              dragging.position.copy(lerpWorld);
+            } else dragging.position.copy(lerpWorld);
+            if (p < 1) requestAnimationFrame(returnStep);
+          }
+          requestAnimationFrame(returnStep);
+        }
 
-                // reset dragging state
-                dragging = null;
-              }, { passive: false });
-              /*End: Drag&Drop Feature*/
+        // reset dragging state
+        dragging = null;
+      }, { passive: false });
+      /*End: Drag&Drop Feature*/
 
-            };              /*function init() zuende*/
+    };/*function init() zuende*/
             // learn about other types of 3D model formats you can use here: 
             // https://threejs.org/docs/#manual/en/introduction/Loading-3D-models
 
@@ -911,7 +911,7 @@
             showPage(0);
 
             //End: Script für Textleiste unten, um Typewriter-Effekt, Pagination und Overflow-Handling des Textes hinzubekommen.
-	    </script>
+</script>
 
 </body>
 
