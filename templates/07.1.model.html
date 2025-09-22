@@ -363,10 +363,9 @@
 
             // setze Position RELATIV zur Kamera (Kamerakoordinaten)
             // x: links/rechts, y: hoch/runter, z: vor(-) / hinter(+) der Kamera
-            model.position.set(0, 0.10, -0.2); // anpassen: -0.2 = 20cm vor der Kamera, 0.1 = etwas über Mitte
-            model.rotation.set(0, 0, 0); // optional: Orientierung zurücksetzen
+            model.position.set(0, 0.05, -0.2); // anpassen: -0.2 = 20cm vor der Kamera, 0.1 = etwas über Mitte
 
-            // Sicherstellen, dass das Modell im Kamera-Raum gerendert wird
+            // Sicherstellen, dass das Modell im Kamera-Raum gerendert wird --> dafür muss oben einmal die Kamera in dem Scene Graph initailisiert werden: scene.add(camera), sodass nun das Modell Kind der Kamera sein kann.
             camera.add(model);
 
             // Flag, dass dieses Modell screen-space ist
