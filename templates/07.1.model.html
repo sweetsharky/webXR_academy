@@ -404,8 +404,10 @@
 
 
             // sicherstellen, dass die Materialien transparent sind, damit wir fade/opacity verändern können
-            rostParts.forEach(m => ensureTransparentMaterials(m, 1));
-            m.frustumCulled = false;
+            rostParts.forEach(m => {
+              ensureTransparentMaterials(m, 1);
+              m.frustumCulled = false;
+            });
 
             models["Nietplatte_mit_Rost_children"] = rostParts;
             // status-flag
