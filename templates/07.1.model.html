@@ -337,19 +337,69 @@
 
       ];
 
-          // 📌 Modelle laden
-      modelList.forEach(item => {
-        loader.load(item.url, gltf => {
-          const model = gltf.scene;
-          model.scale.multiplyScalar(item.scale);
-          model.position.set(item.position.x, item.position.y, item.position.z);
-          model.visible = false; // unsichtbar am Anfang
-          model.userData.rotatable = item.rotatable; // Flag gespeichert, ob rotierbar oder nicht
-          scene.add(model);
-          models[item.name] = model; // im Objekt speichern
-          console.log(`Model "${item.name}" geladen`);
-        });
 
+              // --- Erweiterte Model-Loader-Callback-Logik --- durch Drag&Drop Feature bei Rostpartikeln ergänzt
+        // (Ersetze oder ergänze deinen loader.load Callback mit dem folgenden Verhalten)
+        // 📌 Modelle laden
+        modelList.forEach(item => {
+          loader.load(item.url, gltf => {
+            const model = gltf.scene;
+            model.scale.multiplyScalar(item.scale);
+            model.position.set(item.position.x, item.position.y, item.position.z);
+            model.visible = false; // unsichtbar am Anfang
+            model.userData.rotatable = item.rotatable; // Flag gespeichert, ob rotierbar oder nicht
+            scene.add(model);
+            models[item.name] = model; // im Objekt speichern
+            console.log(`Model "${item.name}" geladen`);
+
+            // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
+            if (item.name === "Nietplatte_mit_Rost") {
+              // Versuche, Kinder per Name zu finden; falls nicht benannt, suche Meshes mit 'rost' im Namen
+              const rostParts = [];
+              model.traverse((child) => {
+                if (child.isMesh) {
+                  const n = (child.name || "").toLowerCase();
+                  if (n.includes("rost1") || n.includes("rost2") || n.includes("rost3") || n.includes("rost")) {
+                    rostParts.push(child);
+                  }
+                }
+              });
+
+              // Falls Namen im Asset exakt "rost1" etc. sind, bessere Suche:
+              // try direct lookup
+              ["rost1","rost2","rost3"].forEach(rname => {
+                const found = model.getObjectByName(rname);
+                if (found && found.isMesh && !rostParts.includes(found)) rostParts.push(found);
+              });
+
+              // Wenn trotzdem leer => nimm die 3 erstbesten Meshes (Fallback)
+              if (rostParts.length === 0) {
+                let count = 0;
+                model.traverse((child) => {
+                  if (child.isMesh && count < 3) { rostParts.push(child); count++; }
+                });
+              }
+
+              // sicherstellen, dass die Materialien transparent sind, damit wir fade/opacity verändern können
+              rostParts.forEach(m => ensureTransparentMaterials(m, 1));
+
+              models["Nietplatte_mit_Rost_children"] = rostParts;
+              // status-flag
+              models["Nietplatte_mit_Rost_removedCount"] = 0;
+
+              console.log("Gefundene Rost-Teile:", rostParts.map(p => p.name || p.uuid));
+            }
+
+            // Wenn es die saubere Nietplatte ist: ensure materials support opacity (für fade-in)
+            if (item.name === "Nietplatte") {
+              ensureTransparentMaterials(model, 0); // start bei 0 opacity (für fade-in)
+              model.visible = false;
+            }
+
+          }, undefined, (err) => {
+            console.error("Fehler beim Laden von", item.url, err);
+          });
+        });
 
         /*Start: Drag&Drop Feature*/
         /* ---------------------------
@@ -413,67 +463,7 @@
         }
 
 
-        // --- Erweiterte Model-Loader-Callback-Logik ---
-        // (Ersetze oder ergänze deinen loader.load Callback mit dem folgenden Verhalten)
-        modelList.forEach(item => {
-          loader.load(item.url, gltf => {
-            const model = gltf.scene;
-            model.scale.multiplyScalar(item.scale);
-            model.position.set(item.position.x, item.position.y, item.position.z);
-            model.visible = false; // unsichtbar am Anfang
-            model.userData.rotatable = item.rotatable;
-            scene.add(model);
-            models[item.name] = model;
-            console.log(`Model "${item.name}" geladen`);
 
-            // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
-            if (item.name === "Nietplatte_mit_Rost") {
-              // Versuche, Kinder per Name zu finden; falls nicht benannt, suche Meshes mit 'rost' im Namen
-              const rostParts = [];
-              model.traverse((child) => {
-                if (child.isMesh) {
-                  const n = (child.name || "").toLowerCase();
-                  if (n.includes("rost1") || n.includes("rost2") || n.includes("rost3") || n.includes("rost")) {
-                    rostParts.push(child);
-                  }
-                }
-              });
-
-              // Falls Namen im Asset exakt "rost1" etc. sind, bessere Suche:
-              // try direct lookup
-              ["rost1","rost2","rost3"].forEach(rname => {
-                const found = model.getObjectByName(rname);
-                if (found && found.isMesh && !rostParts.includes(found)) rostParts.push(found);
-              });
-
-              // Wenn trotzdem leer => nimm die 3 erstbesten Meshes (Fallback)
-              if (rostParts.length === 0) {
-                let count = 0;
-                model.traverse((child) => {
-                  if (child.isMesh && count < 3) { rostParts.push(child); count++; }
-                });
-              }
-
-              // sicherstellen, dass die Materialien transparent sind, damit wir fade/opacity verändern können
-              rostParts.forEach(m => ensureTransparentMaterials(m, 1));
-
-              models["Nietplatte_mit_Rost_children"] = rostParts;
-              // status-flag
-              models["Nietplatte_mit_Rost_removedCount"] = 0;
-
-              console.log("Gefundene Rost-Teile:", rostParts.map(p => p.name || p.uuid));
-            }
-
-            // Wenn es die saubere Nietplatte ist: ensure materials support opacity (für fade-in)
-            if (item.name === "Nietplatte") {
-              ensureTransparentMaterials(model, 0); // start bei 0 opacity (für fade-in)
-              model.visible = false;
-            }
-
-          }, undefined, (err) => {
-            console.error("Fehler beim Laden von", item.url, err);
-          });
-        });
 
 
         /* ---------------------------
