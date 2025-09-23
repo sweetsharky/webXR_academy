@@ -258,7 +258,7 @@
     const models = {}; // hier speichern wir die geladenen Modelle
 
     //für den Abruf Animationen auf Models
-    let mixer;
+    const mixers = []; // enthält alle AnimationMixer-Instanzen, da pro Modell ein mixer vorhanden sein sollten, wenn man mehrere Modelle animiert hat
 		const clock = new THREE.Clock();
 
 
@@ -356,16 +356,17 @@
           
           //Start: lade Animationen auf Models und spiele sie ab
           if (gltf.animations && gltf.animations.length > 0) {
-              mixer = new THREE.AnimationMixer(model); // nur einmal setzen, für dieses Modell
-              // the gltf animations array contains animation clips for the model
-              console.log(gltf.animations);
-
+            const localMixer = new THREE.AnimationMixer(model);
+              // lege alle Actions an und play sie sofort
               gltf.animations.forEach((clip) => {
-                const action = mixer.clipAction(clip);
-                action.play(); // start playing each animation clip
+                const action = localMixer.clipAction(clip);
+                action.reset();
+                action.play();
               });
+              // speichere den Mixer, damit wir ihn im Render-Loop updaten können
+              mixers.push(localMixer);
           }
-          //End: lade Animationen auf Models
+          //End: lade Animationen auf Models durch das Erstellen von mixer (Animations-controller/-handler pro Modell
 
           scene.add(model);
           models[item.name] = model; // im Objekt speichern
@@ -773,11 +774,13 @@
             // which typically means 60 times a second (60 frames per second)
             //alles,was pro Frame ausgeführt werden soll
             function render() {
-              //Start: für natürliche Animation
+              // Start: für natürliche Animation über delta
+              // update aller Mixer
               const delta = clock.getDelta();
-              if (mixer) {
-                // Update the animation mixer on each frame
-                mixer.update(delta);
+              if (mixers.length > 0) {
+                for (let i = 0; i < mixers.length; i++) {
+                  mixers[i].update(delta);
+                }
               }
               //Ende: für natürliche Animation
               
