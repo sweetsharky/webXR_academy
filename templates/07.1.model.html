@@ -631,13 +631,13 @@
                   // ensure clean visible and start from 0 opacity
                   ensureTransparentMaterials(clean, 0);
                   clean.visible = true;
-                  fadeModel(clean, 0, 1, 800);
+                  fadeModel(clean, 0, 1, 8000);
                   //start animation on Model:"Nietplatte"
 
                 }
                 if (rusty) {
                   // fade out rusty
-                  fadeModel(rusty, 1, 0, 800, () => {
+                  fadeModel(rusty, 1, 0, 80000, () => {
                     // nach fade komplett: trigger next learning step
                     console.log("Alle Rost-Teile entfernt -> nextStepButton triggern");
                     // wenn nextStepButton existiert: click auslösen
