@@ -257,6 +257,10 @@
 		let loader; // we need to create a variable for a gltf model loader
     const models = {}; // hier speichern wir die geladenen Modelle
 
+    //für den Abruf Animationen auf Models
+    const mixers = []; // enthält alle AnimationMixer-Instanzen, da pro Modell ein mixer vorhanden sein sollten, wenn man mehrere Modelle animiert hat
+		const clock = new THREE.Clock();
+
 
     //Flags für Greifen/Ablgegen:Modell greifbar machen und an anderer Position ablegen: Greifen-und-Ablegen-Feature
     let isGrabbed = false;
@@ -269,75 +273,78 @@
     const continueButton = document.getElementById("continue-button");
 
 
-		init();
-		animate();
+    init();
+    animate();
 
 
-		function init() {
-			const container = document.createElement('div');
-			document.body.appendChild(container);
+    function init() {
+      const container = document.createElement('div');
+      document.body.appendChild(container);
 
-			scene = new THREE.Scene();
+      scene = new THREE.Scene();
 
-			camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 40);
-
-			renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-			renderer.setPixelRatio(window.devicePixelRatio);
-			renderer.setSize(window.innerWidth, window.innerHeight);
-			renderer.xr.enabled = true; // we have to enable the renderer for webxr
-			container.appendChild(renderer.domElement);
+      camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 40);
+      scene.add(camera); // wichtig: Kamera in die Szene hängen, damit über camera.add(modelname) Kinder gerendert werden
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.xr.enabled = true; // we have to enable the renderer for webxr
+      container.appendChild(renderer.domElement);
 
       renderer.domElement.classList.add("three.js-canvas"); // Hiermit werden alle Elemente von Three.js (also der Canvas von Three.js) in den Vordergrund gerückt (über CSS-style oben gennent three.js-canvas), sodass das grid nicht die Interaktion mit den Modellen blockiert! 
 
 
-			var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
-			light.position.set(0.5, 1, 0.25);
-			scene.add(light);
+      var light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+      light.position.set(0.5, 1, 0.25);
+      scene.add(light);
 
       // specify a model URL
       //const modelUrl = 'https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_bearbeitet0.1_gltf/nietplatte_bearbeitet0.1.gltf'; 
       
-			// create a GLTF loader object. GLTF is a 3D model format usually called the "JPEG of 3D" because it is
+      // create a GLTF loader object. GLTF is a 3D model format usually called the "JPEG of 3D" because it is
       // fast and efficient to use, which is ideal for the web
-			loader = new THREE.GLTFLoader();
-      
+      loader = new THREE.GLTFLoader();
+  
 
-          // 📌 Liste der Modelle
+        // 📌 Liste der Modelle
       const modelList = [
-        {
-          name: "Nietplatte",
-          url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_bearbeitet0.1_gltf/nietplatte_bearbeitet0.1.gltf",
-          position: { x: 0, y: 0, z: -0.3 },
-          scale: 0.002,
-          rotatable: true,
-        },
-        {
-          name: "Schiff",
-          url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/gislinge_viking_boat/scene.gltf",
-          position: { x: 0, y: -1.5, z: -4.0 },
-          scale: 0.01,
-          rotatable: false,
-        },
+      {
+        name: "Nietplatte",
+        url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_animation/nietplatte_mit_animation.gltf",
+        position: { x: 0, y: 0, z: -0.3 },
+        scale: 0.002,
+        rotatable: true,
+      },
+      {
+        name: "Schiff",
+        url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/gislinge_viking_boat/scene.gltf",
+        position: { x: 0, y: -1.5, z: -4.0 },
+        scale: 0.01,
+        rotatable: false,
+      },
 
-        {
-          name: "Nietplatte_mit_Rost",
-          url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_Rost/nietplatte_mit_Rost.gltf", 
-          position: { x: 0, y: 0, z: -0.3 }, 
-          scale: 0.002,
-          rotatable: false,
-        },
-        {
-          name: "Werkzeug",
-          url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/werkzeug_arch%C3%A4ologe/Werkzeug_arch%C3%A4ologe.gltf", 
-          position: { x: 0.2, y: 0, z: -0.3 }, // etwas versetzt neben der Nietplatte
-          scale: 0.002,
-          rotatable: false,
-        }
+      {
+        name: "Nietplatte_mit_Rost",
+        url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_Rost/nietplatte_mit_Rost.gltf", 
+        position: { x: 0, y: 0, z: -0.3 }, 
+        scale: 0.002,
+        rotatable: false,
+      },
+      {
+        name: "Werkzeug",
+        url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/werkzeug_arch%C3%A4ologe/Werkzeug_arch%C3%A4ologe.gltf", 
+        position: { x: 0.2, y: 0, z: -0.3 }, // etwas versetzt neben der Nietplatte
+        scale: 0.002,
+        rotatable: false,
+      }
 
 
       ];
 
-          // 📌 Modelle laden
+
+            // --- Erweiterte Model-Loader-Callback-Logik --- durch Drag&Drop Feature bei Rostpartikeln ergänzt
+      // (Ersetze oder ergänze deinen loader.load Callback mit dem folgenden Verhalten)
+      // 📌 Modelle laden
       modelList.forEach(item => {
         loader.load(item.url, gltf => {
           const model = gltf.scene;
@@ -345,277 +352,502 @@
           model.position.set(item.position.x, item.position.y, item.position.z);
           model.visible = false; // unsichtbar am Anfang
           model.userData.rotatable = item.rotatable; // Flag gespeichert, ob rotierbar oder nicht
+          
+          
+          //Start: lade Animationen auf Models und spiele sie ab
+          if (gltf.animations && gltf.animations.length > 0) {
+            const localMixer = new THREE.AnimationMixer(model);
+              // lege alle Actions an und play sie sofort
+              gltf.animations.forEach((clip) => {
+                const action = localMixer.clipAction(clip);
+                action.reset();
+                action.play();
+              });
+              // speichere den lokalen Mixer, damit wir ihn im Render-Loop updaten können, über die globale Variable mixers
+              mixers.push(localMixer);
+          }
+          //End: lade Animationen auf Models durch das Erstellen von mixer (Animations-controller/-handler pro Modell
+
           scene.add(model);
           models[item.name] = model; // im Objekt speichern
           console.log(`Model "${item.name}" geladen`);
+
+
+          // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
+          if (item.name === "Nietplatte_mit_Rost") {
+            if (model.parent) {
+              model.parent.remove(model); //da wir diese Modell als Kind der Kamera haben wollen und nicht mehr als Kind der Scene (AR-Scene), müssen wir es erst von der Scene entfernen, falls wir zuvor scene.add(model) gemacht haben.
+            }
+            // damit es immer sichtbar bleibt (auch wenn außerhalb der Frustum-Berechnung)
+            model.traverse((c) => { if (c.isMesh) c.frustumCulled = false; });
+
+            // setze Position RELATIV zur Kamera (Kamerakoordinaten)
+            // x: links/rechts, y: hoch/runter, z: vor(-) / hinter(+) der Kamera
+            model.position.set(0, 0.05, -0.2); // anpassen: -0.2 = 20cm vor der Kamera, 0.1 = etwas über Mitte
+
+            // Sicherstellen, dass das Modell im Kamera-Raum gerendert wird --> dafür muss oben einmal die Kamera in dem Scene Graph initailisiert werden: scene.add(camera), sodass nun das Modell Kind der Kamera sein kann.
+            camera.add(model);
+
+            // Flag, dass dieses Modell screen-space ist
+            model.userData.screenSpace = true;
+            
+
+            // Suche und registriere die Rost-Teile: Versuche, Kinder per Name zu finden; falls nicht benannt, suche Meshes mit 'rost' im Namen
+            const rostParts = [];
+            model.traverse((child) => {
+              if (child.isMesh) {
+                const n = (child.name || "").toLowerCase();
+                if (n.includes("rost1") || n.includes("rost2") || n.includes("rost3") || n.includes("rost")) {
+                  rostParts.push(child);
+                }
+              }
+            });
+
+
+            models["Nietplatte_mit_Rost_children"] = rostParts;
+            // status-flag
+            models["Nietplatte_mit_Rost_removedCount"] = 0;
+
+            console.log("Gefundene Rost-Teile:", rostParts.map(p => p.name || p.uuid));
+          }
+
+        }, undefined, (err) => {
+          console.error("Fehler beim Laden von", item.url, err);
         });
       });
-      // learn about other types of 3D model formats you can use here: 
-      // https://threejs.org/docs/#manual/en/introduction/Loading-3D-models
 
+      /*Start: Drag&Drop Feature*/
+      /* ---------------------------
+        Ergänzungen: Drag/Remove Rost-Teile 
+        Einfügen nach deinem modelList.forEach(...) / im selben scope wie models, loader, camera, renderer
+      ----------------------------*/
+      /* ---------------------------
+        Drag & Drop via Touch (Raycast + Ebenenprojektion)
+      ----------------------------*/
 
-				// onProgress callback: optional function for showing progress on model load
-				//function (xhr) {
-		      // console.log((xhr.loaded / xhr.total * 100) + '% loaded' );},
-				
-			
+      let raycaster = new THREE.Raycaster();
+      let touchPos = new THREE.Vector2();
+      let dragging = null; // das aktuell gezogene Rost-Mesh
+      let dragOffset = new THREE.Vector3();
+      let dragPlane = new THREE.Plane();
+      let planeIntersectPoint = new THREE.Vector3();
 
-			document.body.appendChild(ARButton.createButton(renderer, {
-				optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],
-          		domOverlay: { root: document.body}
-			}));
+      renderer.domElement.addEventListener('touchstart', (ev) => {
+        if (!models["Nietplatte_mit_Rost"] || !models["Nietplatte_mit_Rost"].visible) return;
+        if (ev.touches.length !== 1) return;
 
+        const t = ev.touches[0];
+        touchPos.x = (t.pageX / window.innerWidth) * 2 - 1;
+        touchPos.y = -(t.pageY / window.innerHeight) * 2 + 1;
 
-      // Wenn eine AR-Session startet → Intro-video starten und später UI einblenden
-        renderer.xr.addEventListener('sessionstart', () => {
-          // 1. Intro-Overlay anzeigen und video starten
-          overlay.style.display = "flex";
-          introVideo.play();
-          continueButton.style.display ="block";
-        });
+        raycaster.setFromCamera(touchPos, camera);
 
-        // Continue-Button → Overlay schließen und Grid freigeben
-        continueButton.addEventListener("click", () => {
-          overlay.remove(); // mit remove() wird das Video auch vom DOM getrennt, statt nur overlay.style.display = "none"; --> mehr Speicher wird frei
-          document.querySelector('.grid-container').style.display = "grid"; // UI freigeben
-        });
+        // wir prüfen nur die Rost-Teile (falls vorhanden)
+        const rostParts = models["Nietplatte_mit_Rost_children"] || [];
+        if (rostParts.length === 0) return;
 
+        // Intersect mit diesen Teilen
+        const intersects = raycaster.intersectObjects(rostParts, true);
+        if (intersects.length > 0) {
+          // wähle den Mesh, setze dragging
+          dragging = intersects[0].object;
+          // setze Plane: senkrecht zur Kamera durch das Objekt (so bleibt es "auf dem Bildschirm")
+          const objWorldPos = new THREE.Vector3();
+          dragging.getWorldPosition(objWorldPos);
+          // plane normal entlang camera.getWorldDirection()
+          const camDir = new THREE.Vector3();
+          camera.getWorldDirection(camDir).negate(); // für Plane-Normal
+          dragPlane.setFromNormalAndCoplanarPoint(camDir, objWorldPos);
+          // berechne initialen offset (maintain grab point)
+          raycaster.ray.intersectPlane(dragPlane, planeIntersectPoint);
+          dragOffset.copy(planeIntersectPoint).sub(objWorldPos);
 
-        // Wenn AR-Session beendet → UI ausblenden
-        renderer.xr.addEventListener('sessionend', () => {
-          document.querySelector('.grid-container').style.display = 'none';
-        });
+          // Optionale visuelle Rückmeldung: etwas skalieren / highlight
+          dragging.scale.multiplyScalar(1.05);
+        }
+      }, { passive: false });
 
-        
+      renderer.domElement.addEventListener('touchmove', (ev) => {
+        if (!dragging) return;
+        if (ev.touches.length !== 1) return;
+        ev.preventDefault();
+        const t = ev.touches[0];
+        touchPos.x = (t.pageX / window.innerWidth) * 2 - 1;
+        touchPos.y = -(t.pageY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(touchPos, camera);
+        if (raycaster.ray.intersectPlane(dragPlane, planeIntersectPoint)) {
+          // berechne neue Weltposition - offset abziehen
+          const newWorldPos = new THREE.Vector3().copy(planeIntersectPoint).sub(dragOffset);
+          // wenn das dragging Objekt Kind eines Modells ist => transformiere ggf. in lokalen Koordinaten
+          // Wir setzen position in world space, dazu parent.worldToLocal
+          const parent = dragging.parent;
+          if (parent) {
+            parent.worldToLocal(newWorldPos);
+            dragging.position.copy(newWorldPos);
+          } else {
+            dragging.position.copy(newWorldPos);
+          }
+        }
+      }, { passive: false });
 
+      renderer.domElement.addEventListener('touchend', (ev) => {
+        if (!dragging) return;
 
+        // kleine Rücksetzung der Skalierung
+        dragging.scale.multiplyScalar(1 / 1.05);
 
-              //Button, um UI-Panel(grid-Layout) zu sichtbar zu machen/unsichtbar
-      document.getElementById('toggle-panel').addEventListener('click', () => {
-        document.querySelector('.grid-container').classList.toggle('hide');
-      });
+        // Entfernen-Logik: wenn das Teil weit genug weg vom Ursprung der Nietplatte ist oder außerhalb eines Radius --> entfernen
+        const parentModel = models["Nietplatte_mit_Rost"];
+        const worldPos = new THREE.Vector3();
+        dragging.getWorldPosition(worldPos);
 
-            window.addEventListener('resize', onWindowResize, false);
+        // referenzpunkt: parentModel world pos (falls vorhanden)
+        const parentWorld = new THREE.Vector3();
+        parentModel.getWorldPosition(parentWorld);
 
-              // 📌 Buttons für Modelle
-                document.getElementById("toggle-nietplatte").addEventListener("click", () => toggleModel("Nietplatte"));
-                document.getElementById("toggle-schiff").addEventListener("click", () => toggleModel("Schiff"));
-                document.getElementById("toggle-nietplatte-rost").addEventListener("click", () => toggleModel("Nietplatte_mit_Rost"));
-                document.getElementById("toggle-werkzeug").addEventListener("click", () => toggleModel("Werkzeug"));
-    
+        const dist = worldPos.distanceTo(parentWorld);
+        const removeThreshold = 0.05; // in Metern: anpassen falls nötig
 
-              function toggleModel(name) {
-                if (models[name]) {
-                  models[name].visible = !models[name].visible;
-                  console.log(`${name} ist jetzt ${models[name].visible ? "sichtbar" : "unsichtbar"}`);
-                  
-                  // 📌 Greif-Button nur für Nietplatte sichtbar machen
-                  if (name === "Nietplatte") {
-                    document.getElementById("grab-nietplatte").style.display = models[name].visible ? "block" : "none";
-                  }
+        if (dist > removeThreshold) {
+          // animate scale & fade-out, dann visible=false und count++
+          const removedMesh = dragging;
+          // fade out this mesh (material opacity -> 0)
+          const fadeDuration = 400;
+          const startTime = performance.now();
+          // ensure materials transparent
+          removedMesh.traverse((c) => { if (c.isMesh) { if (Array.isArray(c.material)) c.material.forEach(m=>m.transparent=true); else if(c.material) c.material.transparent=true; }});
+          function fadeStep(t) {
+            const p = Math.min(1, (t - startTime) / fadeDuration);
+            const val = 1 - p;
+            removedMesh.traverse((c) => {
+              if (c.isMesh) {
+                if (Array.isArray(c.material)) c.material.forEach(m => { if (m) m.opacity = val; });
+                else if (c.material) c.material.opacity = val;
+              }
+            });
+            removedMesh.scale.setScalar(1 - 0.7 * p); // leicht schrumpfen
+            if (p < 1) requestAnimationFrame(fadeStep);
+            else {
+              removedMesh.visible = false;
+              // markiere als entfernt
+              const childrenList = models["Nietplatte_mit_Rost_children"] || [];
+              // Setze removedCount
+              models["Nietplatte_mit_Rost_removedCount"] = (models["Nietplatte_mit_Rost_removedCount"] || 0) + 1;
+              // optional: entferne aus array
+              const idx = childrenList.indexOf(removedMesh);
+              if (idx !== -1) childrenList.splice(idx, 1);
+              console.log("Rost-Teil entfernt, verbleibend:", childrenList.length);
+              // wenn alle entfernt -> trigger nextStep
+              if (childrenList.length === 0) {
+                // Nietplatte einblenden, Nietplatte_mit_Rost ausblenden
+                const clean = models["Nietplatte"];
+                const rusty = models["Nietplatte_mit_Rost"];
+                if (clean) {
+                  clean.visible = true;
                 }
-              }  
-
-        //ft_model_rot/clickable - Funktion, um Modell mit touch-swipes zu rotieren und anglickbar zu machen
-          //modell rotieren, wenn sichtbar    
-        let previousTouch = null;
-        let rotating = false; // Flag, ob Rotation aktiv ist. Erst sobald raycasting anzeigt, dass auf Model geklickt wurde wird rotating auf true gesetzt. Nur wenn Modell berührt wird, kann Modell also gedreht werden.
-        let activeModel = null;
-        
-        
-          renderer.domElement.addEventListener('touchstart', (event) => {
-            if (event.touches.length === 1) {
-              const touch = new THREE.Vector2();
-              touch.x = (event.touches[0].pageX / window.innerWidth) * 2 - 1;
-              touch.y = -(event.touches[0].pageY / window.innerHeight) * 2 + 1;
-
-              const raycaster = new THREE.Raycaster();
-              raycaster.setFromCamera(touch, camera);
-
-              // Nur sichtbare Modelle prüfen
-              const visibleModels = Object.values(models).filter(m => m.visible);
-              const intersects = raycaster.intersectObjects(visibleModels, true);
-
-              if (intersects.length > 0) {
-                // Das getroffene Modell als activeModel speichern
-                let intersected = intersects[0].object;
-
-                // Falls das getroffene Objekt ein Kind ist, gehe zum Root-Model
-                while (!visibleModels.includes(intersected)) {
-                  intersected = intersected.parent;
-                }
-                
-                // nur Modelle, die rotiert werden sollen (='rotatabel: true,') auf "rotating = true" setzen
-                if (intersected.userData.rotatable) {
-                activeModel = intersected;
-                rotating = true;
-                previousTouch = { x: event.touches[0].pageX, y: event.touches[0].pageY };
+                if (rusty) {
+                    // rusty ausblenden
+                    rusty.visible = false;
+                    // nachdem rusty ausgeblendet: trigger next learning step
+                    console.log("Alle Rost-Teile entfernt -> nextStepButton triggern");
+                    // wenn nextStepButton existiert: click auslösen
+                    if (nextStepButton) {
+                      // Sicherheit: make it visible then trigger click so die UI-Logik läuft
+                      nextStepButton.style.display = "block";
+                      nextStepButton.click();
+                    }
+                  } else {
+                  // fallback: direkt triggern
+                  if (nextStepButton) { nextStepButton.style.display = "block"; nextStepButton.click(); }
                 }
               }
             }
-          }, false);
+          }
+          requestAnimationFrame(fadeStep);
+        } 
 
-          renderer.domElement.addEventListener('touchmove', (event) => {
-            if (event.touches.length === 1 && previousTouch && rotating && activeModel) {
-              const deltaX = event.touches[0].pageX - previousTouch.x;
-              const deltaY = event.touches[0].pageY - previousTouch.y;
+        // reset dragging state
+        dragging = null;
+      }, { passive: false });
+      /*End: Drag&Drop Feature*/
 
-              activeModel.rotation.y += deltaX * 0.01;
-              activeModel.rotation.x += deltaY * 0.01;
+    };/*function init() zuende*/
+            // learn about other types of 3D model formats you can use here: 
+            // https://threejs.org/docs/#manual/en/introduction/Loading-3D-models
 
-              previousTouch = { x: event.touches[0].pageX, y: event.touches[0].pageY };
+
+              // onProgress callback: optional function for showing progress on model load
+              //function (xhr) {
+                // console.log((xhr.loaded / xhr.total * 100) + '% loaded' );},
+              
+            
+
+            document.body.appendChild(ARButton.createButton(renderer, {
+              optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],
+                    domOverlay: { root: document.body}
+            }));
+
+
+            // Wenn eine AR-Session startet → Intro-video starten und später UI einblenden
+              renderer.xr.addEventListener('sessionstart', () => {
+                // 1. Intro-Overlay anzeigen und video starten
+                overlay.style.display = "flex";
+                introVideo.play();
+                continueButton.style.display ="block";
+              });
+
+              // Continue-Button → Overlay schließen und Grid freigeben
+              continueButton.addEventListener("click", () => {
+                overlay.remove(); // mit remove() wird das Video auch vom DOM getrennt, statt nur overlay.style.display = "none"; --> mehr Speicher wird frei
+                document.querySelector('.grid-container').style.display = "grid"; // UI freigeben
+              });
+
+
+              // Wenn AR-Session beendet → UI ausblenden
+              renderer.xr.addEventListener('sessionend', () => {
+                document.querySelector('.grid-container').style.display = 'none';
+              });
+
+              
+
+
+
+                            //Button, um UI-Panel(grid-Layout) zu sichtbar zu machen/unsichtbar
+                    document.getElementById('toggle-panel').addEventListener('click', () => {
+                      document.querySelector('.grid-container').classList.toggle('hide');
+                    });
+
+                  window.addEventListener('resize', onWindowResize, false);
+
+                    // 📌 Buttons für Modelle
+                      document.getElementById("toggle-nietplatte").addEventListener("click", () => toggleModel("Nietplatte"));
+                      document.getElementById("toggle-schiff").addEventListener("click", () => toggleModel("Schiff"));
+                      document.getElementById("toggle-nietplatte-rost").addEventListener("click", () => toggleModel("Nietplatte_mit_Rost"));
+                      document.getElementById("toggle-werkzeug").addEventListener("click", () => toggleModel("Werkzeug"));
+          
+
+                    function toggleModel(name) {
+                      if (models[name]) {
+                        models[name].visible = !models[name].visible;
+                        console.log(`${name} ist jetzt ${models[name].visible ? "sichtbar" : "unsichtbar"}`);
+                        
+                        // 📌 Greif-Button nur für Nietplatte sichtbar machen
+                        if (name === "Nietplatte") {
+                          document.getElementById("grab-nietplatte").style.display = models[name].visible ? "block" : "none";
+                        }
+                      }
+                    }  
+
+                //ft_model_rot/clickable - Funktion, um Modell mit touch-swipes zu rotieren und anglickbar zu machen
+                  //modell rotieren, wenn sichtbar    
+                let previousTouch = null;
+                let rotating = false; // Flag, ob Rotation aktiv ist. Erst sobald raycasting anzeigt, dass auf Model geklickt wurde wird rotating auf true gesetzt. Nur wenn Modell berührt wird, kann Modell also gedreht werden.
+                let activeModel = null;
+              
+              
+                renderer.domElement.addEventListener('touchstart', (event) => {
+                  if (event.touches.length === 1) {
+                    const touch = new THREE.Vector2();
+                    touch.x = (event.touches[0].pageX / window.innerWidth) * 2 - 1;
+                    touch.y = -(event.touches[0].pageY / window.innerHeight) * 2 + 1;
+
+                    const raycaster = new THREE.Raycaster();
+                    raycaster.setFromCamera(touch, camera);
+
+                    // Nur sichtbare Modelle prüfen
+                    const visibleModels = Object.values(models).filter(m => m.visible);
+                    const intersects = raycaster.intersectObjects(visibleModels, true);
+
+                    if (intersects.length > 0) {
+                      // Das getroffene Modell als activeModel speichern
+                      let intersected = intersects[0].object;
+
+                      // Falls das getroffene Objekt ein Kind ist, gehe zum Root-Model
+                      while (!visibleModels.includes(intersected)) {
+                        intersected = intersected.parent;
+                      }
+                      
+                      // nur Modelle, die rotiert werden sollen (='rotatabel: true,') auf "rotating = true" setzen
+                      if (intersected.userData.rotatable) {
+                      activeModel = intersected;
+                      rotating = true;
+                      previousTouch = { x: event.touches[0].pageX, y: event.touches[0].pageY };
+                      }
+                    }
+                  }
+                }, false);
+
+                renderer.domElement.addEventListener('touchmove', (event) => {
+                  if (event.touches.length === 1 && previousTouch && rotating && activeModel) {
+                    const deltaX = event.touches[0].pageX - previousTouch.x;
+                    const deltaY = event.touches[0].pageY - previousTouch.y;
+
+                    activeModel.rotation.y += deltaX * 0.01;
+                    activeModel.rotation.x += deltaY * 0.01;
+
+                    previousTouch = { x: event.touches[0].pageX, y: event.touches[0].pageY };
+                  }
+                }, false);
+
+                renderer.domElement.addEventListener('touchend', () => {
+                  rotating = false;
+                  previousTouch = null;
+                  activeModel = null;
+                }, false);
+
+                //Greif-Button-Logik: während Event 'touchstart' das Modell mitführen. Bei 'touchend' ablegen
+                grabButton.addEventListener("touchstart", (e) => {
+                  e.preventDefault(); // verhindert Ghost-Clicks
+                  if (models["Nietplatte"] && models["Nietplatte"].visible) {
+                    grabbedModel = models["Nietplatte"];
+                    isGrabbed = true;
+                    grabButton.classList.add("grabbing"); // visuelles Feedback aktiv
+                  }
+                });
+
+                grabButton.addEventListener("touchend", () => {
+                  isGrabbed = false;
+                  grabbedModel = null;
+                  grabButton.classList.remove("grabbing"); // visuelles Feedback deaktivieren
+                });
+
+
+
+
+
+
+
+            // Anpassung bei Fenstergröße ändern → Kamera, Renderer und Grid
+            function onWindowResize() {
+                // Three.js anpassen
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);       
             }
-          }, false);
 
-          renderer.domElement.addEventListener('touchend', () => {
-            rotating = false;
-            previousTouch = null;
-            activeModel = null;
-          }, false);
 
-          //Greif-Button-Logik: während Event 'touchstart' das Modell mitführen. Bei 'touchend' ablegen
-          grabButton.addEventListener("touchstart", (e) => {
-            e.preventDefault(); // verhindert Ghost-Clicks
-            if (models["Nietplatte"] && models["Nietplatte"].visible) {
-              grabbedModel = models["Nietplatte"];
-              isGrabbed = true;
-              grabButton.classList.add("grabbing"); // visuelles Feedback aktiv
+
+            function animate() {
+              renderer.setAnimationLoop(render);
             }
-          });
-
-          grabButton.addEventListener("touchend", () => {
-            isGrabbed = false;
-            grabbedModel = null;
-            grabButton.classList.remove("grabbing"); // visuelles Feedback deaktivieren
-          });
-
-
-
-
-		}/*function init() zuende*/
-
-
-
-    // Anpassung bei Fenstergröße ändern → Kamera, Renderer und Grid
-    function onWindowResize() {
-        // Three.js anpassen
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);       
-    }
-
-
-
-		function animate() {
-			renderer.setAnimationLoop(render);
-		}
-    
-    //alles,was pro Frame ausgeführt werden soll
-		function render() {
-      //Gegriffenes Modell soll mit Camera "mitwandern", um Position im Raum zu verändern.
-      if (isGrabbed && grabbedModel) {
-        // Position etwas vor die Kamera setzen (z.B. 0.5m)
-        const offset = new THREE.Vector3(0, 0, -0.5);
-        offset.applyMatrix4(camera.matrixWorld);
-        grabbedModel.position.copy(offset);
-      }
-
-			renderer.render(scene, camera);
-		}
-
-
-
-    //Start: Script für Textleiste unten, um Typewriter-Effekt, Pagination und Overflow-Handling des Textes hinzubekommen.
-    const fullTexts = [
-      'Hallo angehender Archäologe!',
-      'Siehst du diesen verrosteten Klumpen Metall? Er wurde 1990 genau hier bei archöologischen Ausgrabungen gefunden.',
-      'Befreie es von der Korrosion! ',
-      'Was glaubst du, wozu dieses Metallstück gehören könnte?',
-      'Dieses alte Metallstück ist Teil von einem Schiff. Die Erdschicht, in dem es gefunden wurde, ist dem 9. Jahrhundert zuzuordnen. Aus einer schriftlichen Überlieferung wissen wir, dass es einen Überfall auf das Handelszentrum von Duisburg gegeben haben soll.', 
-      `Dieser Überfall ist von den Normannen, den Wikingern ausgegangen. Dieser Schiffsniet ist Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind. Denn nur an den Schiffen der Wikinger finden sich Schiffsnieten der gleichen Bauart. Schau dir den Schiffsniet genauer an und entdecke neue Informationen.`,
-      `Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben. Finde es heraus, indem du auch die anderen Gegenstände erkundest!`,
-      `Jetzt erfährst du noch mehr über die Wikinger ...`
-    ];
-
-
-    const charsPerPage = 100; // Anzahl Zeichen pro "Seite" (kannst du anpassen)
-    let currentStep = 0;   // startet bei Lernschritt 0
-    let currentPage = 0;   // Seite im aktuellen Schritt
-
-
-    const textBox = document.getElementById('textBox');
-    const nextButton = document.getElementById('nextButton');
-    const nextStepButton = document.getElementById('nextStepButton');
-
-    function typeWriterEffect(text, callback) {
-      let i = 0;
-      textBox.textContent = "";
-      const interval = setInterval(() => {
-        textBox.textContent += text[i];
-        i++;
-        if (i >= text.length) {
-          clearInterval(interval);
-          callback();
-        }
-      }, 30); // Geschwindigkeit (ms pro Buchstabe)
-    }
-
-    function showPage(pageIndex) {
-      const fullText = fullTexts[currentStep]; // Text vom aktuellen Lernschritt
-      const start = pageIndex * charsPerPage;
-      const end = start + charsPerPage;
-      let pageText = fullText.slice(start, end);
-
-      if (end < fullText.length) {
-        pageText += "...";
-      }
-
-
-
-      typeWriterEffect(pageText, () => {
-        if (end < fullText.length) {
-          nextButton.style.display = "block";  // normale Weiter-Page
-        } else {     // wir sind am Ende eines Textes
-          //Wenn am Ende des ersten Textes, dann...
-                if (currentStep ===2){
-                    models["Nietplatte_mit_Rost"].visible = true;
-                    nextStepButton.style.display = "block";
-                } else if (currentStep === 3) {
-                  document.querySelector('.item2').style.display = 'block';
-                } else if (currentStep < fullTexts.length - 1) {//Wenn am Ende aller weiteren Texte, dann...
-                  nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
+            
+            // render function called on a loop every time the screen is refreshed
+            // which typically means 60 times a second (60 frames per second)
+            //alles,was pro Frame ausgeführt werden soll
+            function render() {
+              // Start: für natürliche Animation über delta
+              // update aller Mixer
+              const delta = clock.getDelta();
+              if (mixers.length > 0) {
+                for (let i = 0; i < mixers.length; i++) {
+                  mixers[i].update(delta);
                 }
-        }
-      });
-    }
+              }
+              //Ende: für natürliche Animation
+              
+              //Gegriffenes Modell soll mit Camera "mitwandern", um Position im Raum zu verändern.
+              if (isGrabbed && grabbedModel) {
+                // Position etwas vor die Kamera setzen (z.B. 0.5m)
+                const offset = new THREE.Vector3(0, 0, -0.5);
+                offset.applyMatrix4(camera.matrixWorld);
+                grabbedModel.position.copy(offset);
+              }
 
-    /*Auswahl der Buttons und definieren, was sie auslesen sollen*/
-    nextStepButton.addEventListener('click', () => {
-      currentStep++;       // nächster Lernschritt
-      currentPage = 0;     // wieder von Seite 0 starten
-      nextStepButton.style.display = "none";
-      showPage(currentPage);
-    });
+              renderer.render(scene, camera);
+            }
 
-    nextButton.addEventListener('click', () => {
-      currentPage++;
-      nextButton.style.display = "none";
-      showPage(currentPage);
-    });
 
-    document.getElementById('schiff').addEventListener('click', () => {
-      currentStep++;
-      currentPage = 0;
-      document.querySelector('.item2').style.display = 'none';
-      showPage(currentPage);
-      models["Schiff"].visible = true;
-    });
 
-    // Start bei Seite 0
-    showPage(0);
+            //Start: Script für Textleiste unten, um Typewriter-Effekt, Pagination und Overflow-Handling des Textes hinzubekommen.
+            const fullTexts = [
+              'Hallo angehender Archäologe!',
+              'Siehst du diesen verrosteten Klumpen Metall? Er wurde 1990 genau hier bei archäologischen Ausgrabungen gefunden. Befreie es über drag&drop von der Korrosion!',
+              'Was glaubst du, wozu dieses Metallstück gehören könnte?',
+              'Dieses alte Metallstück ist Teil von einem Schiff. Die Erdschicht, in dem es gefunden wurde, ist dem 9. Jahrhundert zuzuordnen. Aus einer schriftlichen Überlieferung wissen wir, dass es einen Überfall auf das Handelszentrum von Duisburg gegeben haben soll.', 
+              `Dieser Überfall ist von den Normannen, den Wikingern ausgegangen. Dieser Schiffsniet ist Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind. Denn nur an den Schiffen der Wikinger finden sich Schiffsnieten der gleichen Bauart. Schau dir den Schiffsniet genauer an und entdecke neue Informationen.`,
+              `Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben. Finde es heraus, indem du auch die anderen Gegenstände erkundest!`,
+              `Jetzt erfährst du noch mehr über die Wikinger ...`
+            ];
 
-    //End: Script für Textleiste unten, um Typewriter-Effekt, Pagination und Overflow-Handling des Textes hinzubekommen.
-	</script>
+
+            const charsPerPage = 100; // Anzahl Zeichen pro "Seite" (kannst du anpassen)
+            let currentStep = 0;   // startet bei Lernschritt 0
+            let currentPage = 0;   // Seite im aktuellen Schritt
+
+
+            const textBox = document.getElementById('textBox');
+            const nextButton = document.getElementById('nextButton');
+            const nextStepButton = document.getElementById('nextStepButton');
+
+            function typeWriterEffect(text, callback) {
+              let i = 0;
+              textBox.textContent = "";
+              const interval = setInterval(() => {
+                textBox.textContent += text[i];
+                i++;
+                if (i >= text.length) {
+                  clearInterval(interval);
+                  callback();
+                }
+              }, 30); // Geschwindigkeit (ms pro Buchstabe)
+            }
+
+            function showPage(pageIndex) {
+              const fullText = fullTexts[currentStep]; // Text vom aktuellen Lernschritt
+              const start = pageIndex * charsPerPage;
+              const end = start + charsPerPage;
+              let pageText = fullText.slice(start, end);
+
+              if (end < fullText.length) {
+                pageText += "...";
+              }
+
+
+
+            typeWriterEffect(pageText, () => {
+              if (end < fullText.length) {
+                nextButton.style.display = "block";  // normale Weiter-Page
+              } else {     // wir sind am Ende eines Textes
+                //Wenn am Ende des ersten Textes, dann...
+                      if (currentStep === 1){
+                          models["Nietplatte_mit_Rost"].visible = true;
+                          nextStepButton.style.display = "block";
+                      } else if (currentStep === 2) {
+                        document.querySelector('.item2').style.display = 'block';
+                      } else if (currentStep < fullTexts.length - 1) {//Wenn am Ende aller weiteren Texte, dann...
+                        nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
+                      }
+              }
+            });
+            }
+
+            /*Auswahl der Buttons und definieren, was sie auslesen sollen*/
+            nextStepButton.addEventListener('click', () => {
+              currentStep++;       // nächster Lernschritt
+              currentPage = 0;     // wieder von Seite 0 starten
+              nextStepButton.style.display = "none";
+              showPage(currentPage);
+            });
+
+            nextButton.addEventListener('click', () => {
+              currentPage++;
+              nextButton.style.display = "none";
+              showPage(currentPage);
+            });
+
+            document.getElementById('schiff').addEventListener('click', () => {
+              currentStep++;
+              currentPage = 0;
+              document.querySelector('.item2').style.display = 'none';
+              showPage(currentPage);
+              models["Schiff"].visible = true;
+            });
+
+            // Start bei Seite 0
+            showPage(0);
+
+            //End: Script für Textleiste unten, um Typewriter-Effekt, Pagination und Overflow-Handling des Textes hinzubekommen.
+</script>
 
 </body>
 
