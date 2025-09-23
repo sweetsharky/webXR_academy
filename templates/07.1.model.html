@@ -257,6 +257,10 @@
 		let loader; // we need to create a variable for a gltf model loader
     const models = {}; // hier speichern wir die geladenen Modelle
 
+    //für den Abruf Animationen auf Models
+    let mixer;
+		const clock = new THREE.Clock();
+
 
     //Flags für Greifen/Ablgegen:Modell greifbar machen und an anderer Position ablegen: Greifen-und-Ablegen-Feature
     let isGrabbed = false;
@@ -306,7 +310,7 @@
       const modelList = [
       {
         name: "Nietplatte",
-        url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_bearbeitet0.1_gltf/nietplatte_bearbeitet0.1.gltf",
+        url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_animation/nietplatte_mit_animation.gltf",
         position: { x: 0, y: 0, z: -0.3 },
         scale: 0.002,
         rotatable: true,
@@ -348,6 +352,18 @@
           model.position.set(item.position.x, item.position.y, item.position.z);
           model.visible = false; // unsichtbar am Anfang
           model.userData.rotatable = item.rotatable; // Flag gespeichert, ob rotierbar oder nicht
+          
+          //Start: lade Animationen auf Models
+          mixer = new THREE.AnimationMixer(model);
+          // the gltf animations array contains animation clips for the model
+          console.log(gltf.animations);
+
+          gltf.animations.forEach((clip) => {
+            const action = mixer.clipAction(clip);
+            action.play(); // start playing each animation clip
+          });
+          //End: lade Animationen auf Models
+
           scene.add(model);
           models[item.name] = model; // im Objekt speichern
           console.log(`Model "${item.name}" geladen`);
@@ -415,7 +431,7 @@
           }
 
           // Wenn es die saubere Nietplatte ist: ensure materials support opacity (für fade-in)
-          if (item.name === "Werkzeug") {
+          if (item.name === "Nietplatte") {
             ensureTransparentMaterials(model, 0); // start bei 0 opacity (für fade-in)
             model.visible = false;
           }
@@ -609,13 +625,15 @@
               // wenn alle entfernt -> trigger nextStep
               if (childrenList.length === 0) {
                 // Fade: Nietplatte einblenden, Nietplatte_mit_Rost ausblenden
-                const clean = models["Werkzeug"];
+                const clean = models["Nietplatte"];
                 const rusty = models["Nietplatte_mit_Rost"];
                 if (clean) {
                   // ensure clean visible and start from 0 opacity
                   ensureTransparentMaterials(clean, 0);
                   clean.visible = true;
                   fadeModel(clean, 0, 1, 800);
+                  //start animation on Model:"Nietplatte"
+
                 }
                 if (rusty) {
                   // fade out rusty
@@ -827,8 +845,18 @@
               renderer.setAnimationLoop(render);
             }
             
+            // render function called on a loop every time the screen is refreshed
+            // which typically means 60 times a second (60 frames per second)
             //alles,was pro Frame ausgeführt werden soll
             function render() {
+              //Start: für natürliche Animation
+              const delta = clock.getDelta();
+              if (mixer) {
+                // Update the animation mixer on each frame
+                mixer.update(delta);
+              }
+              //Ende: für natürliche Animation
+              
               //Gegriffenes Modell soll mit Camera "mitwandern", um Position im Raum zu verändern.
               if (isGrabbed && grabbedModel) {
                 // Position etwas vor die Kamera setzen (z.B. 0.5m)
