@@ -353,15 +353,18 @@
           model.visible = false; // unsichtbar am Anfang
           model.userData.rotatable = item.rotatable; // Flag gespeichert, ob rotierbar oder nicht
           
-          //Start: lade Animationen auf Models
-          mixer = new THREE.AnimationMixer(model);
-          // the gltf animations array contains animation clips for the model
-          console.log(gltf.animations);
+          
+          //Start: lade Animationen auf Models und spiele sie ab
+          if (gltf.animations && gltf.animations.length > 0) {
+              mixer = new THREE.AnimationMixer(model); // nur einmal setzen, für dieses Modell
+              // the gltf animations array contains animation clips for the model
+              console.log(gltf.animations);
 
-          gltf.animations.forEach((clip) => {
-            const action = mixer.clipAction(clip);
-            action.play(); // start playing each animation clip
-          });
+              gltf.animations.forEach((clip) => {
+                const action = mixer.clipAction(clip);
+                action.play(); // start playing each animation clip
+              });
+          }
           //End: lade Animationen auf Models
 
           scene.add(model);
@@ -518,7 +521,7 @@
         parentModel.getWorldPosition(parentWorld);
 
         const dist = worldPos.distanceTo(parentWorld);
-        const removeThreshold = 0.1; // in Metern: anpassen falls nötig
+        const removeThreshold = 0.05; // in Metern: anpassen falls nötig
 
         if (dist > removeThreshold) {
           // animate scale & fade-out, dann visible=false und count++
