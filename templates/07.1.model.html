@@ -363,7 +363,7 @@
                 action.reset();
                 action.play();
               });
-              // speichere den Mixer, damit wir ihn im Render-Loop updaten können
+              // speichere den lokalen Mixer, damit wir ihn im Render-Loop updaten können über globale Variable mixers
               mixers.push(localMixer);
           }
           //End: lade Animationen auf Models durch das Erstellen von mixer (Animations-controller/-handler pro Modell
@@ -371,7 +371,6 @@
           scene.add(model);
           models[item.name] = model; // im Objekt speichern
           console.log(`Model "${item.name}" geladen`);
-          console.log("Mixer:",mixers);
 
 
           // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
@@ -404,22 +403,6 @@
               }
             });
 
-            // Falls Namen im Asset exakt "rost1" etc. sind, bessere Suche:
-            // try direct lookup
-            /*
-            ["rost1","rost2","rost3"].forEach(rname => {
-              const found = model.getObjectByName(rname);
-              if (found && found.isMesh && !rostParts.includes(found)) rostParts.push(found);
-            });
-
-            // Wenn trotzdem leer => nimm die 3 erstbesten Meshes (Fallback)
-            if (rostParts.length === 0) {
-              let count = 0;
-              model.traverse((child) => {
-                if (child.isMesh && count < 3) { rostParts.push(child); count++; }
-              });
-            }
-            */
 
             models["Nietplatte_mit_Rost_children"] = rostParts;
             // status-flag
@@ -581,30 +564,7 @@
             }
           }
           requestAnimationFrame(fadeStep);
-        } else {
-          // nicht weit genug verschoben: sanfte Rückkehr an ursprüngliche Position
-          // Du kannst hier eine kleine Animation hinzufügen (als lineare Interpolation)
-          // Wir finden original world position vom parentModel (oder setze auf parentWorld)
-          const originalWorld = new THREE.Vector3();
-          // Wir versuchen, falls das rost-Teil ein child war: dessen original Position relativ zum Model ist schwer zu erinnern.
-          // Simpler: wir bewegen es zurück in die Nähe des parentWorld + small random offset
-          const targetWorld = parentWorld.clone().add(new THREE.Vector3(0, 0, 0.02));
-          const startWorld = worldPos.clone();
-          const t0 = performance.now();
-          const duration = 280;
-          function returnStep(t) {
-            const p = Math.min(1, (t - t0) / duration);
-            const lerpWorld = startWorld.clone().lerp(targetWorld, p);
-            // transform to local of parent
-            const parent = dragging.parent;
-            if (parent) {
-              parent.worldToLocal(lerpWorld);
-              dragging.position.copy(lerpWorld);
-            } else dragging.position.copy(lerpWorld);
-            if (p < 1) requestAnimationFrame(returnStep);
-          }
-          requestAnimationFrame(returnStep);
-        }
+        } 
 
         // reset dragging state
         dragging = null;
