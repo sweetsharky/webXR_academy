@@ -416,24 +416,11 @@
             }
             */
 
-
-            // sicherstellen, dass die Materialien transparent sind, damit wir fade/opacity verändern können
-            rostParts.forEach(m => {
-              ensureTransparentMaterials(m, 1);
-              m.frustumCulled = false;
-            });
-
             models["Nietplatte_mit_Rost_children"] = rostParts;
             // status-flag
             models["Nietplatte_mit_Rost_removedCount"] = 0;
 
             console.log("Gefundene Rost-Teile:", rostParts.map(p => p.name || p.uuid));
-          }
-
-          // Wenn es die saubere Nietplatte ist: ensure materials support opacity (für fade-in)
-          if (item.name === "Nietplatte") {
-            ensureTransparentMaterials(model, 0); // start bei 0 opacity (für fade-in)
-            model.visible = false;
           }
 
         }, undefined, (err) => {
@@ -443,69 +430,9 @@
 
       /*Start: Drag&Drop Feature*/
       /* ---------------------------
-        Ergänzungen: Drag/Remove Rost-Teile + Fade Animationen
+        Ergänzungen: Drag/Remove Rost-Teile 
         Einfügen nach deinem modelList.forEach(...) / im selben scope wie models, loader, camera, renderer
       ----------------------------*/
-
-      // Hilfsfunktion: setzt alle Mesh-Materialien transparent und initial opacity
-      function ensureTransparentMaterials(object, initialOpacity = 1) {
-        object.traverse((child) => {
-          if (child.isMesh) {
-            const mat = child.material;
-            // handle Array-Material (multi-material)
-            if (Array.isArray(mat)) {
-              mat.forEach(m => { m.transparent = true; if (m.opacity === undefined) m.opacity = initialOpacity; m.opacity = initialOpacity; });
-            } else if (mat) {
-              mat.transparent = true;
-              if (mat.opacity === undefined) mat.opacity = initialOpacity;
-              mat.opacity = initialOpacity;
-            }
-          }
-        });
-      }
-
-      // Fade helper (in/aus) - animiert opacity über duration (ms)
-      function fadeModel(model, from, to, duration = 6000, onComplete = null) {
-        const start = performance.now();
-        // ensure materials are ready for opacity animation
-        model.traverse(m => {
-          if (m.isMesh) {
-            if (Array.isArray(m.material)) {
-              m.material.forEach(mm => mm.transparent = true);
-            } else if (m.material) m.material.transparent = true;
-          }
-        });
-
-        function frame(t) {
-          const elapsed = t - start;
-          const p = Math.min(1, elapsed / duration);
-          const value = from + (to - from) * p;
-          model.traverse((child) => {
-            if (child.isMesh) {
-              if (Array.isArray(child.material)) {
-                child.material.forEach(m => { if (m) m.opacity = value; });
-              } else if (child.material) {
-                child.material.opacity = value;
-              }
-            }
-          });
-          if (p < 1) {
-            requestAnimationFrame(frame);
-          } else {
-            // Ende
-            if (to === 0) model.visible = false;
-            if (onComplete) onComplete();
-          }
-        }
-        // make sure model visible when fading in
-        if (to > 0) model.visible = true;
-        requestAnimationFrame(frame);
-      }
-
-
-
-
-
       /* ---------------------------
         Drag & Drop via Touch (Raycast + Ebenenprojektion)
       ----------------------------*/
@@ -624,21 +551,16 @@
               console.log("Rost-Teil entfernt, verbleibend:", childrenList.length);
               // wenn alle entfernt -> trigger nextStep
               if (childrenList.length === 0) {
-                // Fade: Nietplatte einblenden, Nietplatte_mit_Rost ausblenden
+                // Nietplatte einblenden, Nietplatte_mit_Rost ausblenden
                 const clean = models["Nietplatte"];
                 const rusty = models["Nietplatte_mit_Rost"];
                 if (clean) {
-                  // ensure clean visible and start from 0 opacity
-                  ensureTransparentMaterials(clean, 0);
                   clean.visible = true;
-                  fadeModel(clean, 0, 1, 8000);
-                  //start animation on Model:"Nietplatte"
-
                 }
                 if (rusty) {
-                  // fade out rusty
-                  fadeModel(rusty, 1, 0, 80000, () => {
-                    // nach fade komplett: trigger next learning step
+                    // rusty ausblenden
+                    rusty.visible = false;
+                    // nachdem rusty ausgeblendet: trigger next learning step
                     console.log("Alle Rost-Teile entfernt -> nextStepButton triggern");
                     // wenn nextStepButton existiert: click auslösen
                     if (nextStepButton) {
@@ -646,8 +568,7 @@
                       nextStepButton.style.display = "block";
                       nextStepButton.click();
                     }
-                  });
-                } else {
+                  } else {
                   // fallback: direkt triggern
                   if (nextStepButton) { nextStepButton.style.display = "block"; nextStepButton.click(); }
                 }
