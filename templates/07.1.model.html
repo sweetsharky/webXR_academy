@@ -371,7 +371,7 @@
           scene.add(model);
           models[item.name] = model; // im Objekt speichern
           console.log(`Model "${item.name}" geladen`);
-
+          console.log("Mixer:",mixers);
 
 
           // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
@@ -433,8 +433,6 @@
         });
       });
 
-
-                console.log(mixers);
       /*Start: Drag&Drop Feature*/
       /* ---------------------------
         Ergänzungen: Drag/Remove Rost-Teile 
