@@ -53,7 +53,7 @@
       grid-column-end: 3;
     }
 
-    .item2 {
+    .item2_1 {
       background-color: orange;
       display: none;
     }
@@ -142,6 +142,17 @@
     width: 100%;
     align-items: center;
   }
+  .icon-btn {
+  background: transparent;
+  border: none;
+  padding: 6px;
+  border-radius: 6px;
+}
+.icon-btn img { display: block; pointer-events: none; } /* pointer-events: none damit Klicks immer am <Button> landen und nicht auf <img> */
+
+
+
+
   /*Hinweis-Icons Ende*/
 
   /*Start: Button für grab-nietplatte und änderung der Farbe als Feedback*/
@@ -214,7 +225,7 @@
 <div class="grid-container">
   <div class="item1">Auf den Spuren der Wikinger in Duisburg</div>
   <div class="empty-gameObject-item2">
-    <div class="item2">  
+    <div class="item2_1">  
     <p style="background: green;"></p>Das Objekt, das du siehst ist es ein Teil von...(wähle aus):</p>
     <div class="answers">
       <button class="quiz-button" id="schiff">einem Schiff</button>
@@ -223,11 +234,19 @@
     </div>
     </div>
   </div>
+
     
-  <div class="item3">3
+  <div class="item3">
     <div class="icon-column">
-      <img src="/webXR_academy/staticfiles/images/feuerstahlbeschlag_duisburg_einzeln.svg" alt="Feuerstahlbeschlag" width="10"/>
-      <img src="/webXR_academy/staticfiles/images/logo_schrift.svg" alt="logoSchrift" width="20"/>
+      <button class="icon-btn" data-action="showNiet">
+        <img src="/webXR_academy/staticfiles/images/logo_schrift.svg" alt="Icon Niet" width="20"/>
+      </button>
+      <button class="icon-btn" data-action="showShip">
+        <img src="/webXR_academy/staticfiles/images/logo_schrift.svg" alt="Icon Schiff" width="20"/>
+      </button>
+      <button class="icon-btn" data-action="showFeuerstahl">
+        <img src="/webXR_academy/staticfiles/images/feuerstahlbeschlag_duisburg_einzeln.svg" alt="Feuerstahlbeschlag" width="24"/>
+      </button>
             <!-- 📌 Buttons im HTML -->
       <button id="toggle-nietplatte">Nietplatte an/aus</button>
       <button id="toggle-schiff">Schiff an/aus</button>
@@ -619,6 +638,34 @@
 
                   window.addEventListener('resize', onWindowResize, false);
 
+                    //Start: Icon-Buttons
+                    document.querySelectorAll('.icon-btn').forEach(btn => {
+                      btn.addEventListener('click', (e) => {
+                        const action = btn.dataset.action;
+                        handleIconAction(action, e);
+                      });
+                    });
+
+                    // zentrale Dispatcher-Funktion
+                    function handleIconAction(action, event) {
+                      switch(action) {
+                        case 'showNiet':
+                          // Beispiel: Text anzeigen
+                          document.querySelector('.item2').style.display = 'block';
+                          break;
+                        case 'showSchiff':
+                          // vorhandene Funktion benutzen
+                          toggleModel('Schiff');
+                          break;
+                        case 'showFeuerstahl':
+                          // beliebige Aktion, z. B. Panel öffnen
+                          document.querySelector('.item2').style.display = 'block';
+                          break;
+                      }
+                    }
+                    //End: Icon-Buttons
+
+
                     // 📌 Buttons für Modelle
                       document.getElementById("toggle-nietplatte").addEventListener("click", () => toggleModel("Nietplatte"));
                       document.getElementById("toggle-schiff").addEventListener("click", () => toggleModel("Schiff"));
@@ -813,7 +860,7 @@
                           models["Nietplatte_mit_Rost"].visible = true;
                           nextStepButton.style.display = "block";
                       } else if (currentStep === 2) {
-                        document.querySelector('.item2').style.display = 'block';
+                        document.querySelector('.item2_1').style.display = 'block';
                       } else if (currentStep < fullTexts.length - 1) {//Wenn am Ende aller weiteren Texte, dann...
                         nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
                       }
@@ -838,7 +885,7 @@
             document.getElementById('schiff').addEventListener('click', () => {
               currentStep++;
               currentPage = 0;
-              document.querySelector('.item2').style.display = 'none';
+              document.querySelector('.item2_1').style.display = 'none';
               showPage(currentPage);
               models["Schiff"].visible = true;
             });
