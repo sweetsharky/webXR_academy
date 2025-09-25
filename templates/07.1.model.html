@@ -63,6 +63,11 @@
       z-index: 30;
       pointer-events: auto; /* erlaubt Klicks/Touch am Video */
     }
+    .grid-container .item2_2 video {
+      width: 100%;
+      height: auto;
+      max-height: 100%;
+    }
 
     .item3 {
       background-color: orange;
@@ -256,7 +261,9 @@
         <source src="/webXR_academy/staticfiles/videos/probeVideo_restauration.mp4" type="video/mp4">
         Dein Browser unterstützt kein HTML5-Video.
       </video>
-      <button id="continueButton_nietVideo">Skip</button>
+      <div>
+        <button id="continueButton_nietVideo">Skip</button>
+      </div>
     </div>
   </div>
 
