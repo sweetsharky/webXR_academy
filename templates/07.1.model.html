@@ -194,7 +194,7 @@
   max-height: 100%;
 }
 
-#continue-button {
+#continue-button_intro {
   position: absolute;
   bottom: 200px;
   padding: 1em 2em;
@@ -207,6 +207,17 @@
 }
 /*Ende: Intro-video und -Button*/
 
+#continueButton_nietVideo {
+  position: absolute;
+  bottom: 200px;
+  padding: 1em 2em;
+  border-radius: 0.5em;
+  background-color: #04AA6D;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 1em;
+}
 </style>
 
 </head>
@@ -219,7 +230,7 @@
     <source src="/webXR_academy/staticfiles/videos/WikingAR_intro.mp4" type="video/mp4">
     Dein Browser unterstützt kein HTML5-Video.
   </video>
-  <button id="continue-button" style="display:none;">Los geht's!</button>
+  <button id="continue-button_intro" style="display:none;">Los geht's!</button>
 </div>
 
 <div class="grid-container">
@@ -232,6 +243,14 @@
       <button class="quiz-button" id="waffe">einer Waffe</button>
       <button class="quiz-button" id="eimer">einem Wassereimer</button>
     </div>
+    </div>
+
+    <div class="item2_2" style="display: none;">
+      <video id="ship-video" width="100%" controls>
+        <source src="/webXR_academy/staticfiles/videos/probeVideo_restauration.mp4" type="video/mp4">
+        Dein Browser unterstützt kein HTML5-Video.
+      </video>
+      <button id="continueButton_nietVideo" style="display:none;">Skip</button>
     </div>
   </div>
 
@@ -289,7 +308,7 @@
     //Intro-video und -Button
     const overlay = document.getElementById("intro-overlay");
     const introVideo = document.getElementById("intro-video");
-    const continueButton = document.getElementById("continue-button");
+    const continueButton_intro = document.getElementById("continue-button_intro");
 
 
     init();
@@ -615,12 +634,15 @@
                 continueButton.style.display ="block";
               });
 
-              // Continue-Button → Overlay schließen und Grid freigeben
-              continueButton.addEventListener("click", () => {
+              // Continue-Button_intro → Overlay schließen und Grid freigeben
+              continueButton_intro.addEventListener("click", () => {
                 overlay.remove(); // mit remove() wird das Video auch vom DOM getrennt, statt nur overlay.style.display = "none"; --> mehr Speicher wird frei
                 document.querySelector('.grid-container').style.display = "grid"; // UI freigeben
               });
-
+              // continueButton_nietVideo → Video schließen
+              continueButton_nietVideo.addEventListener("click", () => {
+                document.querySelector('.item2_2').style.display = 'none';
+              });
 
               // Wenn AR-Session beendet → UI ausblenden
               renderer.xr.addEventListener('sessionend', () => {
@@ -650,12 +672,16 @@
                     function handleIconAction(action, event) {
                       switch(action) {
                         case 'showNiet':
-                          // Beispiel: Text anzeigen
-                          document.querySelector('.item2_1').style.display = 'block';
+                        // item2_2 Container sichtbar machen und Video starten
+                        const nietVideo = document.getElementById('ship-video');
+                        if (document.querySelector('.item2_2') && nietVideo) {
+                          document.querySelector('.item2_2').style.display = 'block';
+                          nietVideo.currentTime = 0; // optional: von Anfang starten
+                          nietVideo.play();
+                        }
                           break;
                         case 'showShip':
-                          // vorhandene Funktion benutzen
-                          toggleModel('Schiff');
+                          //Funktion einfügen, um beim Klick was auszulösen
                           break;
                         case 'showFeuerstahl':
                           // beliebige Aktion, z. B. Panel öffnen
