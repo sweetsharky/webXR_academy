@@ -661,45 +661,38 @@
 
                   window.addEventListener('resize', onWindowResize, false);
 
-                    //Start: Icon-Buttons
-                    document.querySelectorAll('.icon-btn').forEach(btn => {
-                      btn.addEventListener('click', (e) => {
-                        const action = btn.dataset.action;
-                        handleIconAction(action, e);
-                      });
+                  //Start: Icon-Buttons
+                  document.querySelectorAll('.icon-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                      const action = btn.dataset.action;
+                      handleIconAction(action, e);
                     });
+                  });
 
-                    // zentrale Dispatcher-Funktion
-                    function handleIconAction(action, event) {
-                      switch(action) {
-                        case 'showNiet':
-                        // item2_2 Container sichtbar machen und Video starten
-                        const nietVideo = document.getElementById('ship-video');
-                        if (document.querySelector('.item2_2') && nietVideo) {
-                          document.querySelector('.item2_2').style.display = 'block';
-                          nietVideo.currentTime = 0; // optional: von Anfang starten
-                          nietVideo.play();
+                  // zentrale Dispatcher-Funktion
+                  function handleIconAction(action, event) {
+                    switch(action) {
+                      case 'showNiet':
+                      // item2_2 Container sichtbar machen und Video starten
+                      const nietVideo = document.getElementById('ship-video');
+                      if (document.querySelector('.item2_2') && nietVideo) {
+                        document.querySelector('.item2_2').style.display = 'block';
+                        nietVideo.currentTime = 0; // optional: von Anfang starten
+                        nietVideo.play();
 
-                          // Pause/Play beim Klick auf Video
-                          nietVideo.addEventListener('click', () => {
-                            if (nietVideo.paused) {
-                              nietVideo.play();
-                            } else {
-                              nietVideo.pause();
-                            }
-                          });
-                        }
-                          break;
-                        case 'showShip':
-                          //Funktion einfügen, um beim Klick was auszulösen
-                          break;
-                        case 'showFeuerstahl':
-                          // beliebige Aktion, z. B. Panel öffnen
-                          document.querySelector('.item2_1').style.display = 'block';
-                          break;
+
                       }
+                        break;
+                      case 'showShip':
+                        //Funktion einfügen, um beim Klick was auszulösen
+                        break;
+                      case 'showFeuerstahl':
+                        // beliebige Aktion, z. B. Panel öffnen
+                        document.querySelector('.item2_1').style.display = 'block';
+                        break;
                     }
-                    //End: Icon-Buttons
+                  }
+                  //End: Icon-Buttons
 
 
                     // 📌 Buttons für Modelle
