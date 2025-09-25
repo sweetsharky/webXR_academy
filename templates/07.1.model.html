@@ -217,7 +217,6 @@
   border: none;
   cursor: pointer;
   font-size: 1em;
-   z-index: 6; /*button liegt über dem grid*/
 }
 </style>
 
@@ -306,10 +305,11 @@
     let grabbedModel = null;
     const grabButton = document.getElementById("grab-nietplatte");
 
-    //Intro-video und -Button
+    //Intro-video und -Button & nietVideo
     const overlay = document.getElementById("intro-overlay");
     const introVideo = document.getElementById("intro-video");
     const continueButton_intro = document.getElementById("continue-button_intro");
+    const continueButton_nietVideo = document.getElementById("continue-button_nietVideo");
 
 
     init();
@@ -679,6 +679,15 @@
                           document.querySelector('.item2_2').style.display = 'block';
                           nietVideo.currentTime = 0; // optional: von Anfang starten
                           nietVideo.play();
+
+                          // Pause/Play beim Klick auf Video
+                          nietVideo.addEventListener('click', () => {
+                            if (nietVideo.paused) {
+                              nietVideo.play();
+                            } else {
+                              nietVideo.pause();
+                            }
+                          });
                         }
                           break;
                         case 'showShip':
