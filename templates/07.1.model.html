@@ -246,7 +246,7 @@
     </div>
 
     <div class="item2_2" style="display: none;">
-      <video id="ship-video" width="100%" controls>
+      <video id="nietVideo" width="100%" controls>
         <source src="/webXR_academy/staticfiles/videos/probeVideo_restauration.mp4" type="video/mp4">
         Dein Browser unterstützt kein HTML5-Video.
       </video>
@@ -674,7 +674,7 @@
                     switch(action) {
                       case 'showNiet':
                       // item2_2 Container sichtbar machen und Video starten
-                      const nietVideo = document.getElementById('ship-video');
+                      const nietVideo = document.getElementById('nietVideo');
                       if (document.querySelector('.item2_2') && nietVideo) {
                         document.querySelector('.item2_2').style.display = 'block';
                         nietVideo.currentTime = 0; // optional: von Anfang starten
