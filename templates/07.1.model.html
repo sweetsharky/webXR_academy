@@ -194,7 +194,7 @@
   max-height: 100%;
 }
 
-#continue-button_intro {
+#continueButton_intro {
   position: absolute;
   bottom: 200px;
   padding: 1em 2em;
@@ -230,7 +230,7 @@
     <source src="/webXR_academy/staticfiles/videos/WikingAR_intro.mp4" type="video/mp4">
     Dein Browser unterstützt kein HTML5-Video.
   </video>
-  <button id="continue-button_intro" style="display:none;">Los geht's!</button>
+  <button id="continueButton_intro" style="display:none;">Los geht's!</button>
 </div>
 
 <div class="grid-container">
@@ -308,8 +308,8 @@
     //Intro-video und -Button & nietVideo
     const overlay = document.getElementById("intro-overlay");
     const introVideo = document.getElementById("intro-video");
-    const continueButton_intro = document.getElementById("continue-button_intro");
-    const continueButton_nietVideo = document.getElementById("continue-button_nietVideo");
+    const continueButton_intro = document.getElementById("continueButton_intro");
+    const continueButton_nietVideo = document.getElementById("continueButton_nietVideo");
 
 
     init();
@@ -680,7 +680,14 @@
                         nietVideo.currentTime = 0; // optional: von Anfang starten
                         nietVideo.play();
 
-
+                        // Pause/Play beim Klick auf Video
+                        nietVideo.addEventListener('click', () => {
+                          if (nietVideo.paused) {
+                            nietVideo.play();
+                          } else {
+                            nietVideo.pause();
+                          }
+                        });
                       }
                         break;
                       case 'showShip':
