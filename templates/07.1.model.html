@@ -325,6 +325,8 @@
     const continueButton_nietVideo = document.getElementById("continueButton_nietVideo");
 
 
+
+
     init();
     animate();
 
@@ -655,6 +657,13 @@
               });
               // continueButton_nietVideo → Video schließen
               continueButton_nietVideo.addEventListener("click", () => {
+                const video = document.getElementById('nietVideo');
+                if (video) {
+                  video.pause();
+                  video.currentTime = 0;
+                  video.removeAttribute("src"); //Video-Quelle entfernen
+                  video.load(); // zwingt Browser, Quelle zu entladen --> removeAttribute() und load() arbeiten also zusammen wie staging und push bei Git
+                }
                 document.querySelector('.item2_2').style.display = 'none';
               });
 
@@ -688,10 +697,19 @@
                       case 'showNiet':
                       // item2_2 Container sichtbar machen und Video starten
                       const nietVideo = document.getElementById('nietVideo');
+                      const nietSource = nietVideo ? nietVideo.querySelector("source") : null;
+                      const nietOriginalSrc = nietSource ? nietSource.src : null;
+
                       if (document.querySelector('.item2_2') && nietVideo) {
                         document.querySelector('.item2_2').style.display = 'block';
-                        nietVideo.currentTime = 0; // optional: von Anfang starten
-                        nietVideo.play();
+                        
+                        // Video-Quelle wiederherstellen, falls sie entfernt wurde (--> besser über src und load() das Video herausnehmen und wieder laden, da sonst bei pause() und display: none das Video weiterhin Laderessourcen einnimmt!)
+                        if (!nietVideo.getAttribute("src") && nietOriginalSrc) {
+                          nietVideo.setAttribute("src", nietOriginalSrc); //Der Browser merkt: Aha, Attribut fehlt, aber solange er nicht gezwungen wird, neu zu prüfen, behält er noch seinen alten Decoder-/Buffer-Zustand.→ Das Video-Element zeigt also noch intern: „Ich habe Daten, ich könnte weiterspielen".
+                          nietVideo.load(); //„Okay Browser, bitte überprüfe jetzt sofort den aktuellen Stand deiner Quelle.“ → Browser sieht: Keine Quelle mehr vorhanden! → Er schmeißt Decoder und Buffer weg, Effekt: Keine Wiedergabe möglich, keine Rest-Audiospur, keine Ressourcenbindung mehr.
+                        }
+
+                        nietVideo.currentTime = 0; // Video von Anfang starten
 
                         // Pause/Play beim Klick auf Video
                         nietVideo.onclick = () => {
@@ -855,12 +873,23 @@
             //Start: Script für Textleiste unten, um Typewriter-Effekt, Pagination und Overflow-Handling des Textes hinzubekommen.
             const fullTexts = [
               'Hallo angehender Archäologe!',
-              'Siehst du diesen verrosteten Klumpen Metall? Er wurde 1990 genau hier bei archäologischen Ausgrabungen gefunden. Befreie es über drag&drop von der Korrosion!',
+              'Genau hier haben mein Archäologen-Team und ich dieses Metallstück tief in der Erde gefunden. Hilf mir und befreie es über drag&drop von der Korrosion!',
               'Was glaubst du, wozu dieses Metallstück gehören könnte?',
-              'Dieses alte Metallstück ist Teil von einem Schiff. Die Erdschicht, in dem es gefunden wurde, ist dem 9. Jahrhundert zuzuordnen. Aus einer schriftlichen Überlieferung wissen wir, dass es einen Überfall auf das Handelszentrum von Duisburg gegeben haben soll.', 
-              `Dieser Überfall ist von den Normannen, den Wikingern ausgegangen. Dieser Schiffsniet ist Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind. Denn nur an den Schiffen der Wikinger finden sich Schiffsnieten der gleichen Bauart. Schau dir den Schiffsniet genauer an und entdecke neue Informationen.`,
-              `Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben. Finde es heraus, indem du auch die anderen Gegenstände erkundest!`,
-              `Jetzt erfährst du noch mehr über die Wikinger ...`
+              'Genau! Dieses alte Metallstück ist Teil von einem Schiff! Es handelt sich um einen Nagel und eine Platte, die typischerweise von den Wikingern genutzt wurden, um Schiffsplanken miteinander zu verbinden.',
+
+              'Vor dir siehst du einen Teil eines Wikingerschiffs aus dem 9. Jahrundert. Greife den Schiffsniet und bringe ihn an die richtige Stelle zu den Brettern!',
+              'Super! Du hast dein erstes Wikingerschiff gebaut!', 
+              'Laut Regino von Prüm sollen die Normannen im Jahr 883 Duisburg überfallen haben! Die Erdschicht, in dem der Schiffsniet gefunden wurde, ist genau dieser Zeit (dem 9. Jahrhundert) zuzuordnen. Es wurden nämlich Keramikgefäße gefunden, die genau aus dieser Zeit stammen.',
+              'Ist dieser Schiffsniet also ein Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind und Duisburg überfallen haben?!',
+              `Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben? Finde es heraus, indem du weitere duisburger Funde erkundest!`,
+              'Klicke auf das Niet-Icon, wenn du mehr über den Schiffsniet erfahren möchtest. Klicke auf das Schiff-Icon, wenn du das Schiff erkunden und Björn kennenlernen möchtest. Das untere Icon zeigt dir weitere mögliche Funde aus Skandinavien.',
+              
+
+              
+               
+              
+ 
+
             ];
 
 
