@@ -376,6 +376,13 @@
         scale: 0.01,
         rotatable: false,
       },
+            {
+        name: "boatPart",
+        url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/vikingboat_part/vikingboat_part.gltf",
+        position: { x: 0, y: -1.5, z: -4.0 },
+        scale: 0.01,
+        rotatable: false,
+      },
 
       {
         name: "Nietplatte_mit_Rost",
@@ -937,6 +944,10 @@
                           nextStepButton.style.display = "block";
                       } else if (currentStep === 2) {
                         document.querySelector('.item2_1').style.display = 'block';
+                      } else if (currentStep === 4) {
+                        models["boatPart"].visible = true;
+                        nextStepButton.style.display = "block";
+                        
                       } else if (currentStep < fullTexts.length - 1) {//Wenn am Ende aller weiteren Texte, dann...
                         nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
                       }
