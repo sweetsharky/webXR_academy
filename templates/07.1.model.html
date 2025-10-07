@@ -959,8 +959,8 @@
                   observer.observe(nextStepButton, { attributes: true, attributeFilter: ['style'] });
                 
                   // Blur-Oberlay auch aus, wenn am Ende --> Prüfe: Wenn wir beim letzten Lernschritt angekommen sind UND der Text vollständig getippt wurde
-                 if (currentStep < fullTexts.length - 1) {
-                    cameraBlurOverlay.classList.add('active');
+                  if (currentStep === fullTexts.length - 1) {
+                    cameraBlurOverlay.classList.remove('active');
                   }
               }
                 //End: Kamera-Blur
