@@ -958,10 +958,10 @@
                   });
                   observer.observe(nextStepButton, { attributes: true, attributeFilter: ['style'] });
                 
-                // Zusätzlich: Wenn letzte Seite erreicht, Blur auch entfernen
-                if (currentPage === totalPages - 1) { // letzte Seite
-                  cameraBlurOverlay.classList.remove('active'); 
-                }
+                  // Blur-Oberlay auch aus, wenn am Ende --> Prüfe: Wenn wir beim letzten Lernschritt angekommen sind UND der Text vollständig getippt wurde
+                  if (currentStep === fullTexts.length - 1) {
+                    cameraBlurOverlay.classList.remove('active');
+                  }
               }
                 //End: Kamera-Blur
               }, 30); // Geschwindigkeit (ms pro Buchstabe)
