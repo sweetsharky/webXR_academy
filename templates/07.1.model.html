@@ -925,7 +925,7 @@
             const charsPerPage = 100; // Anzahl Zeichen pro "Seite" (kannst du anpassen)
             let currentStep = 0;   // startet bei Lernschritt 0
             let currentPage = 0;   // Seite im aktuellen Schritt
-            const totalPages = 9;
+            const totalPages = 7;
 
             const textBox = document.getElementById('textBox');
             const nextButton = document.getElementById('nextButton');
@@ -963,7 +963,7 @@
                   cameraBlurOverlay.classList.remove('active'); 
                 }
                 //End: Kamera-Blur
-              }, 20); // Geschwindigkeit (ms pro Buchstabe)
+              }, 30); // Geschwindigkeit (ms pro Buchstabe)
             }
 
             function showPage(pageIndex) {
