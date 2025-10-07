@@ -925,7 +925,7 @@
             const charsPerPage = 100; // Anzahl Zeichen pro "Seite" (kannst du anpassen)
             let currentStep = 0;   // startet bei Lernschritt 0
             let currentPage = 0;   // Seite im aktuellen Schritt
-
+            const totalPages = 5;
 
             const textBox = document.getElementById('textBox');
             const nextButton = document.getElementById('nextButton');
@@ -957,8 +957,13 @@
                     }
                   });
                   observer.observe(nextStepButton, { attributes: true, attributeFilter: ['style'] });
-                } //End: Kamera-Blur
-              }, 30); // Geschwindigkeit (ms pro Buchstabe)
+                }
+                // Zusätzlich: Wenn letzte Seite erreicht, Blur auch entfernen
+                if (currentPage === totalPages - 1) { // letzte Seite
+                  cameraBlurOverlay.classList.remove('active'); 
+                }
+                //End: Kamera-Blur
+              }, 10); // Geschwindigkeit (ms pro Buchstabe)
             }
 
             function showPage(pageIndex) {
