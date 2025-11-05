@@ -627,6 +627,10 @@
                 const rusty = models["Nietplatte_mit_Rost"];
                 if (clean) {
                   clean.visible = true;
+
+                  // Greifbutton sichtbar 
+                  const grabBtn = document.getElementById("grab-nietplatte");
+                  if (grabBtn) grabBtn.style.display = "block";
                 }
                 if (rusty) {
                     // rusty ausblenden
@@ -909,9 +913,10 @@
               'Vor dir siehst du einen Teil eines Wikingerschiffs aus dem 9. Jahrundert. Greife den Schiffsniet und bringe ihn an die richtige Stelle zu den Brettern!',
               'Super! Du hast dein erstes Wikingerschiff gebaut!', 
               'Laut Regino von Prüm sollen die Normannen im Jahr 883 Duisburg überfallen haben! Die Erdschicht, in dem der Schiffsniet gefunden wurde, ist genau dieser Zeit (dem 9. Jahrhundert) zuzuordnen. Es wurden nämlich Keramikgefäße gefunden, die genau aus dieser Zeit stammen.',
-              'Ist dieser Schiffsniet also ein Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind und Duisburg überfallen haben?!',
-              `Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben? Finde es heraus, indem du weitere duisburger Funde erkundest!`,
-              'Klicke auf das Niet-Icon, wenn du mehr über den Schiffsniet erfahren möchtest. Klicke auf das Schiff-Icon, wenn du das Schiff erkunden und Björn kennenlernen möchtest. Das untere Icon zeigt dir weitere mögliche Funde aus Skandinavien.',
+              //'Ist dieser Schiffsniet also ein Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind und Duisburg überfallen haben?!',
+              //`Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben? Finde es heraus, indem du weitere duisburger Funde erkundest!`,
+              'Erkunde nun das Schiff und sprich mit Björn über friedliches Handeln in Duisburg oder mit Bjarne über einen kämpferischen Überfall auf Duisburg',
+              //'Klicke auf das Niet-Icon, wenn du mehr über den Schiffsniet erfahren möchtest. Klicke auf das Schiff-Icon, wenn du das Schiff erkunden und Björn kennenlernen möchtest. Das untere Icon zeigt dir weitere mögliche Funde aus Skandinavien.',
               
 
               
@@ -989,10 +994,10 @@
                           nextStepButton.style.display = "block";
                       } else if (currentStep === 2) {
                         document.querySelector('.item2_1').style.display = 'block';
-                      } else if (currentStep === 4) {
+                      /*} else if (currentStep === 4) {
                         models["boatPart"].visible = true;
                         nextStepButton.style.display = "block";
-                        
+                      */
                       } else if (currentStep < fullTexts.length - 1) {//Wenn am Ende aller weiteren Texte, dann...
                         nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
                       }
@@ -1019,7 +1024,7 @@
               currentPage = 0;
               document.querySelector('.item2_1').style.display = 'none';
               showPage(currentPage);
-              models["Schiff"].visible = true;
+              models["boatPart"].visible = true;
             });
 
             // Start bei Seite 0
