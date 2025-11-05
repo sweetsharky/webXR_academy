@@ -958,7 +958,7 @@
                  // Start: Kamera-Blur: Wenn der Text fertig geschrieben ist, prüfen ob NextStepButton angezeigt wird
                   // -> Wenn er sichtbar wird, dann Blur wieder deaktivieren
                   const observer = new MutationObserver(() => {
-                    if (nextStepButton.style.display === "block" && !(currentStep === 1) && !(currentStep === 2)) {
+                    if (nextStepButton.style.display === "block" && !(currentStep === 1)) {
                       cameraBlurOverlay.classList.remove('active');
                       observer.disconnect();
                     }
@@ -1027,7 +1027,7 @@
               currentPage = 0;
               document.querySelector('.item2_1').style.display = 'none';
               showPage(currentPage);
-              models["boatPart"].visible = true;
+              //models["boatPart"].visible = true;
             });
 
             // Start bei Seite 0
