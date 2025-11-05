@@ -418,7 +418,7 @@
         url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/schiffsniet/schiffsniet.gltf", 
         position: { x: 0.2, y: 0, z: -0.3 }, // etwas versetzt neben der Nietplatte
         scale: 0.002,
-        rotatable: false,
+        rotatable: true,
       }
 
 
@@ -956,7 +956,7 @@
                  // Start: Kamera-Blur: Wenn der Text fertig geschrieben ist, prüfen ob NextStepButton angezeigt wird
                   // -> Wenn er sichtbar wird, dann Blur wieder deaktivieren
                   const observer = new MutationObserver(() => {
-                    if (nextStepButton.style.display === "block") {
+                    if (nextStepButton.style.display === "block" && !(currentStep === 1) && !(currentStep === 2)) {
                       cameraBlurOverlay.classList.remove('active');
                       observer.disconnect();
                     }
