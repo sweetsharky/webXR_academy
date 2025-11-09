@@ -238,7 +238,7 @@
   width: 100vw;
   height: 100vh;
   backdrop-filter: blur(8px);
-  background: rgba(0, 0, 0, 0.2); /* leicht abdunkeln */
+  background: rgba(0, 0, 0, 1); /* leicht abdunkeln */
   z-index: 4; /* unterhalb des Grid-Containers */
   display: none;
   pointer-events: none; /* keine Interaktionen blockieren */
@@ -458,23 +458,6 @@
 
           // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
           if (item.name === "Nietplatte_mit_Rost") {
-            if (model.parent) {
-              model.parent.remove(model); //da wir diese Modell als Kind der Kamera haben wollen und nicht mehr als Kind der Scene (AR-Scene), müssen wir es erst von der Scene entfernen, falls wir zuvor scene.add(model) gemacht haben.
-            }
-            // damit es immer sichtbar bleibt (auch wenn außerhalb der Frustum-Berechnung)
-            model.traverse((c) => { if (c.isMesh) c.frustumCulled = false; });
-
-            // setze Position RELATIV zur Kamera (Kamerakoordinaten)
-            // x: links/rechts, y: hoch/runter, z: vor(-) / hinter(+) der Kamera
-            model.position.set(0, 0.05, -0.2); // anpassen: -0.2 = 20cm vor der Kamera, 0.1 = etwas über Mitte
-
-            // Sicherstellen, dass das Modell im Kamera-Raum gerendert wird --> dafür muss oben einmal die Kamera in dem Scene Graph initailisiert werden: scene.add(camera), sodass nun das Modell Kind der Kamera sein kann.
-            camera.add(model);
-
-            // Flag, dass dieses Modell screen-space ist
-            model.userData.screenSpace = true;
-            
-
             // Suche und registriere die Rost-Teile: Versuche, Kinder per Name zu finden; falls nicht benannt, suche Meshes mit 'rost' im Namen
             const rostParts = [];
             model.traverse((child) => {
