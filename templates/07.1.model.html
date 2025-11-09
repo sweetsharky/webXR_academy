@@ -928,9 +928,10 @@
             function typeWriterEffect(text, callback) {
               let i = 0;
               textBox.textContent = "";
+              /* Entfernen von KAmera-Blur 1/2
               // Kamera-Blur aktivieren, ab Schritt 3
-              if (currentStep === 3) {cameraBlurOverlay.classList.add('active');}
-
+              if ((currentStep === 3) || (currentStep === 4)) {cameraBlurOverlay.classList.add('active');}
+              */
               const interval = setInterval(() => {
                 textBox.textContent += text[i];
                 i++;
@@ -938,6 +939,7 @@
                   clearInterval(interval);
                   callback();
 
+                  /* Entfernen von KAmera-Blur 2/2
                  // Start: Kamera-Blur: Wenn der Text fertig geschrieben ist, prüfen ob NextStepButton angezeigt wird
                   // -> Wenn er sichtbar wird, dann Blur wieder deaktivieren
                   const observer = new MutationObserver(() => {
@@ -952,8 +954,10 @@
                   if (currentStep === fullTexts.length - 1) {
                     cameraBlurOverlay.classList.remove('active');
                   }
-              }
-                //End: Kamera-Blur
+                    //End: Kamera-Blur
+                    */
+               }
+                
               }, 30); // Geschwindigkeit (ms pro Buchstabe)
             }
 
@@ -974,9 +978,9 @@
                 nextButton.style.display = "block";  // normale Weiter-Page
               } else {     // wir sind am Ende eines Textes
                 //Wenn am Ende des ersten Textes, dann...
-                      if (currentStep === 0){
+                      if (currentStep === 1){
                           models["Nietplatte_mit_Rost"].visible = true;
-                          models["Schiffsniet"].visible = true;
+                          //models["Schiffsniet"].visible = true;
                           nextStepButton.style.display = "block";
                       } else if (currentStep === 3) {
                         document.querySelector('.item2_1').style.display = 'block';
