@@ -306,6 +306,7 @@
       <button id="toggle-schiff">Schiff an/aus</button>
       <button id="toggle-nietplatte-rost">NietplatteRost an/aus</button>
       <button id="toggle-schiffsniet">Schiffsniet an/aus</button>
+      <button id="toggle-schiff-wRivets">wRivets an/aus</button>
     </div>
   </div>  
 
@@ -406,6 +407,13 @@
         rotatable: false,
       },
 
+                  {
+        name: "boatPart_wRivets",
+        url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/vikingboat_part_wRivets/vikingboat_part_wRivets.gltf",
+        position: { x: 0, y: -1.5, z: -4.0 },
+        scale: 0.01,
+        rotatable: false,
+      },
       {
         name: "Nietplatte_mit_Rost",
         url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_Rost/nietplatte_mit_Rost.gltf", 
@@ -752,6 +760,7 @@
                       document.getElementById("toggle-schiff").addEventListener("click", () => toggleModel("Schiff"));
                       document.getElementById("toggle-nietplatte-rost").addEventListener("click", () => toggleModel("Nietplatte_mit_Rost"));
                       document.getElementById("toggle-schiffsniet").addEventListener("click", () => toggleModel("Schiffsniet"));
+                      document.getElementById("toggle-schiff-wRivets").addEventListener("click", () => toggleModel("boatPart_wRivets"));
           
 
                     function toggleModel(name) {
