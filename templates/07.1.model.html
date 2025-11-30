@@ -267,7 +267,9 @@
 </div>
 
 <div class="grid-container">
-  <div class="item1">Auf den Spuren der Wikinger in Duisburg</div>
+  <div class="item1">
+    <div id="textBox"></div>
+  </div>
   <div class="empty-gameObject-item2">
     <div class="item2_1">  
     <p style="background: green;"></p>Das Objekt, das du siehst ist es ein Teil von...(wähle aus):</p>
@@ -311,7 +313,6 @@
   </div>  
 
   <div class="item4">
-  	<div id="textBox"></div>
 
     </div>
     
@@ -906,7 +907,7 @@
               'Genau hier haben mein Archäologen-Team und ich dieses Metallstück tief in der Erde gefunden. Hilf mir und befreie es über drag&drop von der Korrosion!',
               'Schaue dir das Metallstück genauer, indem du es über den Touchscreen rotierst.',
               'Was glaubst du, wozu dieses Metallstück gehören könnte?',
-              'Genau! Dieses alte Metallstück ist Teil von einem Schiff! Es handelt sich um einen Nagel und eine Platte, die typischerweise von den Wikingern genutzt wurden, um Schiffsplanken miteinander zu verbinden.',
+              'Genau! Dieses alte Metallstück ist Teil von einem Schiff! Es handelt sich um einen Nagel mit Platte, die typischerweise von den Wikingern genutzt wurden, um Schiffsplanken miteinander zu verbinden.',
 
               'Vor dir siehst du einen Teil eines Wikingerschiffs aus dem 9. Jahrundert.', 
               'Greife den Schiffsniet und bringe ihn an die richtige Stelle zu den Brettern!',
@@ -999,7 +1000,10 @@
                       } else if (currentStep === 3) {
                         document.querySelector('.item2_1').style.display = 'block';
                       } else if (currentStep === 6) {
-                        models["boatPart"].visible = true;
+                        models["boatPart_wRivets"].visible = true;
+                        nextStepButton.style.display = "block";
+                      } else if (currentStep === 7) {
+                        models["Schiff"].visible = true;
                         nextStepButton.style.display = "block";
                       
                       } else if (currentStep < fullTexts.length - 1) {//Wenn am Ende aller weiteren Texte, dann...
