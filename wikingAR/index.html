@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>WikingAR – WebXR</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Kamera-Blur -->
+  <div id="camera-blur-overlay"></div>
+
+  <!-- Intro-Video Overlay -->
+  <div id="intro-overlay" style="display:none;">
+    <video id="intro-video" playsinline>
+      <source src="/webXR_academy/staticfiles/videos/WikingAR_intro.mp4" type="video/mp4" />
+      Dein Browser unterstützt kein HTML5-Video.
+    </video>
+    <button id="continueButton_intro" style="display:none;">Los geht's!</button>
+  </div>
+
+  <!-- Grid-UI -->
+<div class="grid-container">
+  <div class="item1">
+    <div id="textBox"></div>
+  </div>
+  <div class="empty-gameObject-item2">
+    <div class="item2_1">  
+    <p style="background: green;"></p>Das Objekt, das du siehst ist es ein Teil von...(wähle aus):</p>
+    <div class="answers">
+      <button class="quiz-button" id="schiff">einem Schiff</button>
+      <button class="quiz-button" id="waffe">einer Waffe</button>
+      <button class="quiz-button" id="eimer">einem Wassereimer</button>
+    </div>
+    </div>
+
+    <div class="item2_2" style="display: none;">
+      <video id="nietVideo" width="100%" controls>
+        <source src="/webXR_academy/staticfiles/videos/probeVideo_restauration.mp4" type="video/mp4">
+        Dein Browser unterstützt kein HTML5-Video.
+      </video>
+      <div>
+        <button id="continueButton_nietVideo">Skip</button>
+      </div>
+    </div>
+  </div>
+
+    
+  <div class="item3">
+    <div class="icon-column">
+      <button class="icon-btn" data-action="showNiet">
+        <img src="/webXR_academy/staticfiles/images/logo_schrift.svg" alt="Icon Niet" width="20"/>
+      </button>
+      <button class="icon-btn" data-action="showShip">
+        <img src="/webXR_academy/staticfiles/images/logo_schrift.svg" alt="Icon Schiff" width="20"/>
+      </button>
+      <button class="icon-btn" data-action="showFeuerstahl">
+        <img src="/webXR_academy/staticfiles/images/feuerstahlbeschlag_duisburg_einzeln.svg" alt="Feuerstahlbeschlag" width="24"/>
+      </button>
+        <!-- Modell-Toggles -->
+        <button id="toggle-nietplatte">Nietplatte an/aus</button>
+        <button id="toggle-schiff">Schiff an/aus</button>
+        <button id="toggle-nietplatte-rost">NietplatteRost an/aus</button>
+        <button id="toggle-schiffsniet">Schiffsniet an/aus</button>
+        <button id="toggle-schiff-wRivets">wRivets an/aus</button>
+      </div>
+    </div>
+
+    <div class="item4">
+      <div id="textBox"></div>
+    </div>
+
+    <div class="item5">
+      <button id="nextButton" class="button" style="display:none;">Weiter</button>
+      <button id="nextStepButton" class="button" style="display:none;">Nächster Lernschritt</button>
+      <button id="grab-nietplatte" style="display:none;">Greifen</button>
+    </div>
+
+    <button id="toggle-panel">Toggle Panel</button>
+  </div>
+
+  <!-- 
+Nur das Master-Modul einbinden.
+       Alle weiteren Imports (Three.js, GLTFLoader, ARButton, usw.) passieren innerhalb der JS-Module.
+ -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
