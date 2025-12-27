@@ -66,15 +66,23 @@ function toggleModel(name) {
 
 const fullTexts = [
   'Hallo angehender Archäologe!',
-  'Genau hier haben mein Archäologen-Team und ich dieses Metallstück tief in der Erde gefunden. Hilf mir und befreie es über drag&drop von der Korrosion!',
-  'Schaue dir das Metallstück genauer, indem du es über den Touchscreen rotierst.',
-  'Was glaubst du, wozu dieses Metallstück gehören könnte?',
-  'Genau! Dieses alte Metallstück ist Teil von einem Schiff! Es handelt sich um einen Nagel und eine Platte, die typischerweise von den Wikingern genutzt wurden, um Schiffsplanken miteinander zu verbinden.',
-  'Vor dir siehst du einen Teil eines Wikingerschiffs aus dem 9. Jahrundert.',
-  'Greife den Schiffsniet und bringe ihn an die richtige Stelle zu den Brettern!',
-  'Super! Du hast dein erstes Wikingerschiff gebaut!',
-  'Laut Regino von Prüm sollen die Normannen im Jahr 883 Duisburg überfallen haben! Die Erdschicht, in dem der Schiffsniet gefunden wurde, ist genau dieser Zeit (dem 9. Jahrhundert) zuzuordnen. Es wurden nämlich Keramikgefäße gefunden, die genau aus dieser Zeit stammen.',
-  'Erkunde nun das Schiff und sprich mit Björn über friedliches Handeln in Duisburg oder mit Bjarne über einen kämpferischen Überfall auf Duisburg'
+              'Genau hier haben mein Archäologen-Team und ich dieses Metallstück tief in der Erde gefunden. Hilf mir und befreie es über drag&drop von der Korrosion!',
+              'Schaue dir das Metallstück genauer, indem du es über den Touchscreen rotierst.',
+              'Was glaubst du, wozu dieses Metallstück gehören könnte?',
+              'Genau! Dieses alte Metallstück ist Teil von einem Schiff! Es handelt sich um einen Nagel mit Platte, die typischerweise von den Wikingern genutzt wurden, um Schiffsplanken miteinander zu verbinden.',
+
+              'Vor dir siehst du einen Teil eines Wikingerschiffs aus dem 9. Jahrundert.', 
+              'Greife den Schiffsniet und bringe ihn an die richtige Stelle zu den Brettern!',
+              'Super! Du hast dein erstes Wikingerschiff gebaut!', 
+              'Laut Regino von Prüm sollen die Normannen im Jahr 883 Duisburg überfallen haben! Die Erdschicht, in dem der Schiffsniet gefunden wurde, ist genau dieser Zeit (dem 9. Jahrhundert) zuzuordnen. Es wurden nämlich Keramikgefäße gefunden, die genau aus dieser Zeit stammen.',
+              //'Ist dieser Schiffsniet also ein Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind und Duisburg überfallen haben?!',
+              //`Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben? Finde es heraus, indem du weitere duisburger Funde erkundest!`,
+              'Erkunde nun das Schiff und sprich mit Björn über friedliches Handeln in Duisburg oder mit Bjarne über einen kämpferischen Überfall auf Duisburg',
+              //'Klicke auf das Niet-Icon, wenn du mehr über den Schiffsniet erfahren möchtest. Klicke auf das Schiff-Icon, wenn du das Schiff erkunden und Björn kennenlernen möchtest. Das untere Icon zeigt dir weitere mögliche Funde aus Skandinavien.',
+              
+
+              
+               
 ];
 
 const charsPerPage = 100; // Anzahl Zeichen pro "Seite" (kannst du anpassen)
@@ -106,25 +114,29 @@ function showPage(pageIndex) {
     pageText += "...";
   }
 
-  typeWriterEffect(pageText, () => {
-    if (end < fullText.length) {
-      nextButton.style.display = "block";  // normale Weiter-Page
-    } else {     // wir sind am Ende eines Textes
-      //Wenn am Ende des ersten Textes, dann...
-      if (currentStep === 1){
-        models["Nietplatte_mit_Rost"].visible = true;
-        models["Schiffsniet"].visible = true;
-        nextStepButton.style.display = "block";
-      } else if (currentStep === 3) {
-        document.querySelector('.item2_1').style.display = 'block';
-      } else if (currentStep === 6) {
-        models["boatPart"].visible = true;
-        nextStepButton.style.display = "block";
-      } else if (currentStep < fullTexts.length - 1) {//Wenn am Ende aller weiteren Texte, dann...
-        nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
-      }
-    }
-  });
+             typeWriterEffect(pageText, () => {
+              if (end < fullText.length) {
+                nextButton.style.display = "block";  // normale Weiter-Page
+              } else {     // wir sind am Ende eines Textes
+                //Wenn am Ende des ersten Textes, dann...
+                      if (currentStep === 1){
+                          models["Nietplatte_mit_Rost"].visible = true;
+                          models["Schiffsniet"].visible = true;
+                          nextStepButton.style.display = "block";
+                      } else if (currentStep === 3) {
+                        document.querySelector('.item2_1').style.display = 'block';
+                      } else if (currentStep === 6) {
+                        models["boatPart_wRivets"].visible = true;
+                        nextStepButton.style.display = "block";
+                      } else if (currentStep === 7) {
+                        models["Schiff"].visible = true;
+                        nextStepButton.style.display = "block";
+                      
+                      } else if (currentStep < fullTexts.length - 1) {//Wenn am Ende aller weiteren Texte, dann...
+                        nextStepButton.style.display = "block"; // neuen Button für Lernschritt zeigen
+                      }
+              }
+            });
 }
 
 export function startTextEngine() {
