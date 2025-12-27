@@ -5,7 +5,7 @@
 // Video-Panel 'nietVideo' (Skip-Button), Grid-Visibility
 // ============================================================
 
-import { ARButton } from 'https://unpkg.com/three@0.133.0/examples/jsm/webxr/ARButton.js';
+import { ARButton } from 'three/examples/jsm/webxr/ARButton.js';
 
 export function initXR(renderer) {
   document.body.appendChild(ARButton.createButton(renderer, {

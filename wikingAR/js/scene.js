@@ -4,7 +4,7 @@
 // THREE.js Grundaufbau: Szene, Kamera, Renderer, Licht, Clock
 // ============================================================
 
-import * as THREE from 'https://unpkg.com/three@0.133.0/build/three.module.js';
+import * as THREE from 'three';
 
 export let camera, scene, renderer;
 export const clock = new THREE.Clock();

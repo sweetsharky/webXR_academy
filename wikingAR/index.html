@@ -6,6 +6,18 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
   <link rel="stylesheet" href="style.css" />
+  
+  <!-- Lösung für ein FAllstrick beim Arbeiten mit ES-Modulen: Mit der import Map versteht der Browser nun, was "three" bedeutet. Damit three nicht als bare specifier erkannt wird, sondern das entsprechende Modul beinhaltet-->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.133.0/build/three.module.js",
+    "three/examples/jsm/": "https://unpkg.com/three@0.133.0/examples/jsm/"
+  }
+}
+</script>
+
+
 </head>
 <body>
   <!-- Kamera-Blur -->
