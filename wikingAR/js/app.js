@@ -8,7 +8,7 @@
 import { initScene, scene, camera, renderer, clock } from './scene.js';
 import { initXR } from './xr.js';
 import { loadModels, models, mixers } from './models.js';
-import { initInteractions, updateGrabFollowCamera, getBoatRivetTargets, updatePerFrameCollisionNietplatte } from './interactions.js';
+import { initInteractions, updateGrabFollowCamera, updatePerFrameCollisionNietplatte } from './interactions.js';
 import { initUI, startTextEngine, initFeedbackListener, updatePerFrameUI } from './ui.js';
 
 // ------------------------------------------------------------
