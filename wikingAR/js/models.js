@@ -131,5 +131,7 @@ export function getBoatRivetTargets() {
     }
   });
 
+  console.log(getBoatRivetTargets());
+
   return targets;
 }
