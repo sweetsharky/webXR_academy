@@ -12,7 +12,7 @@ import { initInteractions, updateGrabFollowCamera } from './interactions.js';
 import { initUI, startTextEngine, updatePerFrameUI } from './ui.js';
 
 // ------------------------------------------------------------
-// Bootstrapping-Reihenfolge
+// Bootstrapping-Reihenfolge --> entspricht Unity's start()!
 // ------------------------------------------------------------
 initScene();                 // Szene/Kamera/Renderer + Canvas
 initXR(renderer);            // ARButton + Intro/Session Handling
@@ -22,7 +22,7 @@ initInteractions(models, camera, renderer); // Rotation/Drag&Drop/Greifen
 startTextEngine();           // Text/Steps starten (showPage(0))
 
 // ------------------------------------------------------------
-// Render-Loop (XR-kompatibel)
+// Render-Loop (XR-kompatibel) --> entspricht Unity's update()
 // ------------------------------------------------------------
 renderer.setAnimationLoop(() => {
   // Start: für natürliche Animation über delta
@@ -45,7 +45,7 @@ renderer.setAnimationLoop(() => {
 });
 
 // ------------------------------------------------------------
-// Resize
+// EventListener --> entspricht den Listener in Unitys Eventsystem, die getriggert werden, sobald ausgelöst (OnTriggerEnter(), OnMouseDown()...)
 // ------------------------------------------------------------
 window.addEventListener('resize', () => {
   // Three.js anpassen
