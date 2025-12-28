@@ -8,8 +8,8 @@
 import { initScene, scene, camera, renderer, clock } from './scene.js';
 import { initXR } from './xr.js';
 import { loadModels, models, mixers } from './models.js';
-import { initInteractions, updateGrabFollowCamera } from './interactions.js';
-import { initUI, startTextEngine, updatePerFrameUI } from './ui.js';
+import { initInteractions, updateGrabFollowCamera, getBoatRivetTargets, updatePerFrameCollisionNietplatte } from './interactions.js';
+import { initUI, startTextEngine, initFeedbackListener, updatePerFrameUI } from './ui.js';
 
 // ------------------------------------------------------------
 // Bootstrapping-Reihenfolge --> entspricht Unity's start()!
@@ -18,6 +18,7 @@ initScene();                 // Szene/Kamera/Renderer + Canvas
 initXR(renderer);            // ARButton + Intro/Session Handling
 loadModels(scene);           // GLTFs laden + Registry/Animations
 initUI(models, renderer);    // Buttons/Panels/Video/Modell-Toggles
+initFeedbackListener();     //für ft_dragTrigger: Feedback bei korrekter Kollision
 initInteractions(models, camera, renderer); // Rotation/Drag&Drop/Greifen
 startTextEngine();           // Text/Steps starten (showPage(0))
 
@@ -35,8 +36,10 @@ renderer.setAnimationLoop(() => {
   }
   // Ende: für natürliche Animation
 
+
   // Greifen: Modell vor Kamera positionieren, falls aktiv
   updateGrabFollowCamera(camera);
+  updatePerFrameCollisionNietplatte(); // optional, nur wenn continuous Kollisionstest gewünscht ist (siehe interactions.js)
 
   // Optional: pro Frame UI-Updates
   updatePerFrameUI?.();

@@ -110,4 +110,26 @@ export function loadModels(scene) {
       console.error("Fehler beim Laden von", item.url, err);
     });
   });
+
+  
+}
+
+//für das ft_dropTrigger
+// Liefert die Ziel-Kindobjekte im boatPart_wRivets, die als "Platzierungsstellen" gelten.
+export function getBoatRivetTargets() {
+  const parent = models["boatPart_wRivets"];
+  if (!parent) return [];
+
+  const names = ["schiffsniet", "modelNietplatte_eng.001"];
+  const lowerNames = names.map(n => n.toLowerCase());
+
+  const targets = [];
+  parent.traverse((child) => {
+    const n = (child.name || "").toLowerCase();
+    if (child.isMesh && lowerNames.includes(n)) {
+      targets.push(child);
+    }
+  });
+
+  return targets;
 }

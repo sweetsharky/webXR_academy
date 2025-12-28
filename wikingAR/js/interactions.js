@@ -8,6 +8,8 @@
 // ============================================================
 
 import * as THREE from 'https://unpkg.com/three@0.133.0/build/three.module.js';
+import { getBoatRivetTargets, models } from './models.js';
+
 
 let previousTouch = null;
 let rotating = false; // Flag, ob Rotation aktiv ist
@@ -19,6 +21,14 @@ let raycaster, touchPos, dragging, dragOffset, dragPlane, planeIntersectPoint;
 // Greifen/Ablegen
 let isGrabbed = false;
 let grabbedModel = null;
+
+
+// Umschalter für Kollisionsmodus:'drop' (empfohlen) = nur beim Loslassen prüfen; 'continuous' = pro Frame prüfen (kostet mehr CPU).
+let COLLISION_MODE = 'drop';
+export function setCollisionMode(mode) {
+  COLLISION_MODE = mode === 'continuous' ? 'continuous' : 'drop';
+}
+
 
 // Exportierte Hilfsfunktion für den Render-Loop
 export function updateGrabFollowCamera(camera) {
@@ -256,5 +266,58 @@ export function initInteractions(models, camera, renderer) {
     isGrabbed = false;
     grabbedModel = null;
     grabButton.classList.remove("grabbing"); // visuelles Feedback deaktivieren
+
+  // 👉 Kollisionsprüfung NUR beim Ablegen (drop), durchgehend dann mit (continue) oben in Umschalter ändern.
+  checkNietplatteAgainstTargets();
+
   });
 }
+
+
+// Zwei (Die Dritte ist optional, wegen durchgehender Kollisionsprüfung(viel Berechnung!): updatePerFrameCollisionNietplatte()) Funktionen für ft_dropTrigger --> Kollisionserkennung mit Bounding-Box
+  // Berechnet eine Welt-Bounding-Box für ein Objekt
+  function getWorldBox3(object) {
+    // zur Sicherheit die Matrix aktualisieren
+    object.updateMatrixWorld(true);
+    const box = new THREE.Box3();
+    box.setFromObject(object); // liefert Weltkoordinaten, wenn MatrixWorld stimmt
+    return box;
+  }
+
+  // Prüft Nietplatte vs. alle Ziel-Targets; wir nehmen eine Toleranz.
+  function checkNietplatteAgainstTargets() {
+    const nietplatte = models["Nietplatte"];
+    const targets = getBoatRivetTargets();
+    if (!nietplatte || !targets || targets.length === 0) return false;
+
+    const plateBox = getWorldBox3(nietplatte);
+
+    // Toleranz für einfacheren Treffer (z. B. 2 cm)
+    const TOLERANCE = 0.02;
+
+    for (const t of targets) {
+      const tBox = getWorldBox3(t);
+      // Box des Targets leicht vergrößern
+      const expanded = tBox.clone().expandByScalar(TOLERANCE);
+      if (plateBox.intersectsBox(expanded)) {
+        // Treffer → Event senden
+        window.dispatchEvent(new CustomEvent('nietplatte:placedCorrect', {
+          detail: { targetName: t.name || '(unbenannt)' }
+        }));
+        return true;
+      }
+    }
+    return false;
+  }
+
+
+  // optionale Funktion, wenn Kollisionstest pro Frame gewünscht ist und nicht nur bei Ablage
+  export function updatePerFrameCollisionNietplatte() {
+    if (COLLISION_MODE !== 'continuous') return;
+    // Nur prüfen, wenn Nietplatte gerade getragen wird:
+    if (isGrabbed) {
+      checkNietplatteAgainstTargets();
+    }
+  }
+
+

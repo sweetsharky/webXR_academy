@@ -195,9 +195,34 @@ export function initUI(modelsRef, renderer) {
   document.getElementById("toggle-nietplatte-rost").addEventListener("click", () => toggleModel("Nietplatte_mit_Rost"));
   document.getElementById("toggle-schiffsniet").addEventListener("click", () => toggleModel("Schiffsniet"));
   document.getElementById("toggle-schiff-wRivets").addEventListener("click", () => toggleModel("boatPart_wRivets"));
+
+  
 }
 
-// Optional: pro Frame UI-Updates
-export function updatePerFrameUI() {
-  // z. B. Blur-Overlay-Handling auskommentiert in deinem Code (hier leer)
-}
+
+
+//für ft_dropTrigger --> Für Feedback-Text Anzeige, sobald Objekt an korrektem Platz abgelegt/kollidiert.
+  export function initFeedbackListener() {
+    window.addEventListener('nietplatte:placedCorrect', (e) => {
+      showFeedbackText('Korrekt, nun ziehe das andere Metallstück an die richtige Stelle');
+      // Falls du zusätzlich UI-Logik starten willst (z. B. nächster Schritt):
+      // document.getElementById('nextStepButton').style.display = 'block';
+    });
+  }
+
+  export function showFeedbackText(message) {
+    if (!textBox) textBox = document.getElementById('textBox');
+    if (!textBox) return;
+    // Zeige direkten Feedback-Text (ohne Typewriter, damit es "instant" wirkt)
+    textBox.textContent = message;
+    // Optional: optisch hervorheben
+    textBox.style.background = '#d8f5d1'; // sanftes Grün
+    textBox.style.borderRadius = '8px';
+  }
+
+
+
+  // Optional: pro Frame UI-Updates
+  export function updatePerFrameUI() {
+    // z. B. Blur-Overlay-Handling auskommentiert in deinem Code (hier leer)
+  }
