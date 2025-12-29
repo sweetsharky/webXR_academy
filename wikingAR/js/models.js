@@ -107,6 +107,15 @@ export function loadModels(scene) {
       }
 
 
+  // ✅ Debug-Box für Nietplatte (grün)
+        if (item.name === "Nietplatte") {
+          const helper = new THREE.BoxHelper(model, 0x22aa22);
+          helper.visible = model.visible; // optional: nur zeigen, wenn sichtbar
+          scene.add(helper);
+          models.__debugHelpers.nietplatteBox = helper;
+        }
+
+
       // checken, ob alle childobjekte an Model gefunden werden
       if (item.name === "boatPart_wRivets") {
         const names = ["schiffsniet", "nietplattenteil"];
@@ -124,8 +133,15 @@ export function loadModels(scene) {
         models["boatPart_wRivets_targets"] = boatTargets;
 
         console.log('Boat-Targets beim Laden gefunden:', boatTargets.map(t => t.name || t.uuid));
+        // BoxHelper je Target erzeugen
+        const targetHelpers = boatTargets.map(target => {
+          const h = new THREE.BoxHelper(target, 0xff8800);
+          h.visible = model.visible; // optional: an Parent koppeln
+          scene.add(h);
+          return h;
+        });
+        models.__debugHelpers.boatTargetBoxes = targetHelpers;
       }
-
 
 
     }, undefined, (err) => {
@@ -154,6 +170,25 @@ export function getBoatRivetTargets() {
   });
 
   console.log("Gefundene Boat-Teile:", targets.map(t => t.name));
-
   return targets;
+}
+
+
+
+// 🔁 Sichtbarkeit & Bounds der Boxen pro Frame updaten
+export function updateDebugBoxesVisibilityAndBounds() {
+  const np = models["Nietplatte"];
+  const h1 = models.__debugHelpers.nietplatteBox;
+  if (np && h1) {
+    h1.visible = np.visible; // optional
+    h1.update();
+  }
+
+  const parent = models["boatPart_wRivets"];
+  const hs = models.__debugHelpers.boatTargetBoxes || [];
+  const show = !!(parent && parent.visible);
+  hs.forEach(h => {
+    h.visible = show;        // optional: nur zeigen, wenn Parent sichtbar
+    h.update();              // BoxHelper neu berechnen
+  });
 }

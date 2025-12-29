@@ -7,7 +7,7 @@
 
 import { initScene, scene, camera, renderer, clock } from './scene.js';
 import { initXR } from './xr.js';
-import { loadModels, models, mixers } from './models.js';
+import { loadModels, models, mixers, updateDebugBoxesVisibilityAndBounds } from './models.js';
 import { initInteractions, updateGrabFollowCamera, updatePerFrameCollisionNietplatte } from './interactions.js';
 import { initUI, startTextEngine, initFeedbackListener, updatePerFrameUI } from './ui.js';
 
@@ -40,6 +40,9 @@ renderer.setAnimationLoop(() => {
   // Greifen: Modell vor Kamera positionieren, Objekt vor Kamera halten (funktion prüft intern, ob isGrabbed=true)
   updateGrabFollowCamera(camera);
   //updatePerFrameCollisionNietplatte(); // optional, nur wenn continuous Kollisionstest gewünscht ist (siehe interactions.js)
+  //pro Frame BoxHelper aktualisieren
+  updateDebugBoxesVisibilityAndBounds();
+
 
   // Optional: pro Frame UI-Updates
   //updatePerFrameUI?.();
