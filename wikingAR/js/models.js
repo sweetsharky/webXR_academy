@@ -142,7 +142,7 @@ export function getBoatRivetTargets() {
   const parent = models["boatPart_wRivets"];
   if (!parent) return [];
 
-  const names = ["schiffsniet", "modelNietplatte_eng.001"];
+  const names = ["schiffsniet", "nietplattenteil"];
   const lowerNames = names.map(n => n.toLowerCase());
 
   const targets = [];
