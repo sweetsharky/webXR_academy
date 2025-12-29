@@ -12,6 +12,14 @@ export const models = {};         // hier speichern wir die geladenen Modelle
 export const mixers = [];         // enthält alle AnimationMixer-Instanzen (pro Modell mit Animation)
 const loader = new GLTFLoader();
 
+
+// Debugging: visible bounding boxes: interne Registry für Debug-Helper
+models.__debugHelpers = {
+  nietplatteBox: null,
+  boatTargetBoxes: [], // Array von BoxHelpern für schiffsniet + nietplattenteil
+};
+
+
 // 📌 Liste der Modelle (aus deinem Originalcode)
 export const modelList = [
   {
@@ -107,7 +115,7 @@ export function loadModels(scene) {
       }
 
 
-  // ✅ Debug-Box für Nietplatte (grün)
+  // Debugging: visible bounding boxes: Debug-Box für Nietplatte (grün)
         if (item.name === "Nietplatte") {
           const helper = new THREE.BoxHelper(model, 0x22aa22);
           helper.visible = model.visible; // optional: nur zeigen, wenn sichtbar
@@ -133,7 +141,7 @@ export function loadModels(scene) {
         models["boatPart_wRivets_targets"] = boatTargets;
 
         console.log('Boat-Targets beim Laden gefunden:', boatTargets.map(t => t.name || t.uuid));
-        // BoxHelper je Target erzeugen
+        // Debugging: visible bounding boxes: BoxHelper je Target erzeugen
         const targetHelpers = boatTargets.map(target => {
           const h = new THREE.BoxHelper(target, 0xff8800);
           h.visible = model.visible; // optional: an Parent koppeln
@@ -175,7 +183,7 @@ export function getBoatRivetTargets() {
 
 
 
-// 🔁 Sichtbarkeit & Bounds der Boxen pro Frame updaten
+// Debugging: visible bounding boxes: Sichtbarkeit & Bounds der Boxen pro Frame updaten
 export function updateDebugBoxesVisibilityAndBounds() {
   const np = models["Nietplatte"];
   const h1 = models.__debugHelpers.nietplatteBox;

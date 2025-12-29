@@ -40,7 +40,7 @@ renderer.setAnimationLoop(() => {
   // Greifen: Modell vor Kamera positionieren, Objekt vor Kamera halten (funktion prüft intern, ob isGrabbed=true)
   updateGrabFollowCamera(camera);
   //updatePerFrameCollisionNietplatte(); // optional, nur wenn continuous Kollisionstest gewünscht ist (siehe interactions.js)
-  //pro Frame BoxHelper aktualisieren
+  //Debugging: visible bounding boxes: pro Frame BoxHelper aktualisieren
   updateDebugBoxesVisibilityAndBounds();
 
 
