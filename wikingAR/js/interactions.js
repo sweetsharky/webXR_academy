@@ -269,9 +269,8 @@ export function initInteractions(models, camera, renderer) {
 
   // 👉 Kollisionsprüfung NUR beim Ablegen (drop), durchgehend dann mit (continue) oben in Umschalter ändern.
   // Eine Frame-Verzögerung (über requestAnimationFrame()), damit updateGrabFollowCamera NICHT mehr läuft und das getragene Objekt (=Nietplatte) bei der Kollisionsdprüfung nicht mehr an der Kamera hängt, sondern sich in Weltkoordinaten befindet, wenn geprüft wird NACH dem Ablegen (und nicht im selben Frame, also nicht innerhalb von FollowCamera)!
-  requestAnimationFrame(() => {
+
     checkNietplatteAgainstTargets();
-  });
 
   });
 }
