@@ -216,8 +216,15 @@ export function initUI(modelsRef, renderer) {
     // Zeige direkten Feedback-Text (ohne Typewriter, damit es "instant" wirkt)
     textBox.textContent = message;
     // Optional: optisch hervorheben
-    textBox.style.background = '#d1def5ff'; // sanftes Grün
+    textBox.style.background = '#d8f5d1'; // sanftes Grün
     textBox.style.borderRadius = '8px';
+
+
+// Nach 5 Sekunden automatisch wieder ausblenden
+    setTimeout(() => {
+        textBox.style.display = "none";
+    }, 5000); // 5000 ms = 5 Sekunden
+
   }
 
 
