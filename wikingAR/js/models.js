@@ -109,7 +109,7 @@ export function loadModels(scene) {
 
       // checken, ob alle childobjekte an Model gefunden werden
       if (item.name === "boatPart_wRivets") {
-        const names = ["schiffsniet", "modelNietplatte_eng.001"];
+        const names = ["schiffsniet", "nietplattenteil"];
         const lowerNames = names.map(n => n.toLowerCase());
         const boatTargets = [];
 
