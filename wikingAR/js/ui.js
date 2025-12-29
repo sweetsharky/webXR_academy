@@ -204,7 +204,14 @@ export function initUI(modelsRef, renderer) {
 //für ft_dropTrigger --> Für Feedback-Text Anzeige, sobald Objekt an korrektem Platz abgelegt/kollidiert.
   export function initFeedbackListener() {
     window.addEventListener('nietplatte:placedCorrect', (e) => {
-      showFeedbackText('Korrekt, nun ziehe das andere Metallstück an die richtige Stelle');
+      
+// Direkter Feedback-Text
+    if (textBox) {
+      textBox.textContent = 'Korrekt, nun ziehe das andere Metallstück an die richtige Stelle';
+      textBox.style.background = '#d8f5d1'; // sanftes Grün
+      textBox.style.borderRadius = '8px';
+      textBox.style.padding = '8px 12px';
+    }
       // Falls du zusätzlich UI-Logik starten willst (z. B. nächster Schritt):
       // document.getElementById('nextStepButton').style.display = 'block';
     });

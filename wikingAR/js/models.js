@@ -106,6 +106,28 @@ export function loadModels(scene) {
         console.log("Gefundene Rost-Teile:", rostParts.map(p => p.name || p.uuid));
       }
 
+
+      // checken, ob alle childobjekte an Model gefunden werden
+      if (item.name === "boatPart_wRivets") {
+        const names = ["schiffsniet", "modelNietplatte_eng.001"];
+        const lowerNames = names.map(n => n.toLowerCase());
+        const boatTargets = [];
+
+        model.traverse((child) => {
+          const n = (child.name || "").toLowerCase();
+          if (child.isMesh && lowerNames.includes(n)) {
+            boatTargets.push(child);
+          }
+        });
+
+        // Optional in Registry ablegen, falls du sie mehrfach brauchst:
+        models["boatPart_wRivets_targets"] = boatTargets;
+
+        console.log('Boat-Targets beim Laden gefunden:', boatTargets.map(t => t.name || t.uuid));
+      }
+
+
+
     }, undefined, (err) => {
       console.error("Fehler beim Laden von", item.url, err);
     });
@@ -131,7 +153,7 @@ export function getBoatRivetTargets() {
     }
   });
 
-  console.log(getBoatRivetTargets());
+  console.log("Gefundene Boat-Teile:", targets.map(t => t.name));
 
   return targets;
 }

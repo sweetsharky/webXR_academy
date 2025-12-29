@@ -37,12 +37,12 @@ renderer.setAnimationLoop(() => {
   // Ende: für natürliche Animation
 
 
-  // Greifen: Modell vor Kamera positionieren, falls aktiv
+  // Greifen: Modell vor Kamera positionieren, Objekt vor Kamera halten (funktion prüft intern, ob isGrabbed=true)
   updateGrabFollowCamera(camera);
-  updatePerFrameCollisionNietplatte(); // optional, nur wenn continuous Kollisionstest gewünscht ist (siehe interactions.js)
+  //updatePerFrameCollisionNietplatte(); // optional, nur wenn continuous Kollisionstest gewünscht ist (siehe interactions.js)
 
   // Optional: pro Frame UI-Updates
-  updatePerFrameUI?.();
+  //updatePerFrameUI?.();
 
   renderer.render(scene, camera);
 });

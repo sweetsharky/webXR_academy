@@ -268,7 +268,10 @@ export function initInteractions(models, camera, renderer) {
     grabButton.classList.remove("grabbing"); // visuelles Feedback deaktivieren
 
   // 👉 Kollisionsprüfung NUR beim Ablegen (drop), durchgehend dann mit (continue) oben in Umschalter ändern.
-  checkNietplatteAgainstTargets();
+  // Eine Frame-Verzögerung (über requestAnimationFrame()), damit updateGrabFollowCamera NICHT mehr läuft und das getragene Objekt (=Nietplatte) bei der Kollisionsdprüfung nicht mehr an der Kamera hängt, sondern sich in Weltkoordinaten befindet, wenn geprüft wird NACH dem Ablegen (und nicht im selben Frame, also nicht innerhalb von FollowCamera)!
+  requestAnimationFrame(() => {
+    checkNietplatteAgainstTargets();
+  });
 
   });
 }
@@ -284,7 +287,7 @@ export function initInteractions(models, camera, renderer) {
     return box;
   }
 
-  // Prüft Nietplatte vs. alle Ziel-Targets; wir nehmen eine Toleranz.
+  // Kollisionsprüfung: Prüft Nietplatte vs. alle Ziel-Targets; wir nehmen eine Toleranz.
   function checkNietplatteAgainstTargets() {
     const nietplatte = models["Nietplatte"];
     const targets = getBoatRivetTargets();
@@ -293,7 +296,7 @@ export function initInteractions(models, camera, renderer) {
     const plateBox = getWorldBox3(nietplatte);
 
     // Toleranz für einfacheren Treffer (z. B. 2 cm)
-    const TOLERANCE = 0.02;
+    const TOLERANCE = 0.05;
 
     for (const t of targets) {
       const tBox = getWorldBox3(t);
