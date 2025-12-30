@@ -57,6 +57,11 @@ function toggleModel(name) {
     if (name === "Nietplatte") {
       document.getElementById("grab-nietplatte").style.display = models[name].visible ? "block" : "none";
     }
+    if (name === "Schiffsniet") {
+      document.getElementById("grab-schiffsniet").style.display =
+        models[name].visible ? "block" : "none";
+    }
+
   }
 }
 
@@ -208,6 +213,12 @@ export function initUI(modelsRef, renderer) {
       // Falls du zusätzlich UI-Logik starten willst (z. B. nächster Schritt):
       // document.getElementById('nextStepButton').style.display = 'block';
     });
+
+    window.addEventListener('schiffsniet:placedCorrect', (e) => {
+      showFeedbackText('Super! Der Schiffsniet sitzt an der richtigen Stelle.');
+    });
+
+
   }
 
   export function showFeedbackText(message) {

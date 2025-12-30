@@ -18,9 +18,11 @@ let activeModel = null;
 // Drag&Drop (Rostteile)
 let raycaster, touchPos, dragging, dragOffset, dragPlane, planeIntersectPoint;
 
-// Greifen/Ablegen
-let isGrabbed = false;
-let grabbedModel = null;
+// Greifen/Ablegen - Flags
+let isGrabbed_1 = false;
+let grabbedModel_1 = null;
+let isGrabbed_2 = false;
+let grabbedModel_2 = null;
 
 
 // Umschalter für Kollisionsmodus:'drop' (empfohlen) = nur beim Loslassen prüfen; 'continuous' = pro Frame prüfen (kostet mehr CPU).
@@ -33,11 +35,17 @@ export function setCollisionMode(mode) {
 // Exportierte Hilfsfunktion für den Render-Loop
 export function updateGrabFollowCamera(camera) {
   //Gegriffenes Modell soll mit Camera "mitwandern", um Position im Raum zu verändern.
-  if (isGrabbed && grabbedModel) {
+  if (isGrabbed_1 && grabbedModel_1) {
     // Position etwas vor die Kamera setzen (z.B. 0.5m)
     const offset = new THREE.Vector3(0, 0, -0.5);
     offset.applyMatrix4(camera.matrixWorld);
-    grabbedModel.position.copy(offset);
+    grabbedModel_1.position.copy(offset);
+  }
+  if (isGrabbed_2 && grabbedModel_2) {
+    // Position etwas vor die Kamera setzen (z.B. 0.5m)
+    const offset = new THREE.Vector3(0, 0, -0.5);
+    offset.applyMatrix4(camera.matrixWorld);
+    grabbedModel_2.position.copy(offset);
   }
 }
 
@@ -218,9 +226,11 @@ export function initInteractions(models, camera, renderer) {
             if (clean) {
               clean.visible = true;
 
-              // Greifbutton sichtbar 
-              const grabBtn = document.getElementById("grab-nietplatte");
-              if (grabBtn) grabBtn.style.display = "block";
+              // Greifbuttons sichtbar 
+              const grabBtn_1 = document.getElementById("grab-nietplatte");
+              const grabBtn_2 = document.getElementById("grab-schiffsniet");
+              if (grabBtn_1) grabBtn_1.style.display = "block";
+              if (grabBtn_2) grabBtn_2.style.display = "block";
             }
             if (rusty) {
               // rusty ausblenden
@@ -252,24 +262,42 @@ export function initInteractions(models, camera, renderer) {
   // ---------------------------
   // Greif-Button-Logik
   // ---------------------------
-  const grabButton = document.getElementById("grab-nietplatte");
-  grabButton.addEventListener("touchstart", (e) => {
+  const grabButton_1 = document.getElementById("grab-nietplatte");
+  const grabButton_2 = document.getElementById("grab-schiffsniet");
+  grabButton_1.addEventListener("touchstart", (e) => {
     e.preventDefault(); // verhindert Ghost-Clicks
     if (models["Nietplatte"] && models["Nietplatte"].visible) {
-      grabbedModel = models["Nietplatte"];
-      isGrabbed = true;
-      grabButton.classList.add("grabbing"); // visuelles Feedback aktiv
+      grabbedModel_1 = models["Nietplatte"];
+      isGrabbed_1 = true;
+      grabButton_1.classList.add("grabbing"); // visuelles Feedback aktiv
+    }
+  });
+    grabButton_2.addEventListener("touchstart", (e) => {
+    e.preventDefault(); // verhindert Ghost-Clicks
+    if (models["Schiffsniet"] && models["Schiffsniet"].visible) {
+      grabbedModel_2 = models["Schiffsniet"];
+      isGrabbed_2 = true;
+      grabButton_2.classList.add("grabbing"); // visuelles Feedback aktiv
     }
   });
 
-  grabButton.addEventListener("touchend", () => {
-    isGrabbed = false;
-    grabbedModel = null;
-    grabButton.classList.remove("grabbing"); // visuelles Feedback deaktivieren
-
+  grabButton_1.addEventListener("touchend", () => {
+    isGrabbed_1 = false;
+    grabbedModel_1 = null;
+    grabButton_1.classList.remove("grabbing"); // visuelles Feedback deaktivieren
+  
   // 👉 Kollisionsprüfung NUR beim Ablegen (drop), durchgehend dann mit (continue) oben in Umschalter ändern.
-    checkNietplatteAgainstTargets();
+    checkGrabModelAgainstTargets(tmp, 'nietplatte:placesCorrect'); //Frage:das zweite Argument ist ein EventName, was kann das genau?
+                                                                  //Zum Verständnis: tmp ist models["Nietplatte"] drin, aber warum? ist tmp eine spezielle Variable, die sowas kann wie "this.model"?
+  });
 
+      grabButton_2.addEventListener("touchend", () => {
+    isGrabbed_2 = false;
+    grabbedModel_2 = null;
+    grabButton_2.classList.remove("grabbing"); // visuelles Feedback deaktivieren
+      
+  // 👉 Kollisionsprüfung NUR beim Ablegen (drop), durchgehend dann mit (continue) oben in Umschalter ändern.
+    checkGrabModelAgainstTargets(tmp, 'schiffsniet:placesCorrect'); 
   });
 }
 
@@ -285,12 +313,11 @@ export function initInteractions(models, camera, renderer) {
   }
 
   // Kollisionsprüfung: Prüft Nietplatte vs. alle Ziel-Targets; wir nehmen eine Toleranz.
-  function checkNietplatteAgainstTargets() {
-    const nietplatte = models["Nietplatte"];
+  function checkGrabModelAgainstTargets(model, eventName) {
     const targets = getBoatRivetTargets();
-    if (!nietplatte || !targets || targets.length === 0) return false;
+    if (!model || !targets || targets.length === 0) return false;
 
-    const plateBox = getWorldBox3(nietplatte);
+    const modelBox = getWorldBox3(model);
 
     // Toleranz für einfacheren Treffer (z. B. 2 cm)
     const TOLERANCE = 0.05;
@@ -299,9 +326,9 @@ export function initInteractions(models, camera, renderer) {
       const tBox = getWorldBox3(t);
       // Box des Targets leicht vergrößern
       const expanded = tBox.clone().expandByScalar(TOLERANCE);
-      if (plateBox.intersectsBox(expanded)) {
+      if (modelBox.intersectsBox(expanded)) {
         // Treffer → Event senden
-        window.dispatchEvent(new CustomEvent('nietplatte:placedCorrect', {
+        window.dispatchEvent(new CustomEvent(eventName, {
           detail: { targetName: t.name || '(unbenannt)' }
         }));
         return true;

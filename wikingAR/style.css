@@ -224,6 +224,23 @@ a, button, input, select {
   transform: scale(0.98);     /* leichter "Button gedrückt"-Effekt */
 }
 /*Ende: Button für grab-nietplatte*/
+ /*Start: Button für grab-schiffsniet und änderung der Farbe als Feedback*/
+  #grab-schiffsniet {
+  padding: 1em 2em;
+  border-radius: 0.5em;
+  background-color: #f1d0b5;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+/* Visuelles Feedback beim Drücken */
+#grab-schiffsniet.grabbing {
+  background-color: #aef1bf; /* z.B. grün während Greifen */
+  transform: scale(0.98);     /* leichter "Button gedrückt"-Effekt */
+}
+/*Ende: Button für grab-schiffsniet*/
 
 /*Start: Intro-video und -Button*/
 #intro-overlay {
