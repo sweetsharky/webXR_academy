@@ -95,6 +95,9 @@ let currentStep = 0;   // startet bei Lernschritt 0
 let currentPage = 0;   // Seite im aktuellen Schritt
 
 let textBox, textBoxFeedback, nextButton, nextStepButton;
+// Flags für korrektes Ablegen
+let model_1placed = false;
+let model_2placed = false;
 
 function typeWriterEffect(text, callback) {
   let i = 0;
@@ -210,13 +213,18 @@ export function initUI(modelsRef, renderer) {
 //für ft_dropTrigger --> Für Feedback-Text Anzeige, sobald Objekt an korrektem Platz abgelegt/kollidiert.
   export function initFeedbackListener() {
     window.addEventListener('nietplatte:placedCorrect', (e) => {
+      model_1placed = true;
       showFeedbackText('Korrekt, nun ziehe das andere Metallstück an die richtige Stelle');
+      showNextStep();
+      
       // Falls du zusätzlich UI-Logik starten willst (z. B. nächster Schritt):
       // document.getElementById('nextStepButton').style.display = 'block';
     });
 
     window.addEventListener('schiffsniet:placedCorrect', (e) => {
+      model_2placed = true;
       showFeedbackText('Super! Der Schiffsniet sitzt an der richtigen Stelle.');
+      showNextStep();
     });
 
 
@@ -240,6 +248,12 @@ export function initUI(modelsRef, renderer) {
 
   }
 
+  //Hilfsfunktion:
+  function showNextStep() {
+    if (model_1placed && model_2placed){
+      nextStepButton.style.display = "block";
+    }
+  }
 
 
   // Optional: pro Frame UI-Updates
