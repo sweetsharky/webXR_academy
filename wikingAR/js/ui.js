@@ -251,7 +251,9 @@ export function initUI(modelsRef, renderer) {
   //Hilfsfunktion:
   function showNextStep() {
     if (model_1placed && model_2placed){
-      nextStepButton.style.display = "block";
+        currentStep++;       // nächster Lernschritt
+        currentPage = 0;     // wieder von Seite 0 starten
+        showPage(currentPage);
     }
   }
 
