@@ -32,8 +32,7 @@ export const modelList = [
   {
     name: "Schiff",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/gislinge_viking_boat/scene.gltf",
-    position: { x: 0, y: -1.5, z: -1.0 },
-    rotation: {x: 0, y: 90, z:0},
+    position: { x: 0, y: -1.5, z: -2.0 },
     scale: 0.01,
     rotatable: false,
   },
@@ -47,8 +46,7 @@ export const modelList = [
   {
     name: "boatPart_wRivets",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/vikingboat_part_wRivets/vikingboat_part_wRivets.gltf",
-    position: { x: 0, y: -1.5, z: -1.0 },
-    rotation: {x: 0, y: 90, z:0},
+    position: { x: 0, y: -1.5, z: -2.0 },
     scale: 0.01,
     rotatable: false,
   },
@@ -75,7 +73,6 @@ export function loadModels(scene) {
       const model = gltf.scene;
       model.scale.multiplyScalar(item.scale);
       model.position.set(item.position.x, item.position.y, item.position.z);
-      model.rotation.set(item.rotation.x, item.rotation.y, item.rotation.z);
       model.visible = false; // unsichtbar am Anfang
       model.userData.rotatable = item.rotatable; // Flag gespeichert, ob rotierbar oder nicht
 
