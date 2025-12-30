@@ -94,7 +94,7 @@ const charsPerPage = 100; // Anzahl Zeichen pro "Seite" (kannst du anpassen)
 let currentStep = 0;   // startet bei Lernschritt 0
 let currentPage = 0;   // Seite im aktuellen Schritt
 
-let textBox, nextButton, nextStepButton;
+let textBox, textBoxFeedback, nextButton, nextStepButton;
 
 function typeWriterEffect(text, callback) {
   let i = 0;
@@ -147,6 +147,7 @@ function showPage(pageIndex) {
 export function startTextEngine() {
   // DOM-Refs
   textBox = document.getElementById('textBox');
+  textBoxFeedback = document.getElementById('textBoxFeedback');
   nextButton = document.getElementById('nextButton');
   nextStepButton = document.getElementById('nextStepButton');
 
@@ -222,18 +223,19 @@ export function initUI(modelsRef, renderer) {
   }
 
   export function showFeedbackText(message) {
-    if (!textBox) textBox = document.getElementById('textBox');
-    if (!textBox) return;
+    if (!textBoxFeedback) textBoxFeedback = document.getElementById('textBoxFeedback');
+    if (!textBoxFeedback) return;
     // Zeige direkten Feedback-Text (ohne Typewriter, damit es "instant" wirkt)
-    textBox.textContent = message;
+    textBoxFeedback.textContent = message;
+      textBoxFeedback.style.display = "block"; //TextBox sichtbar machen
     // Optional: optisch hervorheben
-    textBox.style.background = '#d8f5d1'; // sanftes Grün
-    textBox.style.borderRadius = '8px';
+    textBoxFeedback.style.background = '#d8f5d1'; // sanftes Grün
+    textBoxFeedback.style.borderRadius = '8px';
 
 
 // Nach 5 Sekunden automatisch wieder ausblenden
     setTimeout(() => {
-        textBox.style.display = "none";
+        textBoxFeedback.style.display = "none"; //TextBox wieder ausblenden
     }, 5000); // 5000 ms = 5 Sekunden
 
   }
