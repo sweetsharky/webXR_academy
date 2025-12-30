@@ -283,21 +283,23 @@ export function initInteractions(models, camera, renderer) {
 
   grabButton_1.addEventListener("touchend", () => {
     isGrabbed_1 = false;
-    grabbedModel_1 = null;
+    const model = grabbedModel_1;   // << Modell sichern, damit wir es unten in checkGrabModelAgainstTargets noch auf Kollision chekcne können!
+    grabbedModel_1 = null; // hier wird Model aus Variable entfernt
     grabButton_1.classList.remove("grabbing"); // visuelles Feedback deaktivieren
   
   // 👉 Kollisionsprüfung NUR beim Ablegen (drop), durchgehend dann mit (continue) oben in Umschalter ändern.
-    checkGrabModelAgainstTargets(tmp, 'nietplatte:placesCorrect'); //Frage:das zweite Argument ist ein EventName, was kann das genau?
-                                                                  //Zum Verständnis: tmp ist models["Nietplatte"] drin, aber warum? ist tmp eine spezielle Variable, die sowas kann wie "this.model"?
+    checkGrabModelAgainstTargets(model, 'nietplatte:placedCorrect'); //Frage:das zweite Argument ist ein EventName, was kann das genau?
+                                                                  
   });
 
       grabButton_2.addEventListener("touchend", () => {
     isGrabbed_2 = false;
+    const model = grabbedModel_2;
     grabbedModel_2 = null;
     grabButton_2.classList.remove("grabbing"); // visuelles Feedback deaktivieren
       
   // 👉 Kollisionsprüfung NUR beim Ablegen (drop), durchgehend dann mit (continue) oben in Umschalter ändern.
-    checkGrabModelAgainstTargets(tmp, 'schiffsniet:placesCorrect'); 
+    checkGrabModelAgainstTargets(model, 'schiffsniet:placedCorrect'); 
   });
 }
 
