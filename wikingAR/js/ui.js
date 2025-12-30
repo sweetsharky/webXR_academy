@@ -135,7 +135,7 @@ function showPage(pageIndex) {
                         document.querySelector('.item2_1').style.display = 'block';
                       } else if (currentStep === 6) {
                         models["boatPart_wRivets"].visible = true;
-                        nextStepButton.style.display = "block";
+                        //nextStepButton.style.display = "block";
                       } else if (currentStep === 7) {
                         models["Schiff"].visible = true;
                         nextStepButton.style.display = "block";
