@@ -18,6 +18,7 @@ initScene();                 // Szene/Kamera/Renderer + Canvas
 initXR(renderer);            // ARButton + Intro/Session Handling
 loadModels(scene);           // GLTFs laden + Registry/Animations
 initUI(models, renderer);    // Buttons/Panels/Video/Modell-Toggles
+
 initFeedbackListener();     //für ft_dragTrigger: Feedback bei korrekter Kollision
 initInteractions(models, camera, renderer); // Rotation/Drag&Drop/Greifen
 startTextEngine();           // Text/Steps starten (showPage(0))
@@ -51,7 +52,7 @@ renderer.setAnimationLoop(() => {
 });
 
 // ------------------------------------------------------------
-// EventListener --> entspricht den Listener in Unitys Eventsystem, die getriggert werden, sobald ausgelöst (OnTriggerEnter(), OnMouseDown()...)
+// Globale-EventListener --> entspricht den Listener in Unitys Eventsystem, die getriggert werden, sobald ausgelöst (OnTriggerEnter(), OnMouseDown()...)
 // ------------------------------------------------------------
 window.addEventListener('resize', () => {
   // Three.js anpassen
