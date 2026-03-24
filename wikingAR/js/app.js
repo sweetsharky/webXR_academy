@@ -27,7 +27,7 @@ startTextEngine();           // Text/Steps starten (showPage(0))
 // Render-Loop (XR-kompatibel) --> entspricht Unity's update()
 // ------------------------------------------------------------
 renderer.setAnimationLoop(() => {
-  // Start: für natürliche Animation über delta
+  // Start: für natürliche Animation über deltaTime
   // update aller Mixer
   const delta = clock.getDelta();
   if (mixers.length > 0) {
