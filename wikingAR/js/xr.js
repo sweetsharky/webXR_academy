@@ -5,10 +5,10 @@
 // Video-Panel 'nietVideo' (Skip-Button), Grid-Visibility
 // ============================================================
 
-import { VRButton } from 'three/examples/jsm/webxr/VRButton.js';
+import { ARButton } from 'three/examples/jsm/webxr/ARButton.js';
 
 export function initXR(renderer) {
-  document.body.appendChild(VRButton.createButton(renderer, {
+  document.body.appendChild(ARButton.createButton(renderer, {
     optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],
     domOverlay: { root: document.body }
   }));
