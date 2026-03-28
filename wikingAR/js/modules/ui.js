@@ -5,7 +5,7 @@
 // Typing/Text-Lernschritte (Typewriter + Pagination + Triggers)
 // ============================================================
 
-import { models } from './modules/models.js';
+import { models } from './models.js';
 
 // Dispatcher für Icon-Buttons
 function handleIconAction(action, event) {
