@@ -1,5 +1,5 @@
 
-// app.js
+// main.js
 // ============================================================
 // Master-Datei: orchestriert Scene, XR, Models, UI, Interactions
 // Startet Render-Loop (XR-kompatibel) + Resize

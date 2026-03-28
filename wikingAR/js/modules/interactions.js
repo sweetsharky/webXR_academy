@@ -8,7 +8,7 @@
 // ============================================================
 
 import * as THREE from 'https://unpkg.com/three@0.133.0/build/three.module.js';
-import { getBoatRivetTargets, models } from './modules/models.js';
+import { getBoatRivetTargets, models } from './models.js';
 
 
 let previousTouch = null;
