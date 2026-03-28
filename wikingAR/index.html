@@ -23,7 +23,11 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
   }
 }
 </script>
-
+  <!-- 
+Nur das Master-Modul einbinden.
+       Alle weiteren Imports (Three.js, GLTFLoader, ARButton, usw.) passieren innerhalb der JS-Module.
+ -->
+  <script type="module" src="js/app.js"></script>
 
 </head>
 <body>
@@ -100,10 +104,6 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
     <button id="toggle-panel">Toggle Panel</button>
   </div>
 
-  <!-- 
-Nur das Master-Modul einbinden.
-       Alle weiteren Imports (Three.js, GLTFLoader, ARButton, usw.) passieren innerhalb der JS-Module.
- -->
-  <script type="module" src="js/app.js"></script>
+
 </body>
 </html>

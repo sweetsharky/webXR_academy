@@ -25,7 +25,7 @@ export function initScene() {
   renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.xr.enabled = true; // muss für webXR so eingestellt werden, damit der Renderer XR ermöglicht, denke ich!
+  renderer.xr.enabled = true; // der WebGLRenderer muss für die webXR-Funktionen seine xr-rendering ermöglichen.
   container.appendChild(renderer.domElement); // 3. an den Div-container wird ein WebGLRenderer angehängt --> es wird automatisch ein <canva>-Tag geöffnet innerhalb des <div>! (da WebGLRenderer ein HTMLCanvasElemet ist)
   renderer.domElement.classList.add('three.js-canvas'); //4. damit wir über CSS diesen Canvas anpassen können benennen wir ihn mit einer referenz "three.js-canvas" --> three.js Canvas soll in den Vordergrund für Touch-Interaktion 
   /*
