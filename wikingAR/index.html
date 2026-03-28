@@ -9,25 +9,26 @@
   
   <!-- Lösung für ein FAllstrick beim Arbeiten mit ES-Modulen: Mit der import Map versteht der Browser nun, was "three" bedeutet. Damit three nicht als bare specifier erkannt wird, sondern das entsprechende Modul beinhaltet (das Modul soll ja über eine URL als CDN geteilt werden. Die zeichenkette "three" würde der Browser nicht als Modul verstehen, da ich hier nicht npm mit build tool (bundler) nutze, sondern three.js als CDN importiere. Importmaps sagen also: Hey Browser, wenn du die Zeichenkette "three" siehst oder andere, die in import Map stehen, dann lade den entsprechenden CDN-Link und binde so das Modul in das Projekt ein" )
   Die Import Map sagt dem Browser:
-„Wenn du die Zeichenkette three siehst, dann lade stattdessen diese URL.“ 
-Ist wichtig, damit die Importe von THREE.js über den Browser funktinieren, zB:
-import * as THREE from 'three';
-import { ARButton } from 'three/examples/jsm/webxr/ARButton.js';
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
--->
-<script type="importmap">
-{
-  "imports": {
-    "three": "https://unpkg.com/three@0.133.0/build/three.module.js",
-    "three/examples/jsm/": "https://unpkg.com/three@0.133.0/examples/jsm/"
+  „Wenn du die Zeichenkette three siehst, dann lade stattdessen diese URL.“ 
+  Ist wichtig, damit die Importe von THREE.js über den Browser funktinieren, zB:
+  import * as THREE from 'three';
+  import { ARButton } from 'three/examples/jsm/webxr/ARButton.js';
+  import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js"
+  -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.133.0/build/three.module.js",
+      "three/examples/jsm/": "https://unpkg.com/three@0.133.0/examples/jsm/"
+    }
   }
-}
-</script>
+  </script>
   <!-- 
-Nur das Master-Modul einbinden.
-       Alle weiteren Imports (Three.js, GLTFLoader, ARButton, usw.) passieren innerhalb der JS-Module.
- -->
-  <script type="module" src="js/app.js"></script>
+  Nur das Master-Modul einbinden.
+        - Alle weiteren Imports (Three.js, GLTFLoader, ARButton, usw.) passieren innerhalb der JS-Module.
+        - type="module" sagt, dass dieses Skript wie ein Modul gehandhabt werden soll, und somit erst nach dem Laden der HTML-Elemente geladen werden soll. (Man könnte es auch ganz nach unten schreiben, am Ende des body, aber ist wohl best-pracice so, aus Gründen)
+        --> 
+  <script type="module" src="js/main.js"></script>
 
 </head>
 <body>

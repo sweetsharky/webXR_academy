@@ -5,11 +5,11 @@
 // Startet Render-Loop (XR-kompatibel) + Resize
 // ============================================================
 
-import { initScene, scene, camera, renderer, clock } from './scene.js';
-import { initXR } from './xr.js';
-import { loadModels, models, mixers, updateDebugBoxesVisibilityAndBounds } from './models.js';
-import { initInteractions, updateGrabFollowCamera, updatePerFrameCollisionNietplatte } from './interactions.js';
-import { initUI, startTextEngine, initFeedbackListener, updatePerFrameUI } from './ui.js';
+import { initScene, scene, camera, renderer, clock } from './modules/scene.js';
+import { initXR } from './modules/xr.js';
+import { loadModels, models, mixers, updateDebugBoxesVisibilityAndBounds } from './modules/models.js';
+import { initInteractions, updateGrabFollowCamera, updatePerFrameCollisionNietplatte } from './modules/interactions.js';
+import { initUI, startTextEngine, initFeedbackListener, updatePerFrameUI } from './modules/ui.js';
 
 // ------------------------------------------------------------
 // Bootstrapping-Reihenfolge --> entspricht Unity's start()!
