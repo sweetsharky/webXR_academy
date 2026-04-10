@@ -13,8 +13,6 @@ function handleIconAction(action, event) {
     case 'showNiet':
       // item2_2 Container sichtbar machen und Video starten
       const nietVideo = document.getElementById('nietVideo');
-      const nietSource = nietVideo ? nietVideo.querySelector("source") : null;
-      const nietOriginalSrc = nietSource ? nietSource.src : null;
 
       if (document.querySelector('.item2_2') && nietVideo) {
         document.querySelector('.item2_2').style.display = 'block';
