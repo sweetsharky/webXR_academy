@@ -18,21 +18,15 @@ function handleIconAction(action, event) {
 
       if (document.querySelector('.item2_2') && nietVideo) {
         document.querySelector('.item2_2').style.display = 'block';
-        
-        // Video-Quelle wiederherstellen, falls sie entfernt wurde
-        if (!nietVideo.getAttribute("src") && nietOriginalSrc) {
-          nietVideo.setAttribute("src", nietOriginalSrc);
-          nietVideo.load();
-        }
 
         nietVideo.currentTime = 0; // Video von Anfang starten
-
         // Pause/Play beim Klick auf Video
-        nietVideo.onclick = () => {
+        nietVideo.addEventListener('click', () => {
           if (nietVideo.paused) { 
             nietVideo.play();
-          } else nietVideo.pause();
-        };
+          } else {
+            nietVideo.pause();}
+        });
       }
       break;
 

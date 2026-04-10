@@ -9,7 +9,7 @@ import { ARButton } from 'three/examples/jsm/webxr/ARButton.js';
 
 export function initXR(renderer) {
   document.body.appendChild(ARButton.createButton(renderer, {
-    optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],
+    optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],// ermöglicht, dass normale DOM-Elemente (Buttons, Panels, Overlays über das Kamerabild/AR-View) erlaubt sind. --> damit ich das normale DOM als UI nuten kann.
     domOverlay: { root: document.body }
   }));
 
@@ -20,6 +20,7 @@ export function initXR(renderer) {
   const continueButton_nietVideo = document.getElementById("continueButton_nietVideo");
 
   // Wenn eine AR-Session startet → Intro-video starten und später UI einblenden
+  //'sessionstart' ist ein Three.js-Event aus dem WebXRManager(= renderer.xr). Wenn der AR-Startbutton geklickt wird, dann wird die XR-Session gestartet und renderer.xe feuert das Event 'sessionstart'. Sobald das passiert können wir also dieses Event abfangen und sagen, was nun gemacht werden soll. 
   renderer.xr.addEventListener('sessionstart', () => {
     // 1. Intro-Overlay anzeigen und video starten
     overlay.style.display = "flex";
@@ -29,7 +30,7 @@ export function initXR(renderer) {
 
   // Continue-Button_intro → Overlay schließen und Grid freigeben
   continueButton_intro.addEventListener("click", () => {
-    overlay.remove(); // mit remove() wird das Video auch vom DOM getrennt, statt nur overlay.style.display = "none"; --> mehr Speicher wird frei
+    overlay.remove(); // mit remove() wird das ganze div-Element, indem das Video verschachtelt ist vom DOM gelöscht, statt nur overlay.style.display = "none"; --> mehr Speicher wird frei
     document.querySelector('.grid-container').style.display = "grid"; // UI freigeben
   });
 
@@ -39,8 +40,6 @@ export function initXR(renderer) {
     if (video) {
       video.pause();
       video.currentTime = 0;
-      video.removeAttribute("src"); //Video-Quelle entfernen
-      video.load(); // zwingt Browser, Quelle zu entladen --> removeAttribute() und load() arbeiten also zusammen wie staging und push bei Git
     }
     document.querySelector('.item2_2').style.display = 'none';
   });
