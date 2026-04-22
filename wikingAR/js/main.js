@@ -17,7 +17,7 @@ import { initUI, startTextEngine, initFeedbackListener, updatePerFrameUI } from 
 initScene();                 // Szene/Kamera/Renderer + Canvas
 initXR(renderer);            // ARButton + Intro/Session Handling
 loadModels(scene);           // GLTFs laden + Registry/Animations
-initUI(models, renderer);    // Buttons/Panels/Video/Modell-Toggles
+initUI();    // Buttons/Panels/Video/Modell-Toggles
 
 initFeedbackListener();     //für ft_dragTrigger: Feedback bei korrekter Kollision
 initInteractions(models, camera, renderer); // Rotation/Drag&Drop/Greifen
