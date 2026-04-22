@@ -48,9 +48,4 @@ export function initXR(renderer) {
   renderer.xr.addEventListener('sessionend', () => {
     document.querySelector('.grid-container').style.display = 'none';
   });
-
-  // Button, um UI-Panel (grid-Layout) sichtbar/unsichtbar
-  document.getElementById('toggle-panel').addEventListener('click', () => {
-    document.querySelector('.grid-container').classList.toggle('hide');
-  });
 }

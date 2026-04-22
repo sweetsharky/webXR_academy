@@ -176,7 +176,7 @@ export function startTextEngine() {
 // Öffentliche Initialisierung für UI (Buttons/Icons/Toggles)
 // ============================================================
 export function initUI() {
-  // toggle-panel (zusätzlich zu xr.js, falls hier genutzt)
+  // Button, um UI-Panel (grid-Layout) sichtbar/unsichtbar
   document.getElementById('toggle-panel').addEventListener('click', () => {
     document.querySelector('.grid-container').classList.toggle('hide');
   });

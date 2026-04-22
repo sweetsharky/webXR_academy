@@ -8,7 +8,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
-export const models = {};         // hier speichern wir die geladenen Modelle
+export const models = {};         // hier speichern wir die geladenen Modelle in einem Objekt als Schlüssel-Wert-Paare (NICHT als Array!)
 export const mixers = [];         // enthält alle AnimationMixer-Instanzen (pro Modell mit Animation)
 const loader = new GLTFLoader();
 
@@ -20,7 +20,7 @@ models.__debugHelpers = {
 };
 
 
-// 📌 Liste der Modelle (aus deinem Originalcode)
+// 📌 Liste der Modelle
 export const modelList = [
   {
     name: "Nietplatte",
@@ -94,6 +94,8 @@ export function loadModels(scene) {
       models[item.name] = model; // im Objekt speichern
       console.log(`Model "${item.name}" geladen`);
 
+      
+      // checken, ob die Childobjekte der Nietplatte_mit_Rost gefunden werden.
       // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
       if (item.name === "Nietplatte_mit_Rost") {
         // Suche und registriere die Rost-Teile
@@ -111,20 +113,11 @@ export function loadModels(scene) {
         // status-flag
         models["Nietplatte_mit_Rost_removedCount"] = 0;
 
-        console.log("Gefundene Rost-Teile:", rostParts.map(p => p.name || p.uuid));
+        console.log("Gefundene Rost-Teile:", rostParts.map(p => p.name || p.uuid)); //map() ist eine Array-Methode, die jedes Element in einem Array durchgeht und ein neues Array erzeugt. jedes Element in rostParts soll durchgegangen werden(p) und den Namen zurückgeben, falls kein name vorhanden, dann die ID zurückgeben(--> über die THREE.js Kennung, die automatisch von THREE erzeugt wird = uuid) 
       }
 
 
-  // Debugging: visible bounding boxes: Debug-Box für Nietplatte (grün)
-        if (item.name === "Nietplatte") {
-          const helper = new THREE.BoxHelper(model, 0x22aa22);
-          helper.visible = model.visible; // optional: nur zeigen, wenn sichtbar
-          scene.add(helper);
-          models.__debugHelpers.nietplatteBox = helper;
-        }
-
-
-      // checken, ob alle childobjekte an Model gefunden werden
+      // checken, ob alle childobjekte an BoatPart-Model gefunden werden
       if (item.name === "boatPart_wRivets") {
         const names = ["schiffsniet", "nietplattenteil"];
         const lowerNames = names.map(n => n.toLowerCase());
@@ -150,6 +143,15 @@ export function loadModels(scene) {
         });
         models.__debugHelpers.boatTargetBoxes = targetHelpers;
       }
+
+
+        // Debugging: visible bounding boxes: Debug-Box für Nietplatte (grün)
+        if (item.name === "Nietplatte") {
+          const helper = new THREE.BoxHelper(model, 0x22aa22);
+          helper.visible = model.visible; // optional: nur zeigen, wenn sichtbar
+          scene.add(helper);
+          models.__debugHelpers.nietplatteBox = helper;
+        }
 
 
     }, undefined, (err) => {
