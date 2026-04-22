@@ -283,7 +283,7 @@ export function initInteractions(models, camera, renderer) {
 
   grabButton_1.addEventListener("touchend", () => {
     isGrabbed_1 = false;
-    const model = grabbedModel_1;   // << Modell sichern, damit wir es unten in checkGrabModelAgainstTargets noch auf Kollision chekcne können!
+    const model = grabbedModel_1;   // << Modell in "model" sichern, damit wir den Ablageort es unten in checkGrabModelAgainstTargets noch auf Kollision mit dem Target checken können!
     grabbedModel_1 = null; // hier wird Model aus Variable entfernt
     grabButton_1.classList.remove("grabbing"); // visuelles Feedback deaktivieren
   
@@ -310,7 +310,7 @@ export function initInteractions(models, camera, renderer) {
     // zur Sicherheit die Matrix aktualisieren
     object.updateMatrixWorld(true);
     const box = new THREE.Box3();
-    box.setFromObject(object); // liefert Weltkoordinaten, wenn MatrixWorld stimmt
+    box.setFromObject(object); // erstellt eine bounding-Box (sozusagen Collider bei Unity) an den Weltkoordinaten des Objekts, wenn MatrixWorld stimmt
     return box;
   }
 
@@ -328,7 +328,7 @@ export function initInteractions(models, camera, renderer) {
       const tBox = getWorldBox3(t);
       // Box des Targets leicht vergrößern
       const expanded = tBox.clone().expandByScalar(TOLERANCE);
-      if (modelBox.intersectsBox(expanded)) {
+      if (modelBox.intersectsBox(expanded)) { //hier passiert Kollisions-check!!
         // Treffer → Event senden
         window.dispatchEvent(new CustomEvent(eventName, {
           detail: { targetName: t.name || '(unbenannt)' }

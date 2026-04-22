@@ -16,7 +16,7 @@ const loader = new GLTFLoader();
 // Debugging: visible bounding boxes: interne Registry für Debug-Helper
 models.__debugHelpers = {
   nietplatteBox: null,
-  boatTargetBoxes: [], // Array von BoxHelpern für schiffsniet + nietplattenteil
+  boatTargetBoxes: [], // Array von Box3Helpern für schiffsniet + nietplattenteil
 };
 
 
@@ -94,7 +94,7 @@ export function loadModels(scene) {
       models[item.name] = model; // im Objekt speichern
       console.log(`Model "${item.name}" geladen`);
 
-      
+
       // checken, ob die Childobjekte der Nietplatte_mit_Rost gefunden werden.
       // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
       if (item.name === "Nietplatte_mit_Rost") {
@@ -134,9 +134,10 @@ export function loadModels(scene) {
         models["boatPart_wRivets_targets"] = boatTargets;
 
         console.log('Boat-Targets beim Laden gefunden:', boatTargets.map(t => t.name || t.uuid));
-        // Debugging: visible bounding boxes: BoxHelper je Target erzeugen
+        // Debugging: sichtbare Boxen direkt aus Box3 ableiten und per Box3Helper sichtbar machen
         const targetHelpers = boatTargets.map(target => {
-          const h = new THREE.BoxHelper(target, 0xff8800);
+          const box = new THREE.Box3().setFromObject(target);
+          const h = new THREE.Box3Helper(box, 0xff8800);
           h.visible = model.visible; // optional: an Parent koppeln
           scene.add(h);
           return h;
@@ -145,9 +146,10 @@ export function loadModels(scene) {
       }
 
 
-        // Debugging: visible bounding boxes: Debug-Box für Nietplatte (grün)
+        // Debugging: sichtbare Box direkt aus Box3 ableiten und per Box3Helper sichtbar machen
         if (item.name === "Nietplatte") {
-          const helper = new THREE.BoxHelper(model, 0x22aa22);
+          const box = new THREE.Box3().setFromObject(model);
+          const helper = new THREE.Box3Helper(box, 0x22aa22);
           helper.visible = model.visible; // optional: nur zeigen, wenn sichtbar
           scene.add(helper);
           models.__debugHelpers.nietplatteBox = helper;
@@ -162,23 +164,10 @@ export function loadModels(scene) {
   
 }
 
-//für das ft_dropTrigger
+//für das ft_dropTrigger in interactions.js
 // Liefert die Ziel-Kindobjekte im boatPart_wRivets, die als "Platzierungsstellen" gelten.
 export function getBoatRivetTargets() {
-  const parent = models["boatPart_wRivets"];
-  if (!parent) return [];
-
-  const names = ["schiffsniet", "nietplattenteil"];
-  const lowerNames = names.map(n => n.toLowerCase());
-
-  const targets = [];
-  parent.traverse((child) => {
-    const n = (child.name || "").toLowerCase();
-    if (child.isMesh && lowerNames.includes(n)) {
-      targets.push(child);
-    }
-  });
-
+  const targets = models["boatPart_wRivets_targets"] || [];
   console.log("Gefundene Boat-Teile:", targets.map(t => t.name));
   return targets;
 }
@@ -191,14 +180,18 @@ export function updateDebugBoxesVisibilityAndBounds() {
   const h1 = models.__debugHelpers.nietplatteBox;
   if (np && h1) {
     h1.visible = np.visible; // optional
-    h1.update();
+    h1.box.setFromObject(np);
   }
 
   const parent = models["boatPart_wRivets"];
   const hs = models.__debugHelpers.boatTargetBoxes || [];
+  const targets = models["boatPart_wRivets_targets"] || [];
   const show = !!(parent && parent.visible);
-  hs.forEach(h => {
+  hs.forEach((h, index) => {
     h.visible = show;        // optional: nur zeigen, wenn Parent sichtbar
-    h.update();              // BoxHelper neu berechnen
+    const target = targets[index];
+    if (target) {
+      h.box.setFromObject(target);
+    }
   });
 }
