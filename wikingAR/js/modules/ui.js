@@ -175,7 +175,7 @@ export function startTextEngine() {
 // ============================================================
 // Öffentliche Initialisierung für UI (Buttons/Icons/Toggles)
 // ============================================================
-export function initUI(modelsRef, renderer) {
+export function initUI() {
   // toggle-panel (zusätzlich zu xr.js, falls hier genutzt)
   document.getElementById('toggle-panel').addEventListener('click', () => {
     document.querySelector('.grid-container').classList.toggle('hide');

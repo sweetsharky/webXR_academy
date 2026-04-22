@@ -9,7 +9,7 @@ import { ARButton } from 'three/examples/jsm/webxr/ARButton.js';
 
 export function initXR(renderer) {
   document.body.appendChild(ARButton.createButton(renderer, {
-    optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],// ermöglicht, dass normale DOM-Elemente (Buttons, Panels, Overlays über das Kamerabild/AR-View) erlaubt sind. --> damit ich das normale DOM als UI nuten kann.
+    optionalFeatures: ["dom-overlay", "dom-overlay-for-handheld-ar"],// Standardkonfiguration: 1. erstellt den ARButton von three.js. und verbindet ihn mit dem renderer (THREE.WebGLRenderer, der in scene.js initialisiert wurde) 2. ermöglicht, dass normale DOM-Elemente (Buttons, Panels, Overlays über das Kamerabild/AR-View) erlaubt sind. --> damit ich das normale DOM als UI nuten kann.
     domOverlay: { root: document.body }
   }));
 
