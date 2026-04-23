@@ -19,7 +19,7 @@ initXR(renderer);            // ARButton + Intro/Session Handling
 loadModels(scene);           // GLTFs laden + Registry/Animations
 initUI();    // Buttons/Panels/Video/Modell-Toggles
 
-initFeedbackListener();     //für ft_dragTrigger: Feedback bei korrekter Kollision
+initFeedbackListener();     //für ft_dragTrigger: Feedback bei korrekter Kollision durch aktivieren einiger Eventlistener
 initInteractions(models, camera, renderer); // Rotation/Drag&Drop/Greifen
 startTextEngine();           // Text/Steps starten (showPage(0))
 

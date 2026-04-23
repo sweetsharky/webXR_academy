@@ -202,7 +202,7 @@ export function initUI() {
 
 
 
-//für ft_dropTrigger --> Für Feedback-Text Anzeige, sobald Objekt an korrektem Platz abgelegt/kollidiert.
+//für ft_dropTrigger --> Für Feedback-Text Anzeige, sobald Objekt an korrektem Platz abgelegt/kollidiert.Event mit den Namen 'nietplatte:placedCorrect' wird durch die Methode checkGrabModelAgainstTargets dispatcht!
   export function initFeedbackListener() {
     window.addEventListener('nietplatte:placedCorrect', (e) => {
       model_1placed = true;

@@ -315,6 +315,9 @@ export function initInteractions(models, camera, renderer) {
   }
 
   // Kollisionsprüfung: Prüft Nietplatte vs. alle Ziel-Targets; wir nehmen eine Toleranz.
+  // 1. if-check: wenn kein Model angegeben oder es kein targets gibt oder die targets.lengt 0 ist, dann false ausgeben
+  // 2. for-loop: Für jedes t in targets erstelle eine Box3 um das t und eine weitere, die wir als Toleranz nutzen (ist einfach etwas größer). Sobald die model-Box mit der target-Box intersects/kollidiert, dispatche ein Event und return true.
+  // 3. Wenn for-loop endet: gebe false zurück
   function checkGrabModelAgainstTargets(model, eventName) {
     const targets = getBoatRivetTargets();
     if (!model || !targets || targets.length === 0) return false;

@@ -20,7 +20,7 @@ models.__debugHelpers = {
 };
 
 
-// 📌 Liste der Modelle
+// 📌 Liste der Modelle als Konfigurationsplan (hieraus wird tatsächliches Laufzeitmodell/gltf.scene erst erstellt) --> die tatsächlichen Modelle, die sich zur Laufzeit in der Anwendung befinden werden mithilfe dieses "Bauplans" als Schlüssel-Wertpaare in das Objekt models abgelegt!
 export const modelList = [
   {
     name: "Nietplatte",
@@ -95,10 +95,10 @@ export function loadModels(scene) {
       console.log(`Model "${item.name}" geladen`);
 
 
-      // checken, ob die Childobjekte der Nietplatte_mit_Rost gefunden werden.
+      // checken, ob die Childobjekte der Nietplatte_mit_Rost gefunden werden und in Console als Bestätigung ausgeben
       // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
       if (item.name === "Nietplatte_mit_Rost") {
-        // Suche und registriere die Rost-Teile
+        // Suche und registriere die Rost-Teile in rostParts
         const rostParts = [];
         model.traverse((child) => {
           if (child.isMesh) {
@@ -109,7 +109,7 @@ export function loadModels(scene) {
           }
         });
 
-        models["Nietplatte_mit_Rost_children"] = rostParts;
+        models["Nietplatte_mit_Rost_children"] = rostParts; //Schlüssel-Wertpaar wird in dem Objekt "models" hinzugefügt
         // status-flag
         models["Nietplatte_mit_Rost_removedCount"] = 0;
 
@@ -117,7 +117,8 @@ export function loadModels(scene) {
       }
 
 
-      // checken, ob alle childobjekte an BoatPart-Model gefunden werden
+      // checken, ob alle childobjekte an BoatPart-Model gefunden werden und registriere in boatTargets, und füge die gefundenen Modelle in das Objekt "models" ein (= hier sind sie als Modell zur Laufzeit abgelegt/referenzierbar)
+      // Visualisirung des Colliders Hinzufgen über Box3Helper
       if (item.name === "boatPart_wRivets") {
         const names = ["schiffsniet", "nietplattenteil"];
         const lowerNames = names.map(n => n.toLowerCase());
@@ -134,7 +135,7 @@ export function loadModels(scene) {
         models["boatPart_wRivets_targets"] = boatTargets;
 
         console.log('Boat-Targets beim Laden gefunden:', boatTargets.map(t => t.name || t.uuid));
-        // Debugging: sichtbare Boxen direkt aus Box3 ableiten und per Box3Helper sichtbar machen
+        // Debugging: sichtbare Boxen (Box3Helper) direkt aus Box3 der targets ableiten. HelperBox (nur Visualisierung) ist also der Box3 (=tatsächliche Boundary= Collider) angefügt
         const targetHelpers = boatTargets.map(target => {
           const box = new THREE.Box3().setFromObject(target);
           const h = new THREE.Box3Helper(box, 0xff8800);
@@ -146,7 +147,7 @@ export function loadModels(scene) {
       }
 
 
-        // Debugging: sichtbare Box direkt aus Box3 ableiten und per Box3Helper sichtbar machen
+        // Debugging: sichtbare Box direkt aus Box3 ableiten und per Box3Helper sichtbar machen an Nietplatte
         if (item.name === "Nietplatte") {
           const box = new THREE.Box3().setFromObject(model);
           const helper = new THREE.Box3Helper(box, 0x22aa22);
@@ -168,7 +169,6 @@ export function loadModels(scene) {
 // Liefert die Ziel-Kindobjekte im boatPart_wRivets, die als "Platzierungsstellen" gelten.
 export function getBoatRivetTargets() {
   const targets = models["boatPart_wRivets_targets"] || [];
-  console.log("Gefundene Boat-Teile:", targets.map(t => t.name));
   return targets;
 }
 
@@ -187,9 +187,9 @@ export function updateDebugBoxesVisibilityAndBounds() {
   const hs = models.__debugHelpers.boatTargetBoxes || [];
   const targets = models["boatPart_wRivets_targets"] || [];
   const show = !!(parent && parent.visible);
-  hs.forEach((h, index) => {
-    h.visible = show;        // optional: nur zeigen, wenn Parent sichtbar
-    const target = targets[index];
+  hs.forEach((h, index) => { //für jedes Element (h) in dem Array hs, mit dem index (der aktuellen Position im Array, also zB. hs[1]) setze das Element auf visible = true wenn  Parent vorhanden und visisble ist
+    h.visible = show;        // optional: BoxHelper nur zeigen, wenn Parent sichtbar
+    const target = targets[index]; //für den index der Box3Helper-Box (zB hs[1]) wird das entsprechende Target (targets[1] gewählt), an dieses target wird dann die BoxHelper angepasst, indem auf das Property .box der Box3Helper zugegriffen wird.
     if (target) {
       h.box.setFromObject(target);
     }
