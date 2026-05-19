@@ -94,19 +94,31 @@ export function loadModels(scene) {
       models[item.name] = model; // im Objekt speichern
       console.log(`Model "${item.name}" geladen`);
 
- if (item.name === "Schiff") {
+if (item.name === "Schiff") {
   model.traverse((child) => {
     if (!child.isMesh || !child.material) return;
 
     const materials = Array.isArray(child.material) ? child.material : [child.material];
 
-materials.forEach((material) => {
-  material.colorWrite = false;
-  material.needsUpdate = true;
+    materials.forEach((material) => {
+      material.transparent = true;
+      material.opacity = 0.03;
+      material.needsUpdate = true;
 
+      console.log("Beim Laden gesetzt:", material.opacity, material.transparent);
     });
   });
 
+  setTimeout(() => {
+    model.traverse((child) => {
+      if (!child.isMesh || !child.material) return;
+
+      const materials = Array.isArray(child.material) ? child.material : [child.material];
+      materials.forEach((material) => {
+        console.log("500ms später:", material.opacity, material.transparent);
+      });
+    });
+  }, 5000);
 }
 
       // checken, ob die Childobjekte der Nietplatte_mit_Rost gefunden werden und in Console als Bestätigung ausgeben
