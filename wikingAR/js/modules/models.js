@@ -95,30 +95,23 @@ export function loadModels(scene) {
       console.log(`Model "${item.name}" geladen`);
 
  if (item.name === "Schiff") {
+  let firstMeshFound = false;
+
   model.traverse((child) => {
-    if (!child.isMesh || !child.material) return;
+    if (!child.isMesh || !child.material || firstMeshFound) return;
+
+    firstMeshFound = true;
+    console.log("Teste nur dieses Mesh:", child.name);
 
     const materials = Array.isArray(child.material) ? child.material : [child.material];
 
     materials.forEach((material) => {
       material.transparent = true;
       material.opacity = 0.03;
+      material.color.setHex(0xff0000);
       material.needsUpdate = true;
-
-      console.log("Beim Laden gesetzt:", material.opacity, material.transparent);
     });
   });
-
-  setTimeout(() => {
-    model.traverse((child) => {
-      if (!child.isMesh || !child.material) return;
-
-      const materials = Array.isArray(child.material) ? child.material : [child.material];
-      materials.forEach((material) => {
-        console.log("500ms später:", material.opacity, material.transparent);
-      });
-    });
-  }, 500);
 }
 
       // checken, ob die Childobjekte der Nietplatte_mit_Rost gefunden werden und in Console als Bestätigung ausgeben
