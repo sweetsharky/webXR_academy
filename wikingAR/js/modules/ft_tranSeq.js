@@ -2,14 +2,7 @@ import * as THREE from 'three';
 import { models } from './models.js';
 
 const SHIP_MODEL_NAME = 'Schiff';
-
-// Diese Modelle stehen separat neben dem Schiff.
-// Sie starten transparent und werden bei Annäherung voll sichtbar.
-const TARGET_MODEL_NAMES = [
-  'Schiffsniet',
-  'Nietplatte',
-  'boatPart_wRivets'
-];
+const TARGET_MODEL_NAMES = ['Schiffsniet', 'Nietplatte', 'boatPart_wRivets'];
 
 const PROXIMITY_RADIUS = 1.0;
 const SHIP_TRANSPARENT_OPACITY = 0.2;
@@ -20,40 +13,25 @@ const tempTargetPos = new THREE.Vector3();
 
 let cameraRef = null;
 
-// Hier cachen wir vorbereitete Modelle, damit wir nicht in jedem Frame neu traversen müssen.
 const preparedModels = new Map();
-
-// Merkt sich den letzten Zustand, damit Materialien nur bei Änderungen gewechselt werden.
-let shipIsTransparent = false;
-const targetNearState = new Map();
+let lastShipTransparent = false;
+const lastTargetStates = new Map();
 
 function createTransparentMaterial(sourceMaterial, opacity) {
-  // Wir bauen bewusst ein neues THREE-Material,
-  // weil das direkte Verändern des importierten GLTF-Materials bei dir nicht zuverlässig war.
-  return new THREE.MeshStandardMaterial({
+  // Absichtlich stark reduziert:
+  // nur Farbe + Textur + Transparenz
+  return new THREE.MeshBasicMaterial({
     color: sourceMaterial.color ? sourceMaterial.color.clone() : new THREE.Color(0xffffff),
     map: sourceMaterial.map || null,
-    normalMap: sourceMaterial.normalMap || null,
-    roughnessMap: sourceMaterial.roughnessMap || null,
-    metalnessMap: sourceMaterial.metalnessMap || null,
-    aoMap: sourceMaterial.aoMap || null,
-    emissiveMap: sourceMaterial.emissiveMap || null,
-    emissive: sourceMaterial.emissive ? sourceMaterial.emissive.clone() : new THREE.Color(0x000000),
-    emissiveIntensity: sourceMaterial.emissiveIntensity ?? 1,
-    metalness: sourceMaterial.metalness ?? 0,
-    roughness: sourceMaterial.roughness ?? 1,
     transparent: true,
-    opacity: opacity,
-    side: sourceMaterial.side,
-    alphaTest: sourceMaterial.alphaTest ?? 0,
-    depthWrite: false
+    opacity: opacity
   });
 }
 
 function prepareModel(model, transparentOpacity) {
   if (!model || preparedModels.has(model.uuid)) return;
 
-  const meshEntries = [];
+  const entries = [];
 
   model.traverse((child) => {
     if (!child.isMesh || !child.material) return;
@@ -66,33 +44,28 @@ function prepareModel(model, transparentOpacity) {
       createTransparentMaterial(material, transparentOpacity)
     );
 
-    meshEntries.push({
+    entries.push({
       mesh: child,
       originalMaterials,
       transparentMaterials
     });
   });
 
-  preparedModels.set(model.uuid, meshEntries);
+  preparedModels.set(model.uuid, entries);
 }
 
-function setModelTransparentState(model, useTransparent) {
-  const meshEntries = preparedModels.get(model.uuid);
-  if (!meshEntries) return;
+function setTransparentState(model, useTransparent) {
+  const entries = preparedModels.get(model.uuid);
+  if (!entries) return;
 
-  for (const entry of meshEntries) {
-    const nextMaterials = useTransparent
-      ? entry.transparentMaterials
-      : entry.originalMaterials;
-
-    entry.mesh.material = nextMaterials.length === 1 ? nextMaterials[0] : nextMaterials;
+  for (const entry of entries) {
+    const next = useTransparent ? entry.transparentMaterials : entry.originalMaterials;
+    entry.mesh.material = next.length === 1 ? next[0] : next;
   }
 }
 
-function getTargetModels() {
-  return TARGET_MODEL_NAMES
-    .map((name) => models[name])
-    .filter(Boolean);
+function getTargets() {
+  return TARGET_MODEL_NAMES.map((name) => models[name]).filter(Boolean);
 }
 
 export function initTranSeq(camera) {
@@ -105,41 +78,36 @@ export function updateTranSeq() {
   const ship = models[SHIP_MODEL_NAME];
   if (!ship || !ship.visible) return;
 
-  const targetModels = getTargetModels();
-  if (targetModels.length === 0) return;
+  const targets = getTargets();
+  if (targets.length === 0) return;
 
-  // Vorbereitung nur einmal pro Modell ausführen.
   prepareModel(ship, SHIP_TRANSPARENT_OPACITY);
 
-  for (const target of targetModels) {
+  for (const target of targets) {
     if (!target.visible) target.visible = true;
     prepareModel(target, TARGET_TRANSPARENT_OPACITY);
   }
 
   cameraRef.getWorldPosition(tempCameraPos);
 
-  let anyTargetIsNear = false;
+  let anyNear = false;
 
-  for (const target of targetModels) {
+  for (const target of targets) {
     target.getWorldPosition(tempTargetPos);
-    const distance = tempCameraPos.distanceTo(tempTargetPos);
-    const isNear = distance <= PROXIMITY_RADIUS;
-    const previousIsNear = targetNearState.get(target.uuid);
 
-    // Material nur dann wechseln, wenn sich der Zustand wirklich geändert hat.
-    if (previousIsNear !== isNear) {
-      setModelTransparentState(target, !isNear);
-      targetNearState.set(target.uuid, isNear);
+    const isNear = tempCameraPos.distanceTo(tempTargetPos) <= PROXIMITY_RADIUS;
+    const lastState = lastTargetStates.get(target.uuid);
+
+    if (lastState !== isNear) {
+      setTransparentState(target, !isNear);
+      lastTargetStates.set(target.uuid, isNear);
     }
 
-    if (isNear) {
-      anyTargetIsNear = true;
-    }
+    if (isNear) anyNear = true;
   }
 
-  // Auch das Schiff nur bei Zustandswechsel umschalten.
-  if (shipIsTransparent !== anyTargetIsNear) {
-    setModelTransparentState(ship, anyTargetIsNear);
-    shipIsTransparent = anyTargetIsNear;
+  if (lastShipTransparent !== anyNear) {
+    setTransparentState(ship, anyNear);
+    lastShipTransparent = anyNear;
   }
 }
