@@ -66,8 +66,35 @@ export const modelList = [
   }
 ];
 
+function addOpacityDebugSpheres(scene) {
+  const geometry = new THREE.SphereGeometry(0.08, 32, 32);
+
+  const materialOpaque = new THREE.MeshStandardMaterial({
+    color: 0x00aaee,
+    transparent: true,
+    opacity: 1.0
+  });
+
+  const materialTransparent = new THREE.MeshStandardMaterial({
+    color: 0xee5533,
+    transparent: true,
+    opacity: 0.3
+  });
+
+  const sphereOpaque = new THREE.Mesh(geometry, materialOpaque);
+  sphereOpaque.position.set(-0.2, 0.1, -0.5);
+  scene.add(sphereOpaque);
+
+  const sphereTransparent = new THREE.Mesh(geometry, materialTransparent);
+  sphereTransparent.position.set(0.2, 0.1, -0.5);
+  scene.add(sphereTransparent);
+
+  console.log("DEBUG spheres added");
+}
+
 // Modelle laden und registrieren
 export function loadModels(scene) {
+    addOpacityDebugSpheres(scene);
   modelList.forEach(item => {
     loader.load(item.url, gltf => {
       const model = gltf.scene;
@@ -94,32 +121,7 @@ export function loadModels(scene) {
       models[item.name] = model; // im Objekt speichern
       console.log(`Model "${item.name}" geladen`);
 
-if (item.name === "Schiff") {
-  model.traverse((child) => {
-    if (!child.isMesh || !child.material) return;
 
-    const materials = Array.isArray(child.material) ? child.material : [child.material];
-
-    materials.forEach((material) => {
-      material.transparent = true;
-      material.opacity = 0.03;
-      material.needsUpdate = true;
-
-      console.log("Beim Laden gesetzt:", material.opacity, material.transparent);
-    });
-  });
-
-  setTimeout(() => {
-    model.traverse((child) => {
-      if (!child.isMesh || !child.material) return;
-
-      const materials = Array.isArray(child.material) ? child.material : [child.material];
-      materials.forEach((material) => {
-        console.log("500ms später:", material.opacity, material.transparent);
-      });
-    });
-  }, 5000);
-}
 
       // checken, ob die Childobjekte der Nietplatte_mit_Rost gefunden werden und in Console als Bestätigung ausgeben
       // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
