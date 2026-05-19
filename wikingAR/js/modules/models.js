@@ -122,7 +122,29 @@ export function loadModels(scene) {
       console.log(`Model "${item.name}" geladen`);
 
 
+if (item.name === "Schiff") {
+  model.visible = true;
 
+  model.traverse((child) => {
+    if (!child.isMesh || !child.material) return;
+
+    const materials = Array.isArray(child.material)
+      ? child.material
+      : [child.material];
+
+    materials.forEach((material) => {
+      if ((material.name || "") !== "Sail_Full") return;
+
+      console.log("DEBUG Sail_Full gefunden:", child.name, material.name);
+
+      material.transparent = true;
+      material.opacity = 0.1;
+      material.depthWrite = false;
+      material.side = THREE.FrontSide;
+      material.needsUpdate = true;
+    });
+  });
+}
       // checken, ob die Childobjekte der Nietplatte_mit_Rost gefunden werden und in Console als Bestätigung ausgeben
       // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
       if (item.name === "Nietplatte_mit_Rost") {
