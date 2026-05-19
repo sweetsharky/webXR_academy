@@ -105,7 +105,6 @@ export function loadModels(scene) {
     child.visible = false;
   });
 }
-}
 
       // checken, ob die Childobjekte der Nietplatte_mit_Rost gefunden werden und in Console als Bestätigung ausgeben
       // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
