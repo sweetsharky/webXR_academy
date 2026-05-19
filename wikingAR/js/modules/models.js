@@ -94,6 +94,22 @@ export function loadModels(scene) {
       models[item.name] = model; // im Objekt speichern
       console.log(`Model "${item.name}" geladen`);
 
+      if (item.name === "Schiff") {
+  // Schiff direkt beim Laden transparent machen
+  model.traverse((child) => {
+    if (!child.isMesh || !child.material) return;
+
+    const materials = Array.isArray(child.material)
+      ? child.material
+      : [child.material];
+
+    materials.forEach((material) => {
+      material.transparent = true;
+      material.opacity = 0.03;
+      material.needsUpdate = true;
+    });
+  });
+}
 
       // checken, ob die Childobjekte der Nietplatte_mit_Rost gefunden werden und in Console als Bestätigung ausgeben
       // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
