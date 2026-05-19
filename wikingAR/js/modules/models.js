@@ -132,16 +132,16 @@ if (item.name === "Schiff") {
       ? child.material
       : [child.material];
 
-    materials.forEach((material) => {
-      if ((material.name || "") !== "Sail_Full") return;
+    const hasSailMaterial = materials.some((material) => (material.name || "") === "Sail_Full");
+    if (!hasSailMaterial) return;
 
-      console.log("DEBUG Sail_Full gefunden:", child.name, material.name);
+    console.log("DEBUG ersetze Material von:", child.name);
 
-      material.transparent = true;
-      material.opacity = 0.1;
-      material.depthWrite = false;
-      material.side = THREE.FrontSide;
-      material.needsUpdate = true;
+    child.material = new THREE.MeshStandardMaterial({
+      color: 0xff4444,
+      transparent: true,
+      opacity: 0.1,
+      side: THREE.FrontSide
     });
   });
 }
