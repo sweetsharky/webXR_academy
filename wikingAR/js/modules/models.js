@@ -122,29 +122,6 @@ export function loadModels(scene) {
       console.log(`Model "${item.name}" geladen`);
 
 
-if (item.name === "Schiff") {
-  model.visible = true;
-
-  model.traverse((child) => {
-    if (!child.isMesh || !child.material) return;
-
-    const materials = Array.isArray(child.material)
-      ? child.material
-      : [child.material];
-
-    const hasSailMaterial = materials.some((material) => (material.name || "") === "Sail_Full");
-    if (!hasSailMaterial) return;
-
-    console.log("DEBUG ersetze Material von:", child.name);
-
-    child.material = new THREE.MeshStandardMaterial({
-      color: 0xff4444,
-      transparent: true,
-      opacity: 0.1,
-      side: THREE.FrontSide
-    });
-  });
-}
       // checken, ob die Childobjekte der Nietplatte_mit_Rost gefunden werden und in Console als Bestätigung ausgeben
       // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
       if (item.name === "Nietplatte_mit_Rost") {

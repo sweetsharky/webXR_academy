@@ -10,6 +10,7 @@ import { initXR } from './modules/xr.js';
 import { loadModels, models, mixers, updateDebugBoxesVisibilityAndBounds } from './modules/models.js';
 import { initInteractions, updateGrabFollowCamera, updatePerFrameCollisionNietplatte } from './modules/interactions.js';
 import { initUI, startTextEngine, initFeedbackListener, updatePerFrameUI } from './modules/ui.js';
+import { initTranSeq, updateTranSeq } from './modules/ft_tranSeq.js';
 
 // ------------------------------------------------------------
 // Bootstrapping-Reihenfolge --> entspricht Unity's start()!
@@ -21,6 +22,7 @@ initUI();    // Buttons/Panels/Video/Modell-Toggles
 
 initFeedbackListener();     //für ft_dragTrigger: Feedback bei korrekter Kollision durch aktivieren einiger Eventlistener
 initInteractions(models, camera, renderer); // Rotation/Drag&Drop/Greifen
+initTranSeq(camera);
 startTextEngine();           // Text/Steps starten (showPage(0))
 
 // ------------------------------------------------------------
@@ -44,6 +46,7 @@ renderer.setAnimationLoop(() => {
   //Debugging: visible bounding boxes: pro Frame BoxHelper aktualisieren
   updateDebugBoxesVisibilityAndBounds();
 
+  updateTranSeq();
 
   // Optional: pro Frame UI-Updates
   //updatePerFrameUI?.();
