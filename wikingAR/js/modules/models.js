@@ -60,7 +60,7 @@ export const modelList = [
   {
     name: "Schiffsniet",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/schiffsniet/schiffsniet.gltf",
-    position: { x: 0.05, y: 0, z: -0.3 }, // etwas versetzt neben der Nietplatte
+    position: { x: 0.05, y: 3.5, z: -0.3 }, 
     scale: 0.002,
     rotatable: true,
   }
