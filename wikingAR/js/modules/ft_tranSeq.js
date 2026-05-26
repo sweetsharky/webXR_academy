@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { models } from './models.js';
 
 const SHIP_MODEL_NAME = 'Schiff';
-const TARGET_MODEL_NAMES = ['Schiffsniet', 'Nietplatte', 'boatPart_wRivets'];
+const TARGET_MODEL_NAMES = ['Schiffsniet_originalTextur', 'Nietplatte', 'boatPart_wRivets'];
 
 const PROXIMITY_RADIUS = 1.0;
 const SHIP_TRANSPARENT_OPACITY = 0.2;

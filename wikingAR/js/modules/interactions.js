@@ -274,8 +274,8 @@ export function initInteractions(models, camera, renderer) {
   });
     grabButton_2.addEventListener("touchstart", (e) => {
     e.preventDefault(); // verhindert Ghost-Clicks
-    if (models["Schiffsniet"] && models["Schiffsniet"].visible) {
-      grabbedModel_2 = models["Schiffsniet"];
+    if (models["Schiffsniet"] && models["Schiffsniet_originalTextur"].visible) {
+      grabbedModel_2 = models["Schiffsniet_originalTextur"];
       isGrabbed_2 = true;
       grabButton_2.classList.add("grabbing"); // visuelles Feedback aktiv
     }

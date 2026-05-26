@@ -63,6 +63,13 @@ export const modelList = [
     position: { x: 0.2, y: 0, z: -0.3 }, 
     scale: 0.002,
     rotatable: true,
+  },
+    {
+    name: "Schiffsniet_originalTextur",
+    url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/schiffsniet/schiffsniet.gltf",
+    position: { x: 0.2, y: 0, z: -0.3 }, 
+    scale: 0.002,
+    rotatable: true,
   }
 ];
 

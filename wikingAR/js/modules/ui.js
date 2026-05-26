@@ -49,7 +49,7 @@ function toggleModel(name) {
     if (name === "Nietplatte") {
       document.getElementById("grab-nietplatte").style.display = models[name].visible ? "block" : "none";
     }
-    if (name === "Schiffsniet") {
+    if (name === "Schiffsniet_originalTextur") {
       document.getElementById("grab-schiffsniet").style.display =
         models[name].visible ? "block" : "none";
     }
@@ -121,7 +121,7 @@ function showPage(pageIndex) {
                 //Wenn am Ende des ersten Textes, dann...
                       if (currentStep === 1){
                           models["Nietplatte_mit_Rost"].visible = true;
-                          models["Schiffsniet"].visible = true;
+                          models["Schiffsniet_originalTextur"].visible = true;
                           nextStepButton.style.display = "block";
                       } else if (currentStep === 3) {
                         document.querySelector('.item2_1').style.display = 'block';
@@ -194,7 +194,7 @@ export function initUI() {
   document.getElementById("toggle-nietplatte").addEventListener("click", () => toggleModel("Nietplatte"));
   document.getElementById("toggle-schiff").addEventListener("click", () => toggleModel("Schiff"));
   document.getElementById("toggle-nietplatte-rost").addEventListener("click", () => toggleModel("Nietplatte_mit_Rost"));
-  document.getElementById("toggle-schiffsniet").addEventListener("click", () => toggleModel("Schiffsniet"));
+  document.getElementById("toggle-schiffsniet").addEventListener("click", () => toggleModel("Schiffsniet_originalTextur"));
   document.getElementById("toggle-schiff-wRivets").addEventListener("click", () => toggleModel("boatPart_wRivets"));
 
   
