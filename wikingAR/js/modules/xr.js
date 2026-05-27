@@ -34,7 +34,7 @@ export function initXR(renderer) {
     overlay.remove(); // mit remove() wird das ganze div-Element, indem das Video verschachtelt ist vom DOM gelöscht, statt nur overlay.style.display = "none"; --> mehr Speicher wird frei
     document.querySelector('.grid-container').style.display = "grid"; // UI freigeben
     models['Nietplatte_mit_Rost'].visible = true;
-    models['Schiffsniet'].visible = true;
+    models['Schiffsniet_originalTextur'].visible = true;
   });
 
   // continueButton_nietVideo → Video schließen

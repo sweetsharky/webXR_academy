@@ -138,24 +138,6 @@ function showPage(pageIndex) {
             });
 }
 
-export function getCurrentStep() {
-  return currentStep;
-}
-
-export function goToTextStep(stepIndex) {
-  if (!Number.isInteger(stepIndex)) return;
-  if (stepIndex < 0 || stepIndex >= fullTexts.length) return;
-
-  currentStep = stepIndex;
-  currentPage = 0;
-
-  if (nextButton) nextButton.style.display = "none";
-  if (nextStepButton) nextStepButton.style.display = "none";
-
-  showPage(currentPage);
-}
-
-
 
 export function startTextEngine() {
   // DOM-Refs

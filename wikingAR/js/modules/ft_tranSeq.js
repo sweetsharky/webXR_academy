@@ -1,26 +1,22 @@
 import * as THREE from 'three';
 import { models } from './models.js';
-import { getCurrentStep, goToTextStep } from './ui.js';
 
-const SHIP_MODEL_NAME = 'Schiff';
 const TARGET_MODEL_NAMES = ['Schiffsniet_originalTextur', 'Nietplatte', 'Nietplatte_mit_Rost'];
 const TEXT_TRIGGER_NAMES = ['Schiffsniet_originalTextur', 'Nietplatte_mit_Rost'];
 
 const PROXIMITY_RADIUS = 0.5;
 const TARGET_TRANSPARENT_OPACITY = 0.3;
-const DISCOVERY_TEXT_START_STEP = 3;
 
 const tempCameraPos = new THREE.Vector3();
 const tempTargetPos = new THREE.Vector3();
 
 let cameraRef = null;
-let discoveryTextStarted = false;
+let discoveryTriggered = false;
 
 const preparedModels = new Map();
 const targetNearState = new Map();
 
 function createTransparentMaterial(sourceMaterial, opacity) {
-  // Sehr einfache Ersatzmaterialien, damit die Logik auch auf dem Tablet leicht bleibt.
   return new THREE.MeshBasicMaterial({
     color: sourceMaterial.color ? sourceMaterial.color.clone() : new THREE.Color(0xffffff),
     map: sourceMaterial.map || null,
@@ -77,15 +73,19 @@ function getTargets() {
 }
 
 
-function startDiscoveryTextIfReady(targetsNearByName) {
-  if (discoveryTextStarted) return;
-  if (getCurrentStep() >= DISCOVERY_TEXT_START_STEP) return;
+function triggerNextLearningStepIfReady(targetsNearByName) {
+  if (discoveryTriggered) return;
 
   const allTargetsNear = TEXT_TRIGGER_NAMES.every((name) => targetsNearByName.has(name));
   if (!allTargetsNear) return;
 
-  discoveryTextStarted = true;
-  goToTextStep(DISCOVERY_TEXT_START_STEP);
+  discoveryTriggered = true;
+
+  const nextStepButton = document.getElementById('nextStepButton');
+  if (nextStepButton) {
+    nextStepButton.style.display = "block";
+    nextStepButton.click();
+  }
 }
 
 export function initTranSeq(camera) {
@@ -103,19 +103,18 @@ export function updateTranSeq() {
   const targetsNearByName = new Set();
 
   for (const target of targets) {
-    // Transparenz soll direkt gelten, sobald eines der Zielmodelle sichtbar wird.
     if (!target.visible) {
       targetNearState.delete(target.uuid);
       continue;
     }
 
+    // Sobald das Modell sichtbar wird, bekommt es direkt die transparente Variante.
     prepareModel(target, TARGET_TRANSPARENT_OPACITY);
     target.getWorldPosition(tempTargetPos);
 
     const isNear = tempCameraPos.distanceTo(tempTargetPos) <= PROXIMITY_RADIUS;
     const previousIsNear = targetNearState.get(target.uuid);
 
-    // Beim ersten Sichtbarwerden wird das Ziel direkt transparent gesetzt.
     if (previousIsNear === undefined) {
       setTransparentState(target, !isNear);
     } else if (previousIsNear !== isNear) {
@@ -129,5 +128,5 @@ export function updateTranSeq() {
     }
   }
 
-  startDiscoveryTextIfReady(targetsNearByName);
+  triggerNextLearningStepIfReady(targetsNearByName);
 }
