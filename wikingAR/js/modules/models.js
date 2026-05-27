@@ -47,7 +47,7 @@ export const modelList = [
   {
     name: "boatPart_wRivets",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/vikingboat_part_wRivets/vikingboat_part_wRivets.gltf",
-    position: { x: 0, y: -1.5, z: -6.0 },
+    position: { x: 0, y: -1.5, z: -3.0 },
     rotation: {x: 0, y: 90, z: 0},
     scale: 0.01,
     rotatable: false,
@@ -55,7 +55,7 @@ export const modelList = [
   {
     name: "Nietplatte_mit_Rost",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_Rost/nietplatte_mit_Rost.gltf",
-    position: { x: -0.1, y: 0, z: -0.5 },
+    position: { x: -0.1, y: 0.1, z: -0.5 },
     scale: 0.002,
     rotatable: false,
   },
@@ -109,6 +109,13 @@ export function loadModels(scene) {
       const model = gltf.scene;
       model.scale.multiplyScalar(item.scale);
       model.position.set(item.position.x, item.position.y, item.position.z);
+      if (item.rotation) { //Falls Rotationswerte als Attribute vorhanen, dann müssen sie Grad-werte noch in Radiant umgerechnet werden,da .rotation nur Radiant annimmt:
+        model.rotation.set(
+          THREE.MathUtils.degToRad(item.rotation.x),
+          THREE.MathUtils.degToRad(item.rotation.y),
+          THREE.MathUtils.degToRad(item.rotation.z)
+        );
+      }
       model.visible = false; // unsichtbar am Anfang
       model.userData.rotatable = item.rotatable; // Flag gespeichert, ob rotierbar oder nicht
 
