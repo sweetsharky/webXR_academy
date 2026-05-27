@@ -63,18 +63,21 @@ function toggleModel(name) {
 
 const fullTexts = [
   'Hallo angehender Archäologe!',
-              'Genau hier haben mein Archäologen-Team und ich dieses Metallstück tief in der Erde gefunden. Hilf mir und befreie es über drag&drop von der Korrosion!',
-              'Schaue dir das Metallstück genauer, indem du es über den Touchscreen rotierst.',
-              'Was glaubst du, wozu dieses Metallstück gehören könnte?',
-              'Genau! Dieses alte Metallstück ist Teil von einem Schiff! Es handelt sich um einen Nagel mit Platte, die typischerweise von den Wikingern genutzt wurden, um Schiffsplanken miteinander zu verbinden.',
+              'Vor dir siehst Du zwei Artefakte, die 1990 bei Ausgrabungen genau hier in der Archäologischen-Zone gefunden wurden.',
+              'Gehe näher an die Artefakten heran, wenn du sie zu erkunden möchtest!',
+
+              'Genau hier haben mein Archäologen-Team und ich diese Metallstücke tief in der Erde gefunden. Hilf mir und befreie sie über drag&drop von der Korrosion!',
+              'Wenn du möchtest, kannst du sie mithilfe des Touchscreen beliebig drehen und ausrichten.',
+              'Was glaubst du, wozu diese Metallstücke gehören könnten?',
+              'Genau! Diese alten Metallstück sind Teil von einem Schiff! Es handelt sich um einen Nagel mit Platte und eine einzelne Platte. Typischerweise wurden sie von den Normannen im skandinavischen Raum genutzt, um Schiffsplanken miteinander zu verbinden. Diese Art und Weise Bretter zu überlappen, nennt man Klinkerbauweise. Das Schiff ist damit im Wasser gleichzeitig stabil und beweglich genug, um die Kräfte der Wellen auszugleichen!',
 
               'Vor dir siehst du einen Teil eines Wikingerschiffs aus dem 9. Jahrundert.', 
-              'Greife den Schiffsniet und bringe ihn an die richtige Stelle zu den Brettern!',
+              'Hilf uns mit und baue das Wikingerschiff fertig. Greife dazu die Schiffsniete und bringe sie an die richtige Stelle zu den Brettern!',
               'Super! Du hast dein erstes Wikingerschiff gebaut!', 
               'Laut Regino von Prüm sollen die Normannen im Jahr 883 Duisburg überfallen haben! Die Erdschicht, in dem der Schiffsniet gefunden wurde, ist genau dieser Zeit (dem 9. Jahrhundert) zuzuordnen. Es wurden nämlich Keramikgefäße gefunden, die genau aus dieser Zeit stammen.',
               //'Ist dieser Schiffsniet also ein Zeugnis davon, dass die Wikinger tatsächlich hier gewesen sind und Duisburg überfallen haben?!',
               //`Verdichten sich die Informationen über den Aufenthalt der Wikinger, oder ist es doch eher unwahrscheinlich, dass sie Duisburg überfallen haben? Finde es heraus, indem du weitere duisburger Funde erkundest!`,
-              'Erkunde nun das Schiff und sprich mit Björn über friedliches Handeln in Duisburg oder mit Bjarne über einen kämpferischen Überfall auf Duisburg',
+              //'Erkunde nun das Schiff und sprich mit Björn über friedliches Handeln in Duisburg oder mit Bjarne über einen kämpferischen Überfall auf Duisburg',
               //'Klicke auf das Niet-Icon, wenn du mehr über den Schiffsniet erfahren möchtest. Klicke auf das Schiff-Icon, wenn du das Schiff erkunden und Björn kennenlernen möchtest. Das untere Icon zeigt dir weitere mögliche Funde aus Skandinavien.',
               
 
@@ -119,7 +122,7 @@ function showPage(pageIndex) {
                 nextButton.style.display = "block";  // normale Weiter-Page
               } else {     // wir sind am Ende eines Textes
                 //Wenn am Ende des ersten Textes, dann...
-                      if (currentStep === 1){
+                      if (currentStep === 0){
                           models["Nietplatte_mit_Rost"].visible = true;
                           models["Schiffsniet_originalTextur"].visible = true;
                           nextStepButton.style.display = "block";
@@ -138,6 +141,25 @@ function showPage(pageIndex) {
               }
             });
 }
+
+export function getCurrentStep() {
+  return currentStep;
+}
+
+export function goToTextStep(stepIndex) {
+  if (!Number.isInteger(stepIndex)) return;
+  if (stepIndex < 0 || stepIndex >= fullTexts.length) return;
+
+  currentStep = stepIndex;
+  currentPage = 0;
+
+  if (nextButton) nextButton.style.display = "none";
+  if (nextStepButton) nextStepButton.style.display = "none";
+
+  showPage(currentPage);
+}
+
+
 
 export function startTextEngine() {
   // DOM-Refs

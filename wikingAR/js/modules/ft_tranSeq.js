@@ -1,25 +1,26 @@
 import * as THREE from 'three';
 import { models } from './models.js';
+import { getCurrentStep, goToTextStep } from './ui.js';
 
 const SHIP_MODEL_NAME = 'Schiff';
-const TARGET_MODEL_NAMES = ['Schiffsniet_originalTextur', 'Nietplatte', 'boatPart_wRivets'];
+const TARGET_MODEL_NAMES = ['Schiffsniet_originalTextur', 'Nietplatte'];
+const TEXT_TRIGGER_NAMES = ['Schiffsniet_originalTextur', 'Nietplatte'];
 
 const PROXIMITY_RADIUS = 1.0;
-const SHIP_TRANSPARENT_OPACITY = 0.2;
 const TARGET_TRANSPARENT_OPACITY = 0.3;
+const DISCOVERY_TEXT_START_STEP = 3;
 
 const tempCameraPos = new THREE.Vector3();
 const tempTargetPos = new THREE.Vector3();
 
 let cameraRef = null;
+let discoveryTextStarted = false;
 
 const preparedModels = new Map();
-let lastShipTransparent = false;
-const lastTargetStates = new Map();
+const targetNearState = new Map();
 
 function createTransparentMaterial(sourceMaterial, opacity) {
-  // Absichtlich stark reduziert:
-  // nur Farbe + Textur + Transparenz
+  // Sehr einfache Ersatzmaterialien, damit die Logik auch auf dem Tablet leicht bleibt.
   return new THREE.MeshBasicMaterial({
     color: sourceMaterial.color ? sourceMaterial.color.clone() : new THREE.Color(0xffffff),
     map: sourceMaterial.map || null,
@@ -59,13 +60,46 @@ function setTransparentState(model, useTransparent) {
   if (!entries) return;
 
   for (const entry of entries) {
-    const next = useTransparent ? entry.transparentMaterials : entry.originalMaterials;
-    entry.mesh.material = next.length === 1 ? next[0] : next;
+    const nextMaterials = useTransparent
+      ? entry.transparentMaterials
+      : entry.originalMaterials;
+
+    entry.mesh.material = nextMaterials.length === 1
+      ? nextMaterials[0]
+      : nextMaterials;
   }
 }
 
 function getTargets() {
-  return TARGET_MODEL_NAMES.map((name) => models[name]).filter(Boolean);
+  return TARGET_MODEL_NAMES
+    .map((name) => models[name])
+    .filter(Boolean);
+}
+
+function hideTargetsWhenShipIsVisible(targets) {
+  const ship = models[SHIP_MODEL_NAME];
+  if (!ship || !ship.visible) return false;
+
+  // Sobald das Schiff angezeigt wird, verschwinden die Fundobjekte wieder.
+  for (const target of targets) {
+    if (target.visible) {
+      target.visible = false;
+    }
+    targetNearState.delete(target.uuid);
+  }
+
+  return true;
+}
+
+function startDiscoveryTextIfReady(targetsNearByName) {
+  if (discoveryTextStarted) return;
+  if (getCurrentStep() >= DISCOVERY_TEXT_START_STEP) return;
+
+  const allTargetsNear = TEXT_TRIGGER_NAMES.every((name) => targetsNearByName.has(name));
+  if (!allTargetsNear) return;
+
+  discoveryTextStarted = true;
+  goToTextStep(DISCOVERY_TEXT_START_STEP);
 }
 
 export function initTranSeq(camera) {
@@ -75,39 +109,41 @@ export function initTranSeq(camera) {
 export function updateTranSeq() {
   if (!cameraRef) return;
 
-  const ship = models[SHIP_MODEL_NAME];
-  if (!ship || !ship.visible) return;
-
   const targets = getTargets();
   if (targets.length === 0) return;
 
-  prepareModel(ship, SHIP_TRANSPARENT_OPACITY);
-
-  for (const target of targets) {
-    if (!target.visible) target.visible = true;
-    prepareModel(target, TARGET_TRANSPARENT_OPACITY);
-  }
+  if (hideTargetsWhenShipIsVisible(targets)) return;
 
   cameraRef.getWorldPosition(tempCameraPos);
 
-  let anyNear = false;
+  const targetsNearByName = new Set();
 
   for (const target of targets) {
+    // Transparenz soll direkt gelten, sobald eines der Zielmodelle sichtbar wird.
+    if (!target.visible) {
+      targetNearState.delete(target.uuid);
+      continue;
+    }
+
+    prepareModel(target, TARGET_TRANSPARENT_OPACITY);
     target.getWorldPosition(tempTargetPos);
 
     const isNear = tempCameraPos.distanceTo(tempTargetPos) <= PROXIMITY_RADIUS;
-    const lastState = lastTargetStates.get(target.uuid);
+    const previousIsNear = targetNearState.get(target.uuid);
 
-    if (lastState !== isNear) {
+    // Beim ersten Sichtbarwerden wird das Ziel direkt transparent gesetzt.
+    if (previousIsNear === undefined) {
       setTransparentState(target, !isNear);
-      lastTargetStates.set(target.uuid, isNear);
+    } else if (previousIsNear !== isNear) {
+      setTransparentState(target, !isNear);
     }
 
-    if (isNear) anyNear = true;
+    targetNearState.set(target.uuid, isNear);
+
+    if (isNear) {
+      targetsNearByName.add(target.name);
+    }
   }
 
-  if (lastShipTransparent !== anyNear) {
-    setTransparentState(ship, anyNear);
-    lastShipTransparent = anyNear;
-  }
+  startDiscoveryTextIfReady(targetsNearByName);
 }

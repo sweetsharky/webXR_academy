@@ -25,7 +25,7 @@ export const modelList = [
   {
     name: "Nietplatte",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_animation/nietplatte_mit_animation.gltf",
-    position: { x: -0.2, y: 0.1, z: -0.5 },//x->re/li, y= oben/Unten z=vorne/hinten
+    position: { x: -0.05, y: 0.1, z: -0.5 },//x->re/li, y= oben/Unten z=vorne/hinten
     scale: 0.002,
     rotatable: true,
   },
@@ -55,55 +55,29 @@ export const modelList = [
   {
     name: "Nietplatte_mit_Rost",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_Rost/nietplatte_mit_Rost.gltf",
-    position: { x: -0.2, y: 0.1, z: -0.5 },
+    position: { x: -0.05, y: 0.1, z: -0.5 },
     scale: 0.002,
     rotatable: false,
   },
   {
     name: "Schiffsniet",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/schiffsniet/schiffsniet.gltf",
-    position: { x: 0.2, y: 0.1, z: -0.5 }, 
+    position: { x: 0.05, y: 0.1, z: -0.5 }, 
     scale: 0.002,
     rotatable: true,
   },
     {
     name: "Schiffsniet_originalTextur",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/schiffsniet_originalTextur/schiffsniet_originalTextur.gltf",
-    position: { x: 0.2, y: 0.1, z: -0.5 }, 
+    position: { x: 0.05, y: 0.1, z: -0.5 }, 
     scale: 0.002,
     rotatable: true,
   }
 ];
 
-function addOpacityDebugSpheres(scene) {
-  const geometry = new THREE.SphereGeometry(0.08, 32, 32);
-
-  const materialOpaque = new THREE.MeshStandardMaterial({
-    color: 0x00aaee,
-    transparent: true,
-    opacity: 1.0
-  });
-
-  const materialTransparent = new THREE.MeshStandardMaterial({
-    color: 0xee5533,
-    transparent: true,
-    opacity: 0.3
-  });
-
-  const sphereOpaque = new THREE.Mesh(geometry, materialOpaque);
-  sphereOpaque.position.set(-0.2, 0.1, -0.5);
-  scene.add(sphereOpaque);
-
-  const sphereTransparent = new THREE.Mesh(geometry, materialTransparent);
-  sphereTransparent.position.set(0.2, 0.1, -0.5);
-  scene.add(sphereTransparent);
-
-  console.log("DEBUG spheres added");
-}
 
 // Modelle laden und registrieren
 export function loadModels(scene) {
-    addOpacityDebugSpheres(scene);
   modelList.forEach(item => {
     loader.load(item.url, gltf => {
       const model = gltf.scene;
