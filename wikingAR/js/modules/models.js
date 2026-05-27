@@ -25,7 +25,7 @@ export const modelList = [
   {
     name: "Nietplatte",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_animation/nietplatte_mit_animation.gltf",
-    position: { x: -0.1, y: 0.1, z: -0.3 },//x->re/li, y= oben/Unten z=vorne/hinten
+    position: { x: -0.2, y: 0.1, z: -0.5 },//x->re/li, y= oben/Unten z=vorne/hinten
     scale: 0.002,
     rotatable: true,
   },
@@ -33,7 +33,7 @@ export const modelList = [
     name: "Schiff",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/gislinge_viking_boat/scene.gltf",
     position: { x: 0, y: -1.5, z: -6.0 },
-    rotation: {x: 0, y: 90, z: 0},
+    rotation: {x: 0, y: 225, z: 0},
     scale: 0.01,
     rotatable: false,
   },
@@ -48,28 +48,28 @@ export const modelList = [
     name: "boatPart_wRivets",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/vikingboat_part_wRivets/vikingboat_part_wRivets.gltf",
     position: { x: 0, y: -1.5, z: -3.0 },
-    rotation: {x: 0, y: 90, z: 0},
+    rotation: {x: 0, y: 270, z: 0},
     scale: 0.01,
     rotatable: false,
   },
   {
     name: "Nietplatte_mit_Rost",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_Rost/nietplatte_mit_Rost.gltf",
-    position: { x: -0.1, y: 0.1, z: -0.5 },
+    position: { x: -0.2, y: 0.1, z: -0.5 },
     scale: 0.002,
     rotatable: false,
   },
   {
     name: "Schiffsniet",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/schiffsniet/schiffsniet.gltf",
-    position: { x: 0.1, y: 0.1, z: -0.5 }, 
+    position: { x: 0.2, y: 0.1, z: -0.5 }, 
     scale: 0.002,
     rotatable: true,
   },
     {
     name: "Schiffsniet_originalTextur",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/schiffsniet_originalTextur/schiffsniet_originalTextur.gltf",
-    position: { x: 0.1, y: 0.1, z: -0.5 }, 
+    position: { x: 0.2, y: 0.1, z: -0.5 }, 
     scale: 0.002,
     rotatable: true,
   }
