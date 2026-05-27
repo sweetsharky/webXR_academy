@@ -122,11 +122,7 @@ function showPage(pageIndex) {
                 nextButton.style.display = "block";  // normale Weiter-Page
               } else {     // wir sind am Ende eines Textes
                 //Wenn am Ende des ersten Textes, dann...
-                      if (currentStep === 1){
-                          models["Nietplatte_mit_Rost"].visible = true;
-                          models["Schiffsniet_originalTextur"].visible = true;
-                          nextStepButton.style.display = "block";
-                      } else if (currentStep === 5) {
+                      if (currentStep === 5) {
                         document.querySelector('.item2_1').style.display = 'block';
                       } else if (currentStep === 6) {
                         models["boatPart_wRivets"].visible = true;

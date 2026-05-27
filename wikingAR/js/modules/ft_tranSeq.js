@@ -3,8 +3,8 @@ import { models } from './models.js';
 import { getCurrentStep, goToTextStep } from './ui.js';
 
 const SHIP_MODEL_NAME = 'Schiff';
-const TARGET_MODEL_NAMES = ['Schiffsniet_originalTextur', 'Nietplatte'];
-const TEXT_TRIGGER_NAMES = ['Schiffsniet_originalTextur', 'Nietplatte'];
+const TARGET_MODEL_NAMES = ['Schiffsniet_originalTextur', 'Nietplatte', 'Nietplatte_mit_Rost'];
+const TEXT_TRIGGER_NAMES = ['Schiffsniet_originalTextur', 'Nietplatte_mit_Rost'];
 
 const PROXIMITY_RADIUS = 1.0;
 const TARGET_TRANSPARENT_OPACITY = 0.3;
