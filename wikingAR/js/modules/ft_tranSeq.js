@@ -6,7 +6,7 @@ const SHIP_MODEL_NAME = 'Schiff';
 const TARGET_MODEL_NAMES = ['Schiffsniet_originalTextur', 'Nietplatte', 'Nietplatte_mit_Rost'];
 const TEXT_TRIGGER_NAMES = ['Schiffsniet_originalTextur', 'Nietplatte_mit_Rost'];
 
-const PROXIMITY_RADIUS = 1.0;
+const PROXIMITY_RADIUS = 0.5;
 const TARGET_TRANSPARENT_OPACITY = 0.3;
 const DISCOVERY_TEXT_START_STEP = 3;
 
@@ -76,20 +76,6 @@ function getTargets() {
     .filter(Boolean);
 }
 
-function hideTargetsWhenShipIsVisible(targets) {
-  const ship = models[SHIP_MODEL_NAME];
-  if (!ship || !ship.visible) return false;
-
-  // Sobald das Schiff angezeigt wird, verschwinden die Fundobjekte wieder.
-  for (const target of targets) {
-    if (target.visible) {
-      target.visible = false;
-    }
-    targetNearState.delete(target.uuid);
-  }
-
-  return true;
-}
 
 function startDiscoveryTextIfReady(targetsNearByName) {
   if (discoveryTextStarted) return;
@@ -111,8 +97,6 @@ export function updateTranSeq() {
 
   const targets = getTargets();
   if (targets.length === 0) return;
-
-  if (hideTargetsWhenShipIsVisible(targets)) return;
 
   cameraRef.getWorldPosition(tempCameraPos);
 

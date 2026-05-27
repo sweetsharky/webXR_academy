@@ -25,7 +25,7 @@ export const modelList = [
   {
     name: "Nietplatte",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_animation/nietplatte_mit_animation.gltf",
-    position: { x: -0.05, y: 0.1, z: -0.5 },//x->re/li, y= oben/Unten z=vorne/hinten
+    position: { x: -0.05, y: 0.1, z: -0.6 },//x->re/li, y= oben/Unten z=vorne/hinten
     scale: 0.002,
     rotatable: true,
   },
@@ -55,21 +55,21 @@ export const modelList = [
   {
     name: "Nietplatte_mit_Rost",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_Rost/nietplatte_mit_Rost.gltf",
-    position: { x: -0.05, y: 0.1, z: -0.5 },
+    position: { x: -0.05, y: 0.1, z: -0.6 },
     scale: 0.002,
     rotatable: false,
   },
   {
     name: "Schiffsniet",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/schiffsniet/schiffsniet.gltf",
-    position: { x: 0.05, y: 0.1, z: -0.5 }, 
+    position: { x: 0.05, y: 0.1, z: -0.6 }, 
     scale: 0.002,
     rotatable: true,
   },
     {
     name: "Schiffsniet_originalTextur",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/schiffsniet_originalTextur/schiffsniet_originalTextur.gltf",
-    position: { x: 0.05, y: 0.1, z: -0.5 }, 
+    position: { x: 0.05, y: 0.1, z: -0.6 }, 
     scale: 0.002,
     rotatable: true,
   }
