@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { models } from './models.js';
 
 const TARGET_MODEL_NAMES = ['Schiffsniet_originalTextur', 'Nietplatte', 'Nietplatte_mit_Rost'];
-const TEXT_TRIGGER_NAMES = ['Nietplatte_mit_Rost'];
+const TRIGGER_MODEL_NAME = 'Nietplatte_mit_Rost';
 
 const PROXIMITY_RADIUS = 0.5;
 const TARGET_TRANSPARENT_OPACITY = 0.3;
@@ -80,7 +80,7 @@ function triggerNextLearningStepIfReady(isNear) {
 
   const nextStepButton = document.getElementById('nextStepButton');
   if (nextStepButton) {
-    nextStepButton.style.display = "block";
+    nextStepButton.style.display = 'block';
     nextStepButton.click();
   }
 }
@@ -94,6 +94,8 @@ export function updateTranSeq() {
 
   const targets = getTargets();
   if (targets.length === 0) return;
+
+  const triggerModel = models[TRIGGER_MODEL_NAME];
 
   cameraRef.getWorldPosition(tempCameraPos);
 
@@ -118,7 +120,8 @@ export function updateTranSeq() {
 
     targetNearState.set(target.uuid, isNear);
 
-    if (target.name === 'Nietplatte_mit_Rost') {
+    // Nur Nietplatte_mit_Rost darf den nächsten Lernschritt auslösen.
+    if (target === triggerModel) {
       triggerNextLearningStepIfReady(isNear);
     }
   }
