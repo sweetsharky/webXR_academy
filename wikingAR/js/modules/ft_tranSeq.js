@@ -72,11 +72,9 @@ function getTargets() {
     .filter(Boolean);
 }
 
-function triggerNextLearningStepIfReady(targetsNearByName) {
+function triggerNextLearningStepIfReady(isNear) {
   if (discoveryTriggered) return;
-
-  const allTargetsNear = TEXT_TRIGGER_NAMES.every((name) => targetsNearByName.has(name));
-  if (!allTargetsNear) return;
+  if (!isNear) return;
 
   discoveryTriggered = true;
 
@@ -99,8 +97,6 @@ export function updateTranSeq() {
 
   cameraRef.getWorldPosition(tempCameraPos);
 
-  const targetsNearByName = new Set();
-
   for (const target of targets) {
     if (!target.visible) {
       targetNearState.delete(target.uuid);
@@ -122,10 +118,8 @@ export function updateTranSeq() {
 
     targetNearState.set(target.uuid, isNear);
 
-    if (isNear) {
-      targetsNearByName.add(target.name);
+    if (target.name === 'Nietplatte_mit_Rost') {
+      triggerNextLearningStepIfReady(isNear);
     }
   }
-
-  triggerNextLearningStepIfReady(targetsNearByName);
 }
