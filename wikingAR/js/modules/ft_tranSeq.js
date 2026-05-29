@@ -11,7 +11,6 @@ const tempCameraPos = new THREE.Vector3();
 const tempTargetPos = new THREE.Vector3();
 
 let cameraRef = null;
-let discoveryTriggered = false;
 
 const preparedModels = new Map();
 const targetNearState = new Map();
@@ -73,10 +72,7 @@ function getTargets() {
 }
 
 function triggerNextLearningStepIfReady(isNear) {
-  if (discoveryTriggered) return;
   if (!isNear) return;
-
-  discoveryTriggered = true;
 
   const nextStepButton = document.getElementById('nextStepButton');
   if (nextStepButton) {
