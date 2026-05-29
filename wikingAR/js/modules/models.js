@@ -33,7 +33,7 @@ export const modelList = [
     name: "Schiff",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/gislinge_viking_boat/scene.gltf",
     position: { x: 0, y: -1.5, z: -6.0 },
-    rotation: {x: 0, y: 225, z: 0},
+    rotation: {x: 0, y: 270, z: 0},
     scale: 0.01,
     rotatable: false,
   },
