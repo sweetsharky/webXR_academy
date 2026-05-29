@@ -1,28 +1,31 @@
 import * as THREE from 'three';
 import { models } from './models.js';
 
-const TARGET_MODEL_NAME = 'Nietplatte_mit_Rost';
+const TARGET_MODEL_NAMES = ['Schiffsniet_originalTextur', 'Nietplatte', 'Nietplatte_mit_Rost'];
+const TEXT_TRIGGER_NAMES = ['Nietplatte_mit_Rost'];
+
 const PROXIMITY_RADIUS = 0.5;
-const TRANSPARENT_OPACITY = 0.3;
+const TARGET_TRANSPARENT_OPACITY = 0.3;
 
 const tempCameraPos = new THREE.Vector3();
 const tempTargetPos = new THREE.Vector3();
 
 let cameraRef = null;
-let hasTriggeredNextStep = false;
+let discoveryTriggered = false;
 
 const preparedModels = new Map();
+const targetNearState = new Map();
 
 function createTransparentMaterial(sourceMaterial, opacity) {
   return new THREE.MeshBasicMaterial({
     color: sourceMaterial.color ? sourceMaterial.color.clone() : new THREE.Color(0xffffff),
     map: sourceMaterial.map || null,
     transparent: true,
-    opacity
+    opacity: opacity
   });
 }
 
-function prepareModel(model) {
+function prepareModel(model, transparentOpacity) {
   if (!model || preparedModels.has(model.uuid)) return;
 
   const entries = [];
@@ -35,7 +38,7 @@ function prepareModel(model) {
       : [child.material];
 
     const transparentMaterials = originalMaterials.map((material) =>
-      createTransparentMaterial(material, TRANSPARENT_OPACITY)
+      createTransparentMaterial(material, transparentOpacity)
     );
 
     entries.push({
@@ -63,6 +66,27 @@ function setTransparentState(model, useTransparent) {
   }
 }
 
+function getTargets() {
+  return TARGET_MODEL_NAMES
+    .map((name) => models[name])
+    .filter(Boolean);
+}
+
+function triggerNextLearningStepIfReady(targetsNearByName) {
+  if (discoveryTriggered) return;
+
+  const allTargetsNear = TEXT_TRIGGER_NAMES.every((name) => targetsNearByName.has(name));
+  if (!allTargetsNear) return;
+
+  discoveryTriggered = true;
+
+  const nextStepButton = document.getElementById('nextStepButton');
+  if (nextStepButton) {
+    nextStepButton.style.display = "block";
+    nextStepButton.click();
+  }
+}
+
 export function initTranSeq(camera) {
   cameraRef = camera;
 }
@@ -70,38 +94,38 @@ export function initTranSeq(camera) {
 export function updateTranSeq() {
   if (!cameraRef) return;
 
-  const target = models[TARGET_MODEL_NAME];
-  if (!target) return;
-
-  // Wenn das Ziel sichtbar wird, bereiten wir es einmalig mit transparenten Materialien vor.
-  if (target.visible) {
-    prepareModel(target);
-  } else {
-    hasTriggeredNextStep = false;
-    return;
-  }
+  const targets = getTargets();
+  if (targets.length === 0) return;
 
   cameraRef.getWorldPosition(tempCameraPos);
-  target.getWorldPosition(tempTargetPos);
 
-  const isNear = tempCameraPos.distanceTo(tempTargetPos) <= PROXIMITY_RADIUS;
+  const targetsNearByName = new Set();
 
-  if (hasTriggeredNextStep) {
-    setTransparentState(target, false);
-    return;
-  }
+  for (const target of targets) {
+    if (!target.visible) {
+      targetNearState.delete(target.uuid);
+      continue;
+    }
 
-  // Solange man noch nicht nah genug ist, bleibt das Modell transparent.
-  setTransparentState(target, !isNear);
+    // Sobald das Modell sichtbar wird, bekommt es direkt die transparente Variante.
+    prepareModel(target, TARGET_TRANSPARENT_OPACITY);
+    target.getWorldPosition(tempTargetPos);
 
-  // Sobald man nah genug ist, wird das Modell opaque und der nächste Schritt läuft an.
-  if (isNear) {
-    hasTriggeredNextStep = true;
-    setTransparentState(target, false);
+    const isNear = tempCameraPos.distanceTo(tempTargetPos) <= PROXIMITY_RADIUS;
+    const previousIsNear = targetNearState.get(target.uuid);
 
-    const nextStepButton = document.getElementById('nextStepButton');
-    if (nextStepButton) {
-      nextStepButton.click();
+    if (previousIsNear === undefined) {
+      setTransparentState(target, !isNear);
+    } else if (previousIsNear !== isNear) {
+      setTransparentState(target, !isNear);
+    }
+
+    targetNearState.set(target.uuid, isNear);
+
+    if (isNear) {
+      targetsNearByName.add(target.name);
     }
   }
+
+  triggerNextLearningStepIfReady(targetsNearByName);
 }
