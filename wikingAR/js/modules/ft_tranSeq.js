@@ -12,6 +12,7 @@ const tempTargetPos = new THREE.Vector3();
 
 let cameraRef = null;
 let discoveryTriggered = false;
+let tranSeqEnabled = true;
 
 const preparedModels = new Map();
 const targetNearState = new Map();
@@ -83,6 +84,11 @@ function triggerNextLearningStepIfReady(isNear) {
     nextStepButton.style.display = 'block';
     nextStepButton.click();
   }
+
+  // Feature nach dem ersten Durchlauf abschalten, damit danach keine weiteren Checks laufen.
+  tranSeqEnabled = false;
+  preparedModels.clear();
+  targetNearState.clear();
 }
 
 export function initTranSeq(camera) {
@@ -90,7 +96,7 @@ export function initTranSeq(camera) {
 }
 
 export function updateTranSeq() {
-  if (!cameraRef) return;
+  if (!cameraRef || !tranSeqEnabled) return;
 
   const targets = getTargets();
   if (targets.length === 0) return;
