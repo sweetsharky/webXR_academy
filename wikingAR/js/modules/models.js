@@ -32,7 +32,7 @@ export const modelList = [
   {
   name: "Nietplatte_screen",
   url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_animation/nietplatte_mit_animation.gltf",
-  position: { x: 0, y: 0, z: -0.5 },
+  position: { x: 0, y: -0.3, z: -0.4 },
   scale: 0.0036,
   rotatable: true,
 },
