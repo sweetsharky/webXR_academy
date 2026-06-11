@@ -177,9 +177,9 @@ export function startTextEngine() {
 // ============================================================
 export function initUI() {
   // Button, um UI-Panel (grid-Layout) sichtbar/unsichtbar
-  document.getElementById('toggle-panel').addEventListener('click', () => {
-    document.querySelector('.grid-container').classList.toggle('hide');
-  });
+  /*document.getElementById('toggle-panel').addEventListener('click', () => {
+    document.querySelector('.grid-container').classList.toggle('hide'); 
+  });*/
 
   // Start: Icon-Buttons
   document.querySelectorAll('.icon-btn').forEach(btn => {
