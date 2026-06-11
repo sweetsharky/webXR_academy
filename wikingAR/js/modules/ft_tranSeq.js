@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { models } from './models.js';
 
-const TARGET_MODEL_NAMES = ['Schiffsniet_originalTextur', 'Nietplatte', 'Nietplatte_mit_Rost'];
+const TARGET_MODEL_NAMES = ['Nietplatte', 'Nietplatte_mit_Rost'];
 const TRIGGER_MODEL_NAME = 'Nietplatte_mit_Rost';
 
 const PROXIMITY_RADIUS = 0.5;
@@ -127,7 +127,8 @@ export function updateTranSeq() {
       continue;
     }
 
-    // Sobald das Modell sichtbar wird, bekommt es direkt die transparente Variante.
+    // Sobald das Modell sichtbar wird, merken wir uns Original- und transparente Materialien.
+    // Sichtbar startet es opaque; erst bei Annäherung wird es transparent.
     prepareModel(target, TARGET_TRANSPARENT_OPACITY);
     target.getWorldPosition(tempTargetPos);
 
@@ -135,9 +136,9 @@ export function updateTranSeq() {
     const previousIsNear = targetNearState.get(target.uuid);
 
     if (previousIsNear === undefined) {
-      setTransparentState(target, !isNear);
+      setTransparentState(target, isNear);
     } else if (previousIsNear !== isNear) {
-      setTransparentState(target, !isNear);
+      setTransparentState(target, isNear);
     }
 
     targetNearState.set(target.uuid, isNear);

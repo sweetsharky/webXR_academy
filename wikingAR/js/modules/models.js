@@ -30,6 +30,13 @@ export const modelList = [
     rotatable: true,
   },
   {
+  name: "Nietplatte_screen",
+  url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_animation/nietplatte_mit_animation.gltf",
+  position: { x: 0, y: -0.08, z: -0.2 },
+  scale: 0.0036,
+  rotatable: false,
+},
+  {
     name: "Schiff",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/gislinge_viking_boat/scene.gltf",
     position: { x: 0, y: -1.5, z: -6.0 },
@@ -62,7 +69,7 @@ export const modelList = [
   {
   name: "Nietplatte_mit_Rost_screen",
   url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_Rost/nietplatte_mit_Rost.gltf",
-  position: { x: 0, y: -0.08, z: -0.55 },
+  position: { x: 0, y: -0.08, z: -0.2 },
   scale: 0.0036,
   rotatable: false,
   },

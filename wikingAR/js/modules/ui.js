@@ -161,11 +161,21 @@ export function startTextEngine() {
   });
 
   document.getElementById('schiff').addEventListener('click', () => {
-    currentStep++;
-    currentPage = 0;
-    document.querySelector('.item2_1').style.display = 'none';
-    showPage(currentPage);
-    //models["boatPart"].visible = true;
+  const screenCleanModel = models["Nietplatte_screen"];
+  if (screenCleanModel) {
+    screenCleanModel.visible = false;
+  }
+
+  const cleanWorldModel = models["Nietplatte"];
+  if (cleanWorldModel) {
+    cleanWorldModel.visible = true;
+  }
+
+  currentStep++;
+  currentPage = 0;
+  document.querySelector('.item2_1').style.display = 'none';
+  showPage(currentPage);
+  //models["boatPart"].visible = true;
   });
 
   // Start bei Seite 0

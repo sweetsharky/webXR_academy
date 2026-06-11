@@ -258,11 +258,26 @@ export function initInteractions(models, camera, renderer) {
               if (grabBtn_2) grabBtn_2.style.display = "block";
             }
             if (rusty) {
-              // rusty ausblenden
-              rusty.visible = false;
-                if (screenRustModel) {
-                  screenRustModel.visible = false;
-                }
+              // rusty ausblenden, gereinigte Nietplatte erscheinen lassen
+            if (screenRustModel) {
+              screenRustModel.visible = false;
+            }
+
+            const screenCleanModel = models["Nietplatte_screen"];
+            if (screenCleanModel && camera) {
+              if (screenCleanModel.parent !== camera) {
+                camera.add(screenCleanModel);
+              }
+
+              screenCleanModel.position.set(0, -0.08, -0.55);
+              screenCleanModel.rotation.set(
+                THREE.MathUtils.degToRad(12),
+                0,
+                0
+              );
+
+              screenCleanModel.visible = true;
+            }
               // nachdem rusty ausgeblendet: trigger next learning step
               console.log("Alle Rost-Teile entfernt -> nextStepButton triggern");
               // wenn nextStepButton existiert: click auslösen
