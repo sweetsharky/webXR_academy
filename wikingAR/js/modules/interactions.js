@@ -258,7 +258,7 @@ export function initInteractions(models, camera, renderer) {
               if (grabBtn_2) grabBtn_2.style.display = "block";
             }
             if (rusty) {
-              // rusty ausblenden, gereinigte Nietplatte erscheinen lassen
+              rusty.visible = false;}
             if (screenRustModel) {
               screenRustModel.visible = false;
             }

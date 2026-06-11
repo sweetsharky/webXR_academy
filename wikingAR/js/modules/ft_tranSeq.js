@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { models } from './models.js';
 
-const TARGET_MODEL_NAMES = ['Nietplatte', 'Nietplatte_mit_Rost'];
+const TARGET_MODEL_NAMES = ['Nietplatte_mit_Rost'];
 const TRIGGER_MODEL_NAME = 'Nietplatte_mit_Rost';
 
 const PROXIMITY_RADIUS = 0.5;
