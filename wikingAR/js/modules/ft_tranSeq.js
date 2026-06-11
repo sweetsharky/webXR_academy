@@ -78,6 +78,22 @@ function triggerNextLearningStepIfReady(isNear) {
   if (!isNear) return;
 
   discoveryTriggered = true;
+  const screenRustModel = models["Nietplatte_mit_Rost_screen"];
+
+  if (screenRustModel && cameraRef) {
+    if (screenRustModel.parent !== cameraRef) {
+      cameraRef.add(screenRustModel);
+    }
+
+    screenRustModel.position.set(0, -0.08, -0.55);
+    screenRustModel.rotation.set(
+      THREE.MathUtils.degToRad(12),
+      0,
+      0
+    );
+
+    screenRustModel.visible = true;
+  }
 
   const nextStepButton = document.getElementById('nextStepButton');
   if (nextStepButton) {

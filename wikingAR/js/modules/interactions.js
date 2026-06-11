@@ -114,8 +114,16 @@ export function initInteractions(models, camera, renderer) {
   planeIntersectPoint = new THREE.Vector3();
 
   renderer.domElement.addEventListener('touchstart', (ev) => {
-    if (!models["Nietplatte_mit_Rost"] || !models["Nietplatte_mit_Rost"].visible) return;
-    if (ev.touches.length !== 1) return;
+    const screenRustModel = models["Nietplatte_mit_Rost_screen"];
+    const arRustModel = models["Nietplatte_mit_Rost"];
+
+    const activeRustModel =
+      screenRustModel && screenRustModel.visible
+        ? screenRustModel
+        : arRustModel;
+
+    if (!activeRustModel || !activeRustModel.visible) return;
+        if (ev.touches.length !== 1) return;
 
     const t = ev.touches[0];
     touchPos.x = (t.pageX / window.innerWidth) * 2 - 1;
@@ -124,8 +132,11 @@ export function initInteractions(models, camera, renderer) {
     raycaster.setFromCamera(touchPos, camera);
 
     // wir prüfen nur die Rost-Teile (falls vorhanden)
-    const rostParts = models["Nietplatte_mit_Rost_children"] || [];
-    if (rostParts.length === 0) return;
+    const rostParts =
+      activeRustModel === screenRustModel
+        ? models["Nietplatte_mit_Rost_screen_children"] || []
+        : models["Nietplatte_mit_Rost_children"] || [];
+        if (rostParts.length === 0) return;
 
     // Intersect mit diesen Teilen
     const intersects = raycaster.intersectObjects(rostParts, true);
@@ -178,7 +189,13 @@ export function initInteractions(models, camera, renderer) {
     dragging.scale.multiplyScalar(1 / 1.05);
 
     // Entfernen-Logik: wenn das Teil weit genug weg vom Ursprung der Nietplatte ist oder außerhalb eines Radius --> entfernen
-    const parentModel = models["Nietplatte_mit_Rost"];
+    const screenRustModel = models["Nietplatte_mit_Rost_screen"];
+    const arRustModel = models["Nietplatte_mit_Rost"];
+
+    const parentModel =
+      screenRustModel && screenRustModel.visible
+        ? screenRustModel
+        : arRustModel;
     const worldPos = new THREE.Vector3();
     dragging.getWorldPosition(worldPos);
 
@@ -211,13 +228,21 @@ export function initInteractions(models, camera, renderer) {
         else {
           removedMesh.visible = false;
           // markiere als entfernt
-          const childrenList = models["Nietplatte_mit_Rost_children"] || [];
-          // Setze removedCount
-          models["Nietplatte_mit_Rost_removedCount"] = (models["Nietplatte_mit_Rost_removedCount"] || 0) + 1;
-          // optional: entferne aus array
+          const activeChildrenKey =
+            parentModel === screenRustModel
+              ? "Nietplatte_mit_Rost_screen_children"
+              : "Nietplatte_mit_Rost_children";
+
+          const childrenList = models[activeChildrenKey] || [];
+
+          models[`${parentModel.name}_removedCount`] =
+            (models[`${parentModel.name}_removedCount`] || 0) + 1;
+
           const idx = childrenList.indexOf(removedMesh);
           if (idx !== -1) childrenList.splice(idx, 1);
+
           console.log("Rost-Teil entfernt, verbleibend:", childrenList.length);
+
           // wenn alle entfernt -> trigger nextStep
           if (childrenList.length === 0) {
             // Nietplatte einblenden, Nietplatte_mit_Rost ausblenden
@@ -235,6 +260,9 @@ export function initInteractions(models, camera, renderer) {
             if (rusty) {
               // rusty ausblenden
               rusty.visible = false;
+                if (screenRustModel) {
+                  screenRustModel.visible = false;
+                }
               // nachdem rusty ausgeblendet: trigger next learning step
               console.log("Alle Rost-Teile entfernt -> nextStepButton triggern");
               // wenn nextStepButton existiert: click auslösen

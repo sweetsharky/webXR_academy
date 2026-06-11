@@ -47,7 +47,7 @@ export const modelList = [
   {
     name: "boatPart_wRivets",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/vikingboat_part_wRivets/vikingboat_part_wRivets.gltf",
-    position: { x: -3.5, y: -1.5, z: -3.0 },
+    position: { x: -1.7, y: -1.5, z: -3.0 },
     rotation: {x: 0, y: 270, z: 0},
     scale: 0.01,
     rotatable: false,
@@ -58,6 +58,13 @@ export const modelList = [
     position: { x: -0.05, y: 0, z: -0.6 },
     scale: 0.002,
     rotatable: false,
+  },
+  {
+  name: "Nietplatte_mit_Rost_screen",
+  url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/nietplatte_mit_Rost/nietplatte_mit_Rost.gltf",
+  position: { x: 0, y: -0.08, z: -0.55 },
+  scale: 0.0036,
+  rotatable: false,
   },
   {
     name: "Schiffsniet",
@@ -114,7 +121,7 @@ export function loadModels(scene) {
 
       // checken, ob die Childobjekte der Nietplatte_mit_Rost gefunden werden und in Console als Bestätigung ausgeben
       // Wenn es die Rost-Nietplatte ist: suche rost1..rost3 und mach Materialien transparent
-      if (item.name === "Nietplatte_mit_Rost") {
+      if (item.name === "Nietplatte_mit_Rost" || item.name === "Nietplatte_mit_Rost_screen") {
         // Suche und registriere die Rost-Teile in rostParts
         const rostParts = [];
         model.traverse((child) => {
@@ -126,9 +133,11 @@ export function loadModels(scene) {
           }
         });
 
-        models["Nietplatte_mit_Rost_children"] = rostParts; //Schlüssel-Wertpaar wird in dem Objekt "models" hinzugefügt
+        
+        
+        models[`${item.name}_children`] = rostParts; //Schlüssel-Wertpaar wird in dem Objekt "models" hinzugefügt
         // status-flag
-        models["Nietplatte_mit_Rost_removedCount"] = 0;
+       models[`${item.name}_removedCount`] = 0;
 
         console.log("Gefundene Rost-Teile:", rostParts.map(p => p.name || p.uuid)); //map() ist eine Array-Methode, die jedes Element in einem Array durchgeht und ein neues Array erzeugt. jedes Element in rostParts soll durchgegangen werden(p) und den Namen zurückgeben, falls kein name vorhanden, dann die ID zurückgeben(--> über die THREE.js Kennung, die automatisch von THREE erzeugt wird = uuid) 
       }
