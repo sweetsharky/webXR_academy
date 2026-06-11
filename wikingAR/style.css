@@ -88,7 +88,8 @@ a, button, input, select {
     .item1 {
       grid-column-start: 1;
       grid-column-end: 3;
-      background-color: orange;
+      background-color: #404040ff;
+      color: #a99d7cff;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -96,7 +97,7 @@ a, button, input, select {
     }
 
     .item2_1 {
-      background-color: orange;
+      background-color: #404040ff;
       display: none;
       align-items: center;
       justify-content: center;
@@ -115,7 +116,7 @@ a, button, input, select {
     }
 
     .item3 {
-      background-color: orange;
+      background-color: #404040ff;
     }
 
     .item4 {
@@ -128,7 +129,7 @@ a, button, input, select {
   }
 
   .item5 {
-    background-color: orange;
+    background-color: #404040ff;
     display: flex;
     flex-direction: column; /* sorgt dafür, dass alle Buttons untereinander stehen */
     align-items: center;
@@ -143,7 +144,7 @@ a, button, input, select {
 	/*Quiz-Buttons innerhalb eines flex-Layouts (siehe .answers)*/
 	.quiz-button {
   position: relative; /* wichtig! .quiz-button:after ist ein pseudo-element, das absolut positioniert wird. Deshalb muss der Eltern-Button .quiz-button auf position: relative gesetzt werden, damit sich der Effekt nur innerhalb des Buttons ausbreitet. Ansonsten überlagert der Effekt den ganzen Bildschirm*/
-  background-color: #04AA6D;
+  background-color: #404040ff;
   border: none;
   border-radius: 0.5em;
   font-size: 1em;
@@ -211,8 +212,8 @@ a, button, input, select {
   #grab-nietplatte {
   padding: 1em 2em;
   border-radius: 0.5em;
-  background-color: #04AA6D;
-  color: white;
+  background-color: #404040ff;
+  color: #a99d7cff;
   border: none;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -229,7 +230,7 @@ a, button, input, select {
   padding: 1em 2em;
   border-radius: 0.5em;
   background-color: #f1d0b5;
-  color: white;
+  color: #a99d7cff;
   border: none;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -268,8 +269,8 @@ a, button, input, select {
   bottom: 200px;
   padding: 1em 2em;
   border-radius: 0.5em;
-  background-color: #04AA6D;
-  color: white;
+  background-color: #404040ff;
+  color: #a99d7cff;
   border: none;
   cursor: pointer;
   font-size: 1em;
@@ -281,8 +282,8 @@ a, button, input, select {
   bottom: 200px;
   padding: 1em 2em;
   border-radius: 0.5em;
-  background-color: #04AA6D;
-  color: white;
+  background-color: #404040ff;
+  color: #a99d7cff;
   border: none;
   cursor: pointer;
   font-size: 1em;

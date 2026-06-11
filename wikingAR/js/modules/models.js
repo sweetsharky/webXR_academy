@@ -47,7 +47,7 @@ export const modelList = [
   {
     name: "boatPart_wRivets",
     url: "https://raw.githubusercontent.com/sweetsharky/media/refs/heads/main/vikingboat_part_wRivets/vikingboat_part_wRivets.gltf",
-    position: { x: 0, y: -1.5, z: -3.0 },
+    position: { x: -3.5, y: -1.5, z: -3.0 },
     rotation: {x: 0, y: 270, z: 0},
     scale: 0.01,
     rotatable: false,

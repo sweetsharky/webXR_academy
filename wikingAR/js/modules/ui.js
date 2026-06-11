@@ -10,7 +10,7 @@ import { models } from './models.js';
 // Dispatcher für Icon-Buttons
 function handleIconAction(action, event) {
   switch(action) {
-    case 'showNiet':
+    case 'showFeuerstahl':
       // item2_2 Container sichtbar machen und Video starten
       const nietVideo = document.getElementById('nietVideo');
 
@@ -32,7 +32,7 @@ function handleIconAction(action, event) {
       //Funktion einfügen, um beim Klick was auszulösen
       break;
 
-    case 'showFeuerstahl':
+    case 'showNiet':
       // beliebige Aktion, z. B. Panel öffnen
       document.querySelector('.item2_1').style.display = 'block';
       break;
@@ -127,7 +127,7 @@ function showPage(pageIndex) {
                       } else if (currentStep === 6) {
                         models["boatPart_wRivets"].visible = true;
                         nextStepButton.style.display = "block";
-                      } else if (currentStep === 7) {
+                      } else if (currentStep === 8) {
                         models["Schiff"].visible = true;
                         nextStepButton.style.display = "block";
                       
