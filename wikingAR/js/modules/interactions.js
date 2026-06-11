@@ -269,13 +269,6 @@ export function initInteractions(models, camera, renderer) {
                 camera.add(screenCleanModel);
               }
 
-              screenCleanModel.position.set(0, -0.08, -0.55);
-              screenCleanModel.rotation.set(
-                THREE.MathUtils.degToRad(12),
-                0,
-                0
-              );
-
               screenCleanModel.visible = true;
             }
               // nachdem rusty ausgeblendet: trigger next learning step
