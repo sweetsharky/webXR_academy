@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { models } from './models.js';
 
-const TARGET_MODEL_NAMES = ['Nietplatte_mit_Rost'];
+const TARGET_MODEL_NAMES = ['Nietplatte_mit_Rost', 'Nietplatte'];
 const TRIGGER_MODEL_NAME = 'Nietplatte_mit_Rost';
 
 const PROXIMITY_RADIUS = 0.5;
@@ -52,7 +52,11 @@ function prepareModel(model, transparentOpacity) {
   preparedModels.set(model.uuid, entries);
 }
 
-function setTransparentState(model, useTransparent) {
+export function setTransparentState(model, useTransparent) {
+  if (!model) return;
+
+  prepareModel(model, TARGET_TRANSPARENT_OPACITY);
+
   const entries = preparedModels.get(model.uuid);
   if (!entries) return;
 

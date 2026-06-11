@@ -9,6 +9,7 @@
 
 import * as THREE from 'https://unpkg.com/three@0.133.0/build/three.module.js';
 import { getBoatRivetTargets, models } from './models.js';
+import { setTransparentState } from './ft_tranSeq.js';
 
 
 let previousTouch = null;
@@ -250,7 +251,8 @@ export function initInteractions(models, camera, renderer) {
             const rusty = models["Nietplatte_mit_Rost"];
             if (clean) {
               clean.visible = true;
-
+              setTransparentState(clean, true);
+              
               // Greifbuttons sichtbar 
               const grabBtn_1 = document.getElementById("grab-nietplatte");
               const grabBtn_2 = document.getElementById("grab-schiffsniet");

@@ -6,6 +6,7 @@
 // ============================================================
 
 import { models } from './models.js';
+import { setTransparentState } from './ft_tranSeq.js';
 
 // Dispatcher für Icon-Buttons
 function handleIconAction(action, event) {
@@ -127,7 +128,7 @@ function showPage(pageIndex) {
                       } else if (currentStep === 6) {
                         models["boatPart_wRivets"].visible = true;
                         nextStepButton.style.display = "block";
-                      } else if (currentStep === 8) {
+                      } else if (currentStep === 9) {
                         models["Schiff"].visible = true;
                         nextStepButton.style.display = "block";
                       
@@ -161,21 +162,22 @@ export function startTextEngine() {
   });
 
   document.getElementById('schiff').addEventListener('click', () => {
-  const screenCleanModel = models["Nietplatte_screen"];
-  if (screenCleanModel) {
-    screenCleanModel.visible = false;
-  }
+    const cleanWorldModel = models["Nietplatte"];
+    if (cleanWorldModel) {
+      cleanWorldModel.visible = true;
+      setTransparentState(cleanWorldModel, false);
+    }
 
-  const cleanWorldModel = models["Nietplatte"];
-  if (cleanWorldModel) {
-    cleanWorldModel.visible = true;
-  }
+    const screenCleanModel = models["Nietplatte_screen"];
+    if (screenCleanModel) {
+      screenCleanModel.visible = false;
+    }
 
-  currentStep++;
-  currentPage = 0;
-  document.querySelector('.item2_1').style.display = 'none';
-  showPage(currentPage);
-  //models["boatPart"].visible = true;
+    currentStep++;
+    currentPage = 0;
+    document.querySelector('.item2_1').style.display = 'none';
+    showPage(currentPage);
+    //models["boatPart"].visible = true;
   });
 
   // Start bei Seite 0
